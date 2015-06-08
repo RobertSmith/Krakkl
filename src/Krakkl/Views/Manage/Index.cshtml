@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "User Profile";
+}
+
+<h2>@ViewBag.Title</h2>
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div class="col-xs-3">
+    <h4>Gravatar</h4>
+    <img src="@ViewBag.User.GravatarImage"/>
+    <p>
+        <a href="@ViewBag.User.GravatarProfile" target="_blank">See your gravatar profile here </a><span class="glyphicon glyphicon-new-window"></span></p>
+</div>
+<div class="col-xs-9">
+    <form method="POST" action="/Manage/Index">
+        <div class="form-group">
+            <label>Logins:</label>
+            @Model.Logins.Count [<a asp-controller="Manage" asp-action="ManageLogins">Manage</a>]
+        </div>
+        <div class="form-group">
+            <label>Pseudonym:</label>
+            <input type="text" id="pseudonym" name="pseudonym" class="form-control" rows="3" value="@ViewBag.User.Pseudonym" />
+        </div>
+        <div class="form-group">
+            <label>Editor Language: <i class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="Default language for the text editor."></i></label>
+            <select id="editorLanguage" name="editorLanguage" class="form-control">
+                @{
+                    var userLang = string.IsNullOrEmpty(ViewBag.User.EditorLanguage) ? "en" : ViewBag.User.EditorLanguage;
+
+                    foreach (var language in ViewBag.Languages)
+                    {
+                        if (userLang == language.Key)
+                        {
+                            <option value="@language.Key" selected="selected">@language.Value</option>
+                        }
+                        else
+                        {
+                            <option value="@language.Key">@language.Value</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label>About Me: <i class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="A brief summary about you."></i></label>
+            <textarea id="aboutMe" name="aboutMe" class="form-control" rows="3">@ViewBag.User.AboutMe</textarea>
+        </div>
+        <div class="form-group">
+            <label>Author Profile: <i class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="A brief summary about your writing. This will show at the end of your books."></i></label>
+            <textarea id="profile" name="profile" class="form-control" rows="3">@ViewBag.User.AuthorProfile</textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" name="save" value="Save" title="Save your profile" class="btn btn-success pull-right">Save</button>
+        </div>
+    </form>
+</div>
+
+<script src="~/lib/jquery/jquery.js"></script>
+<script src="~/lib/ckeditor/ckeditor.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".glyphicon-question-sign").tooltip();
+
+        CKEDITOR.replace('aboutMe', { toolbar: 'Basic', language: $('#editorLanguage').val() });
+        CKEDITOR.replace('profile', { toolbar: 'Basic', language: $('#editorLanguage').val() });
+
+        $("#editorLanguage").change(function(e) {
+            CKEDITOR.instances.aboutMe.destroy();
+            CKEDITOR.instances.profile.destroy();
+            CKEDITOR.replace('aboutMe', { toolbar: 'Basic', language: $('#editorLanguage').val() });
+            CKEDITOR.replace('profile', { toolbar: 'Basic', language: $('#editorLanguage').val() });
+        });
+    });
+</script>

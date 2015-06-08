@@ -1,0 +1,59 @@
+﻿@using System.Collections.Generic
+@using System.Threading.Tasks
+@using Krakkl.Query
+@model IEnumerable<BookModel>
+
+@{
+    ViewBag.Title = "Desk";
+}
+
+@{
+    if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+    {
+        <p class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            @ViewBag.StatusMessage
+        </p>
+    }
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn btn-success pull-right" onclick="window.location.href='/Account/NewBook'">Create a book</button>
+    </div>
+</div>
+
+<legend>Books in progress</legend>
+@{
+    foreach (BookModel book in Model.Where(x => !x.Abandoned && !x.Complete && !x.DMCA))
+    {
+        @Html.Partial("_DeskListItem", book);
+    }
+}
+
+<legend>Books completed</legend>
+@{
+    foreach (BookModel book in Model.Where(x => x.Complete && !x.DMCA))
+    {
+        @Html.Partial("_DeskListItem", book);
+    }
+}
+
+<legend>Books abandoned</legend>
+@{
+    foreach (BookModel book in Model.Where(x => x.Abandoned && !x.Complete && !x.DMCA))
+    {
+        @Html.Partial("_DeskListItem", book);
+    }
+}
+
+@{
+    if (Model.Any(x => x.DMCA))
+    {
+        <legend>Copyright Issues</legend>
+        foreach (BookModel book in Model.Where(x => x.DMCA))
+        {
+            @Html.Partial("_DeskListItem", book);
+        }
+    }
+}

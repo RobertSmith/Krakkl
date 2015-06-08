@@ -1,0 +1,47 @@
+﻿@{
+    string key = ViewBag.Key.ToString();
+}
+
+<ul class="nav nav-tabs">
+    @{
+        if (ViewBag.SubTab == "Meta")
+        {
+            <li class="active">
+                <a href="/Account/BookMeta?key=@key"><i class="icon-book"></i> Meta</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="/Account/BookMeta?key=@key"><i class="icon-book"></i> Meta</a>
+            </li>
+        }
+
+        if (ViewBag.SubTab == "Edit")
+        {
+            <li class="active">
+                <a href="/Account/BookEdit?key=@key"><i class="icon-edit"></i> Write</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="/Account/BookEdit?key=@key"><i class="icon-edit"></i> Write</a>
+            </li>
+        }
+
+        if (ViewBag.SubTab == "Images")
+        {
+            <li class="active">
+                <a href="/Account/BookImages?key=@key"><i class="icon-picture"></i> Images</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="/Account/BookImages?key=@key"><i class="icon-picture"></i> Images</a>
+            </li>
+        }
+    }
+</ul>
+<br />

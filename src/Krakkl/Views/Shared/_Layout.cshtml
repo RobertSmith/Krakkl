@@ -1,0 +1,200 @@
+﻿@using System.Threading.Tasks
+@inject IOptions<AppSettings> AppSettings
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewBag.Title - @AppSettings.Options.SiteTitle</title>
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
+        <link rel="stylesheet" href="~/lib/bootstrap-touch-carousel/css/bootstrap-touch-carousel.css"/>
+        <link rel="stylesheet" href="~/css/site.css"/>
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
+              asp-fallback-test-class="hidden" asp-fallback-test-property="visibility" asp-fallback-test-value="hidden"/>
+        <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap-touch-carousel/0.8.0/css/bootstrap-touch-carousel.css"
+              asp-fallback-href="~/lib/bootstrap-touch-carousel/css/bootstrap-touch-carousel.css"
+              asp-fallback-test-class="carousel-caption" asp-fallback-test-property="display" asp-fallback-test-value="none"/>
+        <link rel="stylesheet" href="~/css/site.css"/>
+    </environment>
+</head>
+<body>
+    <header>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Krakkl", "Index", "Home", null, new {@class = "navbar-brand"})
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class='nav navbar-nav'>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li @{
+                                    if (ViewBag.Tab == "Library")
+                                    {
+                                        <text> class="active" </text>
+                                    }
+                                }>
+                                <a href='/Account/Library'><i class='fa fa-align-left fa-rotate-270'></i> Library</a>
+                            </li>
+                            <li @{
+                                    if (ViewBag.Tab == "Desk")
+                                    {
+                                        <text> class="active" </text>
+                                    }
+                                }>
+                                <a href='/Account/Desk'><i class='fa fa-inbox'></i> Desk</a>
+                            </li>
+                            <li class='disabled'>
+                                <a href='#'><i class='fa fa-comment'></i> Forums</a>
+                            </li>
+                            <li class='disabled'>
+                                <a href='#'><i class='fa fa-shopping-cart'></i> Shop</a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="col-md-4 JustifyCenter">
+                        <form class="navbar-form navbar-left" role="search" action="/Search" method="POST">
+                            <div class="form-group">
+                                <input type="text" name="searchText" class="form-control" placeholder="Search">
+                            </div>
+                            <button type="submit" class="btn btn-default">Submit</button>
+                        </form>
+                    </div>
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container body-content">
+        <hr />
+        @RenderBody()
+        <hr/>
+        <footer>
+            <legend>&nbsp;</legend>
+            <div class="row">
+                <div class="col-md-1">&nbsp;</div>
+                <div class="col-md-2">
+                    <p class="text-muted">Learn More</p>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#">
+                                <small>How it works</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <small>Feature Tour</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <small>About Us</small>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-1">&nbsp;</div>
+                <div class="col-md-2">
+                    <p class="text-muted">Support</p>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a>
+                                <small>FAQ</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <small>Contact Us</small>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-1">&nbsp;</div>
+                <div class="col-md-2">
+                    <p class="text-muted">Legal</p>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a>
+                                <small>Privacy Policy</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <small>Terms of Use</small>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-1">&nbsp;</div>
+                <div class="col-md-2">
+                    <p class="text-muted">Follow Us</p>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a>
+                                <small>Facebook</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <small>Twitter</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a>
+                                <small>Blog</small>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row text-center text-muted">
+                &copy; @DateTime.Now.Year - Thumpter, LLC
+            </div>
+            <legend></legend>
+        </footer>
+    </div>
+
+    <environment names="Development">
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+        <script src="~/lib/hammer.js/hammer.js"></script>
+        <script src="~/lib/bootstrap-touch-carousel/js/bootstrap-touch-carousel.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="//ajax.aspnetcdn.com/ajax/jquery/jquery-1.10.2.min.js"
+                asp-fallback-src="~/lib/jquery/jquery.min.js"
+                asp-fallback-test="window.jQuery">
+                    
+        </script>
+        <script src="//ajax.aspnetcdn.com/ajax/bootstrap/3.0.0/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery">
+                    
+        </script>
+        <script src="//ajax.aspnetcdn.com/ajax/hammer.js/2.0.4/hammer.min.js"
+                asp-fallback-src="~/lib/hammer.js/hammer.js"
+                asp-fallback-test="window.Hammer">
+                    
+        </script>
+        <script src="//ajax.aspnetcdn.com/ajax/bootstrap-touch-carousel/0.8.0/js/bootstrap-touch-carousel.js"
+                asp-fallback-src="~/lib/bootstrap-touch-carousel/js/bootstrap-touch-carousel.js"
+                asp-fallback-test="window.Zepto">
+                    
+        </script>
+    </environment>
+
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>

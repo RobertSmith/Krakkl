@@ -1,0 +1,27 @@
+{
+    "AppSettings": {
+        "SiteTitle": "Krakkl"
+    },
+    "Data": {
+        "DefaultConnection": {
+            "ConnectionString": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-Krakkl-0d797734-bbff-4829-9c1d-1ad5809938f5;Trusted_Connection=True;MultipleActiveResultSets=true"
+        },
+        "Orchestrate": {
+            "ApiKey" : "09e2f337-263e-4ab3-9fda-c7cd1ff822bb"
+        }
+    },
+    "Authentication": {
+        "Facebook": {
+            "AppId": "1592519070998144",
+            "AppSecret": "2c0dbbe3b3cec948e88df9f5983b2437"
+        },
+        "Google": {
+            "ClientId": "421581303253-d5jp7f7kcsmpokft6bd8qsnavmii3k2n.apps.googleusercontent.com",
+            "ClientSecret": "NYzVdpdbwK_Z3MwuVG0hH0Kr"
+        },
+        "Twitter": {
+            "ConsumerKey": "JwvJgsIvReLqoyNdQWQdwdB0c",
+            "ConsumerSecret" : "vYzX89X7kMSyz2dzMg2Q8A0qbqhykwK96bjoNbQDPZ1q8s8jZt"
+        }
+    }
+}
