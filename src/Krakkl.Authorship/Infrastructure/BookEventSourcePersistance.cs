@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Krakkl.Authorship.Core;
+﻿using Krakkl.Authorship.Core;
 
 namespace Krakkl.Authorship.Infrastructure
 {

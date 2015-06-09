@@ -1,12 +1,11 @@
 ﻿using System;
-using Krakkl.Authorship.Core;
 using Microsoft.Framework.Caching.Memory;
 
 namespace Krakkl.Authorship.Cache
 {
     internal static class BookAggregateCache
     {
-        private static readonly MemoryCacheOptions Options = new MemoryCacheOptions();
+        private static readonly MemoryCacheOptions Options = new MemoryCacheOptions { ExpirationScanFrequency = TimeSpan.FromHours(12), ListenForMemoryPressure = true };
         private static readonly MemoryCache Cache = new MemoryCache(Options);
 
         public static object Get(Guid key)

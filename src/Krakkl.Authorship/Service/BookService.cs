@@ -46,7 +46,7 @@ namespace Krakkl.Authorship.Service
             return bookKey;
         }
 
-        public void AddAnotherAuthor(Guid bookKey, Guid authorKey, Guid newAuthorKey, string newAuthorName)
+        public void AddAuthorToBook(Guid bookKey, Guid authorKey, Guid newAuthorKey, string newAuthorName)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
@@ -67,7 +67,7 @@ namespace Krakkl.Authorship.Service
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
 
-        public void RemoveAnotherAuthor(Guid bookKey, Guid authorKey, Guid removeAuthorKey, string removeAuthorName)
+        public void RemoveAuthorFromBook(Guid bookKey, Guid authorKey, Guid removeAuthorKey, string removeAuthorName)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
@@ -88,7 +88,7 @@ namespace Krakkl.Authorship.Service
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
 
-        public void Retitle(Guid bookKey, Guid authorKey, string newTitle)
+        public void RetitleBook(Guid bookKey, Guid authorKey, string newTitle)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
@@ -105,7 +105,7 @@ namespace Krakkl.Authorship.Service
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
 
-        public void ChangeSubtitle(Guid bookKey, Guid authorKey, string subtitle)
+        public void ChangeBookSubtitle(Guid bookKey, Guid authorKey, string subtitle)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
@@ -119,7 +119,7 @@ namespace Krakkl.Authorship.Service
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
 
-        public void ChangeSeriesTitle(Guid bookKey, Guid authorKey, string seriesTitle)
+        public void ChangeBookSeriesTitle(Guid bookKey, Guid authorKey, string seriesTitle)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
@@ -133,7 +133,7 @@ namespace Krakkl.Authorship.Service
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
 
-        public void ChangeSeriesVolume(Guid bookKey, Guid authorKey, string seriesVolume)
+        public void ChangeBookSeriesVolume(Guid bookKey, Guid authorKey, string seriesVolume)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
@@ -147,7 +147,7 @@ namespace Krakkl.Authorship.Service
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
 
-        public void ChangeGenre(Guid bookKey, Guid authorKey, string genreKey, string genreName, bool isFiction)
+        public void ChangeBookGenre(Guid bookKey, Guid authorKey, string genreKey, string genreName, bool isFiction)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
@@ -168,7 +168,7 @@ namespace Krakkl.Authorship.Service
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
 
-        public void ChangeLanguage(Guid bookKey, Guid authorKey, string languageKey, string languageName)
+        public void ChangeBookEditorLanguage(Guid bookKey, Guid authorKey, string languageKey, string languageName)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
@@ -189,7 +189,7 @@ namespace Krakkl.Authorship.Service
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
 
-        public void ChangeSynopsis(Guid bookKey, Guid authorKey, string newSynopsis)
+        public void ChangeBookSynopsis(Guid bookKey, Guid authorKey, string newSynopsis)
         {
             if (bookKey == null)
                 throw new Exception("Book Key is required");
