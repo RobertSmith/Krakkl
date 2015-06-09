@@ -1,6 +1,7 @@
 ﻿using System;
 using Krakkl.Authorship.Cache;
 using Krakkl.Authorship.Core;
+using Krakkl.Authorship.Infrastructure;
 using Krakkl.Authorship.Models;
 
 namespace Krakkl.Authorship.Service
@@ -11,10 +12,12 @@ namespace Krakkl.Authorship.Service
     /// </summary>
     public class BookService
     {
+        private readonly BookEventSourcePersistance _bookEventSourcePersistance;
+
         public BookService()
         {
             //TODO: Init Moderation Module
-            //TODO: Init Persistance Module
+            _bookEventSourcePersistance = new BookEventSourcePersistance();
         }
 
         public Guid StartANewBook(Guid authorKey, string authorName, string languageKey, string languageName)
@@ -33,7 +36,9 @@ namespace Krakkl.Authorship.Service
 
             var author = new AuthorModel(authorKey, authorName);
             var language = new LanguageModel(languageKey, languageName);
+
             var bookAggregate = new BookAggregate(null);
+            AddBookAggregateEventHandlers(bookAggregate);
 
             var bookKey = bookAggregate.StartANewBook(author, language);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -56,7 +61,7 @@ namespace Krakkl.Authorship.Service
                 throw new Exception("New Author Name is required");
 
             var newAuthor = new AuthorModel(newAuthorKey, newAuthorName);
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.AddAuthor(authorKey, newAuthor);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -77,7 +82,7 @@ namespace Krakkl.Authorship.Service
                 throw new Exception("Remove Author Name is required");
 
             var removeAuthor = new AuthorModel(removeAuthorKey, removeAuthorName);
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.RemoveAuthor(authorKey, removeAuthor);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -94,7 +99,7 @@ namespace Krakkl.Authorship.Service
             if (string.IsNullOrEmpty(newTitle))
                 newTitle = "Untitled";
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.Retitle(authorKey, newTitle);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -108,7 +113,7 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.ChangeSubTitle(authorKey, subtitle);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -122,7 +127,7 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.ChangeSeriesTitle(authorKey, seriesTitle);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -136,7 +141,7 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.ChangeSeriesVolume(authorKey, seriesVolume);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -157,7 +162,7 @@ namespace Krakkl.Authorship.Service
                 throw new Exception("Gnere Name is required");
 
             var newGenre = new GenreModel(genreKey, genreName, isFiction);
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.ChangeGenre(authorKey, newGenre);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -178,7 +183,7 @@ namespace Krakkl.Authorship.Service
                 throw new Exception("Language Name is required");
 
             var newLanguage = new LanguageModel(languageKey, languageName);
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.ChangeEditorLanguage(authorKey, newLanguage);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -192,7 +197,7 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.UpdateSynopsis(authorKey, newSynopsis);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -206,7 +211,7 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.CompleteBook(authorKey);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -220,7 +225,7 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.SetBookAsInProgress(authorKey);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -234,7 +239,7 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.AbandonBook(authorKey);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -248,7 +253,7 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.ReviveBook(authorKey);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
@@ -262,10 +267,33 @@ namespace Krakkl.Authorship.Service
             if (authorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = (BookAggregate)BookAggregateCache.Get(bookKey);
+            var bookAggregate = FindBookAggregate(bookKey);
 
             bookAggregate.PublishBook(authorKey);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
         }
+
+        #region Private Methods
+
+        private BookAggregate FindBookAggregate(Guid key)
+        {
+            var bookAggregate = BookAggregateCache.Get(key) as BookAggregate;
+
+            if (bookAggregate == null)
+            {
+                bookAggregate = new BookAggregate(key);
+                AddBookAggregateEventHandlers(bookAggregate);
+            }
+
+            return bookAggregate;
+        }
+
+        private void AddBookAggregateEventHandlers(BookAggregate bookAggregate)
+        {
+            //TODO: Add more!
+            bookAggregate.BookCreated += _bookEventSourcePersistance.OnBookCreated;
+        }
+
+        #endregion
     }
 }
