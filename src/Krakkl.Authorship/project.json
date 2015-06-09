@@ -6,16 +6,19 @@
     "projectUrl": "",
     "licenseUrl": "",
 
-    "dependencies": {
-        "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
-        "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
-        "Newtonsoft.Json": "7.0.1-beta3",
-        "Orchestrate.NET": "1.3.0",
-        "Microsoft.Bcl.Async": "1.0.168",
-        "Microsoft.Framework.Caching.Memory": "1.0.0-beta4"
-    },
+  "dependencies": {
+    "Microsoft.Bcl.Async": "1.0.168",
+    "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+    "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+    "Newtonsoft.Json": "7.0.1-beta3",
+    "Orchestrate.NET": "1.3.0"
+  },
 
     "frameworks": {
-        "dnx451": { }
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.Runtime.Caching": "4.0.0.0"
+            }
+        }
     }
 }

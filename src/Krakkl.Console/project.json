@@ -1,0 +1,22 @@
+{
+    "version": "1.0.0-*",
+    "description": "",
+    "authors": [ "" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "dependencies": {
+        "Krakkl.Authorship": "1.0.0-*",
+        "Krakkl.Query": "1.0.0-*"
+    },
+
+    "commands": {
+        "Krakkl.Console": "Krakkl.Console"
+    },
+
+    "frameworks": {
+        "dnx451": { }
+        }
+    }
+}

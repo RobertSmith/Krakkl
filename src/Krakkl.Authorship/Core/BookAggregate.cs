@@ -7,7 +7,7 @@ namespace Krakkl.Authorship.Core
 {
     internal class BookAggregate
     {
-        private readonly BookState _state;
+        private BookState _state;
 
         public event EventHandler<BookCreatedEventArgs> BookCreated;
         public event EventHandler<AuthorAddedToBookEventArgs> AuthorAddedToBook;
@@ -40,6 +40,9 @@ namespace Krakkl.Authorship.Core
 
         public Guid StartANewBook(AuthorModel author, LanguageModel language)
         {
+            if (_state == null)
+                _state = new BookState();
+
             if (_state.Key != Guid.Empty)
                 throw new Exception("Can not start a new book, this one is already in progress.");
 

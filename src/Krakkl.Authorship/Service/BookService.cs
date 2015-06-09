@@ -292,6 +292,7 @@ namespace Krakkl.Authorship.Service
         {
             //TODO: Add more!
             bookAggregate.BookCreated += _bookEventSourcePersistance.OnBookCreated;
+            bookAggregate.BookRetitled += _bookEventSourcePersistance.OnBookRetitled;
         }
 
         #endregion
