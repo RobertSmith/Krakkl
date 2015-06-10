@@ -16,6 +16,8 @@ namespace Krakkl.Authorship.Core
         public string Title { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public Guid CreatedBy { get; private set; }
+        public string EventType => "BookCreated";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookCreatedEventArgs(BookState state)
         {
@@ -37,6 +39,8 @@ namespace Krakkl.Authorship.Core
         public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "AuthorAddedToBook";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public AuthorAddedToBookEventArgs(BookState state, AuthorModel newAuthor)
         {
@@ -55,6 +59,8 @@ namespace Krakkl.Authorship.Core
         public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "AuthorRemovedFromBook";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor)
         {
@@ -73,6 +79,8 @@ namespace Krakkl.Authorship.Core
         public string NewTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookRetitled";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookRetitledEventArgs(BookState state, string oldTitle)
         {
@@ -91,6 +99,8 @@ namespace Krakkl.Authorship.Core
         public string NewSubTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookSubTitleChanged";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookSubTitleChangedEventArgs(BookState state, string oldSubTitle)
         {
@@ -109,6 +119,8 @@ namespace Krakkl.Authorship.Core
         public string NewSeriesTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookSeriesTitleChanged";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookSeriesTitleChangedEventArgs(BookState state, string oldSeriesTitle)
         {
@@ -127,6 +139,8 @@ namespace Krakkl.Authorship.Core
         public string NewSeriesVolume { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookSeriesVolumeChanged";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookSeriesVolumeChangedEventArgs(BookState state, string oldSeriesVolume)
         {
@@ -145,6 +159,8 @@ namespace Krakkl.Authorship.Core
         public GenreModel NewGenre { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookGenreChanged";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookGenreChangedEventArgs(BookState state, GenreModel oldGenre)
         {
@@ -163,6 +179,8 @@ namespace Krakkl.Authorship.Core
         public LanguageModel NewLanguage { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookLanguageChanged";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookLanguageChangedEventArgs(BookState state, LanguageModel oldLanguage)
         {
@@ -174,15 +192,17 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class SynopsisUpdatedEventArgs : EventArgs
+    internal class BookSynopsisUpdatedEventArgs : EventArgs
     {
         public Guid BookKey { get; private set; }
         public string OldSynopsis { get; private set; }
         public string NewSynopsis { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "SynopsisUpdated";
+        public string EventSource => "Book.Authorship.Krakkl";
 
-        public SynopsisUpdatedEventArgs(BookState state, string oldSynopsis)
+        public BookSynopsisUpdatedEventArgs(BookState state, string oldSynopsis)
         {
             BookKey = state.Key;
             OldSynopsis = oldSynopsis;
@@ -197,6 +217,8 @@ namespace Krakkl.Authorship.Core
         public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookCompleted";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookCompletedEventArgs(BookState state)
         {
@@ -211,6 +233,8 @@ namespace Krakkl.Authorship.Core
         public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookSetAsInProgress";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookSetAsInProgressEventArgs(BookState state)
         {
@@ -225,6 +249,8 @@ namespace Krakkl.Authorship.Core
         public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookAbandoned";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookAbandonedEventArgs(BookState state)
         {
@@ -239,6 +265,8 @@ namespace Krakkl.Authorship.Core
         public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookRevived";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookRevivedEventArgs(BookState state)
         {
@@ -253,6 +281,8 @@ namespace Krakkl.Authorship.Core
         public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
+        public string EventType => "BookPublisheds";
+        public string EventSource => "Book.Authorship.Krakkl";
 
         public BookPublishedEventArgs(BookState state)
         {

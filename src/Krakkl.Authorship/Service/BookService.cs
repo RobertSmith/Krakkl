@@ -297,6 +297,17 @@ namespace Krakkl.Authorship.Service
             bookAggregate.AuthorAddedToBook += _bookEventSourcePersistance.OnAuthorAddedToBook;
             bookAggregate.AuthorRemovedFromBook += _bookEventSourcePersistance.OnAuthorRemovedFromBook;
             bookAggregate.BookRetitled += _bookEventSourcePersistance.OnBookRetitled;
+            bookAggregate.BookSubTitleChanged += _bookEventSourcePersistance.OnBookSubTitleChanged;
+            bookAggregate.BookSeriesTitleChanged += _bookEventSourcePersistance.OnBookSeriesTitleChanged;
+            bookAggregate.BookSeriesVolumeChanged += _bookEventSourcePersistance.OnBookSeriesVolumeChanged;
+            bookAggregate.BookGenreChanged += _bookEventSourcePersistance.OnBookGenreChanged;
+            bookAggregate.BookLanguageChanged += _bookEventSourcePersistance.OnBookLanguageChanged;
+            bookAggregate.BookSynopsisUpdated += _bookEventSourcePersistance.OnBookSynopsisUpdated;
+            bookAggregate.BookCompleted += _bookEventSourcePersistance.OnBookCompleted;
+            bookAggregate.BookSetAsInProgress += _bookEventSourcePersistance.OnBookSetAsInProgress;
+            bookAggregate.BookAbandoned += _bookEventSourcePersistance.OnBookAbandoned;
+            bookAggregate.BookRevived += _bookEventSourcePersistance.OnBookRevived;
+            bookAggregate.BookPublished += _bookEventSourcePersistance.OnBookPublished;
         }
 
         #endregion

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
 using Krakkl.Authorship.Repository;
@@ -19,7 +18,7 @@ namespace Krakkl.Authorship.Core
         public event EventHandler<BookSeriesVolumeChangedEventArgs> BookSeriesVolumeChanged;
         public event EventHandler<BookGenreChangedEventArgs> BookGenreChanged;
         public event EventHandler<BookLanguageChangedEventArgs> BookLanguageChanged;
-        public event EventHandler<SynopsisUpdatedEventArgs> SynopsisUpdated;
+        public event EventHandler<BookSynopsisUpdatedEventArgs> BookSynopsisUpdated;
         public event EventHandler<BookCompletedEventArgs> BookCompleted;
         public event EventHandler<BookSetAsInProgressEventArgs> BookSetAsInProgress;
         public event EventHandler<BookAbandonedEventArgs> BookAbandoned;
@@ -227,8 +226,8 @@ namespace Krakkl.Authorship.Core
             _state.UpdatedBy = authorKey;
 
             // Fire SynopsisUpdated Event
-            var target = SynopsisUpdated;
-            target?.Invoke(this, new SynopsisUpdatedEventArgs(_state, oldSynopsis));
+            var target = BookSynopsisUpdated;
+            target?.Invoke(this, new BookSynopsisUpdatedEventArgs(_state, oldSynopsis));
         }
 
         public void CompleteBook(Guid authorKey)
