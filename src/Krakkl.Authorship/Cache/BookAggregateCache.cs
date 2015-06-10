@@ -26,5 +26,10 @@ namespace Krakkl.Authorship.Cache
 
             Cache.Set(key.ToString(), item, policy);
         }
+
+        public static long Count()
+        {
+            return Cache.GetCount();
+        }
     }
 }

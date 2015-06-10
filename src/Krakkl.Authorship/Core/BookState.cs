@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Krakkl.Authorship.Models;
+using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Core
 {
     internal sealed class BookState
     {
+        [JsonIgnore]
         public Guid Key { get; set; }
+
         public List<AuthorModel> Authors { get; set; }
         public string Title { get; set; }
         public string SubTitle { get; set; }

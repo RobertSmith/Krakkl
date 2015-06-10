@@ -12,6 +12,8 @@ namespace Krakkl.Authorship.Service
     /// </summary>
     public class BookService
     {
+        public long CacheCount => BookAggregateCache.Count();
+
         private readonly BookEventSourcePersistance _bookEventSourcePersistance;
 
         public BookService()
@@ -292,6 +294,8 @@ namespace Krakkl.Authorship.Service
         {
             //TODO: Add more!
             bookAggregate.BookCreated += _bookEventSourcePersistance.OnBookCreated;
+            bookAggregate.AuthorAddedToBook += _bookEventSourcePersistance.OnAuthorAddedToBook;
+            bookAggregate.AuthorRemovedFromBook += _bookEventSourcePersistance.OnAuthorRemovedFromBook;
             bookAggregate.BookRetitled += _bookEventSourcePersistance.OnBookRetitled;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Krakkl.Authorship.Core;
+using Krakkl.Authorship.Infrastructure;
 using Microsoft.Framework.ConfigurationModel;
 using Newtonsoft.Json;
 
@@ -19,13 +20,13 @@ namespace Krakkl.Authorship.Repository
 
         public BookState FindByKey(Guid key)
         {
-            var result = _orchestrate.Get("Books", key.ToString());
+            var result = _orchestrate.Get(Definitions.BookCollection, key.ToString());
             return JsonConvert.DeserializeObject<BookState>(result.Value.ToString());
         }
 
         public async Task<BookState> FindByKeyAsync(Guid key)
         {
-            var result = await _orchestrate.GetAsync("Books", key.ToString());
+            var result = await _orchestrate.GetAsync(Definitions.BookCollection, key.ToString());
             return JsonConvert.DeserializeObject<BookState>(result.Value.ToString());
         }
     }

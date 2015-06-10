@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
 
@@ -32,16 +33,16 @@ namespace Krakkl.Authorship.Core
     internal class AuthorAddedToBookEventArgs : EventArgs
     {
         public Guid BookKey { get; private set; }
-        public Guid NewAuthorKey { get; private set; }
-        public string NewAuthorName { get; private set; }
+        public AuthorModel NewAuthor { get; private set; }
+        public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
         public AuthorAddedToBookEventArgs(BookState state, AuthorModel newAuthor)
         {
             BookKey = state.Key;
-            NewAuthorKey = newAuthor.Key;
-            NewAuthorName = newAuthor.Name;
+            NewAuthor = newAuthor;
+            ValidAuthors = state.Authors;
             UpdatedAt = state.UpdatedAt;
             UpdatedBy = state.UpdatedBy;
         }
@@ -50,16 +51,16 @@ namespace Krakkl.Authorship.Core
     internal class AuthorRemovedFromBookEventArgs : EventArgs
     {
         public Guid BookKey { get; private set; }
-        public Guid RemovedAuthorKey { get; private set; }
-        public string RemovedAuthorName { get; private set; }
+        public AuthorModel RemovedAuthor { get; private set; }
+        public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
         public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor)
         {
             BookKey = state.Key;
-            RemovedAuthorKey = removedAuthor.Key;
-            RemovedAuthorName = removedAuthor.Name;
+            RemovedAuthor = removedAuthor;
+            ValidAuthors = state.Authors;
             UpdatedAt = state.UpdatedAt;
             UpdatedBy = state.UpdatedBy;
         }

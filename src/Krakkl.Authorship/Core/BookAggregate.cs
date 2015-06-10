@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
 using Krakkl.Authorship.Repository;
@@ -62,7 +63,7 @@ namespace Krakkl.Authorship.Core
 
         public void AddAuthor(Guid authorKey, AuthorModel newAuthor)
         {
-            if (_state.Authors.Contains(newAuthor))
+            if (_state.Authors.Any(author => author.Key == newAuthor.Key))
                 return;
 
             if (!IsValidAuthor(authorKey))
@@ -79,7 +80,7 @@ namespace Krakkl.Authorship.Core
 
         public void RemoveAuthor(Guid authorKey, AuthorModel removedAuthor)
         {
-            if (!_state.Authors.Contains(removedAuthor))
+            if (_state.Authors.All(a => a.Key != removedAuthor.Key))
                 return;
 
             if (_state.Authors.Count == 1)
@@ -88,7 +89,7 @@ namespace Krakkl.Authorship.Core
             if (!IsValidAuthor(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.Authors.Remove(removedAuthor);
+            _state.Authors.Remove(_state.Authors.Single(a => a.Key == removedAuthor.Key));
             _state.UpdatedAt = DateTime.UtcNow;
             _state.UpdatedBy = authorKey;
 
