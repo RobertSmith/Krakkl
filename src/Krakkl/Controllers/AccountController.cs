@@ -196,20 +196,20 @@ namespace Krakkl.Controllers
         }
 
         // GET: /Account/NewBook
-        public async Task<ActionResult> NewBook(string message)
-        {
-            ViewBag.Tab = "Desk";
-            ViewBag.Genres = GenreCache.GetAll();
-            ViewBag.Languages = LanguagesCache.GetAll();
-
-            if (!string.IsNullOrEmpty(message))
-                ViewBag.StatusMessage = message;
-
-            var user = await GetCurrentUserAsync();
-            var newBook = new BookModel { AuthorName = user.UserName , LanguageKey = user.EditorLanguage };
-
-            return View(newBook);
-        }
+//        public async Task<ActionResult> NewBook(string message)
+//        {
+//            ViewBag.Tab = "Desk";
+//            ViewBag.Genres = GenreCache.GetAll();
+//            ViewBag.Languages = LanguagesCache.GetAll();
+//
+//            if (!string.IsNullOrEmpty(message))
+//                ViewBag.StatusMessage = message;
+//
+//            var user = await GetCurrentUserAsync();
+//            var newBook = new BookModel { AuthorName = user.UserName , LanguageKey = user.EditorLanguage };
+//
+//            return View(newBook);
+//        }
 
 //        [HttpPost]
 //        public async Task<ActionResult> NewBook(NewBookModel model)

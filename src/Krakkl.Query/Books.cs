@@ -38,24 +38,23 @@ namespace Krakkl.Query
     public class BookModel
     {
         public string Key { get; set; }
-        public string AuthorId { get; set; }
-        public string AuthorName { get; set; }
+        public List<AuthorObject> Authors { get; set; }
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public string SeriesTitle { get; set; }
         public string SeriesVolume { get; set; }
-        public string GenreKey { get; set; }
-        public string Genre { get; set; }
-        public string LanguageKey { get; set; }
-        public string Language { get; set; }
+        public GenreObject Genre { get; set; }
+        public LanguageObject Language { get; set; }
         public string CoverArt { get; set; }
         public string Synopsis { get; set; }
-        public bool Public { get; set; }
-        public bool Complete { get; set; }
+        public bool Published { get; set; }
+        public bool Completed { get; set; }
         public bool Abandoned { get; set; }
         public bool DMCA { get; set; }
+        public List<ModerationIssueObject> ModerationIssues { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Guid CreatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string UpdatedBy { get; set; }
+        public Guid UpdatedBy { get; set; }
     }
 }

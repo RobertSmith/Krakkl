@@ -20,8 +20,9 @@ namespace Krakkl.Query
         }
     }
 
-    internal class LanguageObject
+    public class LanguageObject
     {
+        public string Key { get; set; }
         public string Name { get; set; }
     }
 }
