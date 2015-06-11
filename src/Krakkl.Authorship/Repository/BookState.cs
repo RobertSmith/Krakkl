@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Krakkl.Authorship.Models;
 using Newtonsoft.Json;
 
-namespace Krakkl.Authorship.Core
+namespace Krakkl.Authorship.Repository
 {
     internal sealed class BookState
     {

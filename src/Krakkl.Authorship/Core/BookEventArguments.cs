@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
+using Krakkl.Authorship.Repository;
 using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Core
@@ -30,7 +31,6 @@ namespace Krakkl.Authorship.Core
         public List<AuthorModel> ValidAuthors { get; private set; }
         public string LanguageKey { get; private set; }
         public string LanguageName { get; private set; }
-        public string Title { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public Guid CreatedBy { get; private set; }
         public string EventType => "BookCreated";
@@ -41,7 +41,6 @@ namespace Krakkl.Authorship.Core
             ValidAuthors = state.Authors;
             LanguageKey = state.Language?.Key;
             LanguageName = state.Language?.Name;
-            Title = state.Title;
             CreatedAt = state.CreatedAt;
             CreatedBy = state.CreatedBy;
         }
@@ -189,7 +188,7 @@ namespace Krakkl.Authorship.Core
         public string NewSynopsis { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
-        public string EventType => "SynopsisUpdated";
+        public string EventType => "BookSynopsisUpdated";
 
         public BookSynopsisUpdatedEventArgs(BookState state, string oldSynopsis) : base(state)
         {

@@ -1,4 +1,4 @@
-﻿namespace Krakkl.Authorship.Infrastructure
+﻿namespace Krakkl.Authorship.Repository
 {
     public static class Definitions
     {

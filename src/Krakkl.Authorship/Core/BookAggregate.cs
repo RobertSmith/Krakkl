@@ -49,7 +49,6 @@ namespace Krakkl.Authorship.Core
             _state.Key = Guid.NewGuid();
             _state.Authors.Add(author);
             _state.Language = language;
-            _state.Title = "Untitled";
             _state.CreatedAt = DateTime.UtcNow;
             _state.CreatedBy = author.Key;
 

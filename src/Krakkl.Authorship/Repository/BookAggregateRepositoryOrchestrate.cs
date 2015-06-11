@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Krakkl.Authorship.Core;
-using Krakkl.Authorship.Infrastructure;
 using Microsoft.Framework.ConfigurationModel;
 using Newtonsoft.Json;
 

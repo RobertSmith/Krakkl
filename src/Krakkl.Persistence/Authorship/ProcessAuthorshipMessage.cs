@@ -26,13 +26,63 @@ namespace Krakkl.Persistence.Authorship
                     break;
 
                 case "AuthorAddedToBook":
-                    AuthorAddedHandler(eventModel);
+                case "AuthorRemovedFromBook":
+                    AuthorChangedHandler(eventModel);
+                    break;
+
+                case "BookRetitled":
+                    BookRetitledHandler(eventModel);
+                    break;
+
+                case "BookSubTitleChanged":
+                    BookSubTitleChangedHandler(eventModel);
+                    break;
+
+                case "BookSeriesTitleChanged":
+                    BookSeriesTitleChangedHandler(eventModel);
+                    break;
+
+                case "BookSeriesVolumeChanged":
+                    BookSeriesVolumeChangedHandler(eventModel);
+                    break;
+
+                case "BookGenreChanged":
+                    BookGenreChangedHandler(eventModel);
+                    break;
+
+                case "BookLanguageChanged":
+                    BookLanguageChangedHandler(eventModel);
+                    break;
+
+                case "BookSynopsisUpdated":
+                    BookSynopsisUpdatedHandler(eventModel);
+                    break;
+
+                case "BookCompleted":
+                    BookCompletedHandler(eventModel);
+                    break;
+
+                case "BookSetAsInProgress":
+                    BookSetAsInProgressHandler(eventModel);
+                    break;
+
+                case "BookAbandoned":
+                    BookAbandonedHandler(eventModel);
+                    break;
+
+                case "BookRevived":
+                    BookRevivedHandler(eventModel);
+                    break;
+
+                case "BookPublished":
+                    BookPublishedHanlder(eventModel);
                     break;
             }
         }
 
         private void BookCreatedHandler(AuthorshipEventModel eventModel)
         {
+            var bookKey = eventModel.BookKey.ToString();
             var language = new LanguageModel { Key = eventModel.LanguageKey, Name = eventModel.LanguageName };
 
             var state = new BookState
@@ -41,15 +91,14 @@ namespace Krakkl.Persistence.Authorship
                 Authors = eventModel.ValidAuthors,
                 Language = language,
                 CreatedAt = eventModel.CreatedAt,
-                CreatedBy = eventModel.AddedAuthor.Key,
-                Title = eventModel.Title
+                CreatedBy = eventModel.AddedAuthor.Key
             };
 
-            _orchestrate.Put(Definitions.BookCollection, eventModel.BookKey.ToString(), state);
-            _orchestrate.PutEvent(Definitions.BookCollection, eventModel.BookKey.ToString(), "update", eventModel.CreatedAt, eventModel);
+            _orchestrate.Put(Definitions.BookCollection, bookKey, state);
+            _orchestrate.PutEvent(Definitions.BookCollection, bookKey, "update", eventModel.CreatedAt, eventModel);
         }
 
-        private void AuthorAddedHandler(AuthorshipEventModel eventModel)
+        private void AuthorChangedHandler(AuthorshipEventModel eventModel)
         {
             var patchItems = new List<object>
             {
@@ -58,16 +107,161 @@ namespace Krakkl.Persistence.Authorship
                 new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
             };
 
-            PatchBook(patchItems, eventModel.BookKey.ToString());
-            _orchestrate.PutEvent(Definitions.BookCollection, eventModel.BookKey.ToString(), "update", eventModel.UpdatedAt, eventModel);
+            PatchBook(patchItems, eventModel);
         }
 
-        private void PatchBook(List<object> patchItems, string bookKey)
+        private void BookRetitledHandler(AuthorshipEventModel eventModel)
         {
+            var patchItems = new List<object>
+            {
+                new PatchItemString { Op = "add", Path = "/Title", Value = eventModel.NewTitle },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookSubTitleChangedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemString { Op = "add", Path = "/SubTitle", Value = eventModel.NewSubTitle },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookSeriesTitleChangedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemString { Op = "add", Path = "/SeriesTitle", Value = eventModel.NewSeriesTitle },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookSeriesVolumeChangedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemString { Op = "add", Path = "/SeriesVolume", Value = eventModel.NewSeriesVolume },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookGenreChangedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject { Op = "add", Path = "/Genre", Value = eventModel.NewGenre },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookLanguageChangedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject { Op = "add", Path = "/Language", Value = eventModel.NewLanguage },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookSynopsisUpdatedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemString { Op = "add", Path = "/Synopsis", Value = eventModel.NewSynopsis },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookCompletedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject { Op = "add", Path = "/Completed", Value = true },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookSetAsInProgressHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject { Op = "add", Path = "/Completed", Value = false },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookAbandonedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject { Op = "add", Path = "/Abandoned", Value = true },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookRevivedHandler(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject { Op = "add", Path = "/Abandoned", Value = false },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void BookPublishedHanlder(AuthorshipEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject { Op = "add", Path = "/Published", Value = true },
+                new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
+                new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt }
+            };
+
+            PatchBook(patchItems, eventModel);
+        }
+
+        private void PatchBook(List<object> patchItems, AuthorshipEventModel eventModel)
+        {
+            var bookKey = eventModel.BookKey.ToString();
             var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
             var json = JsonConvert.SerializeObject(patchItems, settings);
         
             _orchestrate.Patch(Definitions.BookCollection, bookKey, json);
+            _orchestrate.PutEvent(Definitions.BookCollection, bookKey, "update", eventModel.UpdatedAt, eventModel);
         }
     }
 }
