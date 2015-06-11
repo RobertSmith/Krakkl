@@ -37,11 +37,12 @@ namespace Krakkl.Persistence.Authorship
                 {
                     try
                     {
-                        processor.ProcessMessage(message);
+                        await processor.ProcessMessageAsync(message);
                         await _queue.DeleteMessageAsync(message);
                     }
                     catch (Exception)
                     {
+                        
                     }
 
                     _idleCount = 0;
@@ -58,8 +59,8 @@ namespace Krakkl.Persistence.Authorship
         {
             _sleepLength = (_idleCount + 1) * 1000;
 
-            if (_sleepLength > 30000)
-                _sleepLength = 30000;
+            if (_sleepLength > 20000)
+                _sleepLength = 20000;
         }
     }
 }

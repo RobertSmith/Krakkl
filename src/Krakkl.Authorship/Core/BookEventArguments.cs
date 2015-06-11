@@ -58,8 +58,8 @@ namespace Krakkl.Authorship.Core
         {
             AddedAuthor = addedAuthor;
             ValidAuthors = state.Authors;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -75,8 +75,8 @@ namespace Krakkl.Authorship.Core
         {
             RemovedAuthor = removedAuthor;
             ValidAuthors = state.Authors;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -92,8 +92,8 @@ namespace Krakkl.Authorship.Core
         {
             OldTitle = oldTitle;
             NewTitle = state.Title;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -109,8 +109,8 @@ namespace Krakkl.Authorship.Core
         {
             OldSubTitle = oldSubTitle;
             NewSubTitle = state.SubTitle;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -126,8 +126,8 @@ namespace Krakkl.Authorship.Core
         {
             OldSeriesTitle = oldSeriesTitle;
             NewSeriesTitle = state.SeriesTitle;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -143,8 +143,8 @@ namespace Krakkl.Authorship.Core
         {
             OldSeriesVolume = oldSeriesVolume;
             NewSeriesVolume = state.SeriesTitle;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -160,8 +160,8 @@ namespace Krakkl.Authorship.Core
         {
             OldGenre = oldGenre;
             NewGenre = state.Genre;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -177,8 +177,8 @@ namespace Krakkl.Authorship.Core
         {
             OldLanguage = oldLanguage;
             NewLanguage = state.Language;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -194,8 +194,8 @@ namespace Krakkl.Authorship.Core
         {
             OldSynopsis = oldSynopsis;
             NewSynopsis = state.SeriesTitle;
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -207,8 +207,8 @@ namespace Krakkl.Authorship.Core
 
         public BookCompletedEventArgs(BookState state) : base(state)
         {
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -220,8 +220,8 @@ namespace Krakkl.Authorship.Core
 
         public BookSetAsInProgressEventArgs(BookState state) : base(state)
         {
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -233,8 +233,8 @@ namespace Krakkl.Authorship.Core
 
         public BookAbandonedEventArgs(BookState state) : base(state)
         {
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -246,8 +246,8 @@ namespace Krakkl.Authorship.Core
 
         public BookRevivedEventArgs(BookState state) : base(state)
         {
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 
@@ -259,8 +259,8 @@ namespace Krakkl.Authorship.Core
 
         public BookPublishedEventArgs(BookState state) : base(state)
         {
-            UpdatedAt = state.UpdatedAt;
-            UpdatedBy = state.UpdatedBy;
+            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
+            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
     }
 }

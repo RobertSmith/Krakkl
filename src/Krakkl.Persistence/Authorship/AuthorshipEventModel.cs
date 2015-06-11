@@ -28,10 +28,10 @@ namespace Krakkl.Persistence.Authorship
         public LanguageModel NewLanguage { get; set; }
         public string OldSynopsis { get; set; }
         public string NewSynopsis { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public Guid CreatedBy { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public Guid UpdatedBy { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public Guid? CreatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public Guid? UpdatedBy { get; set; }
     }
 
     internal sealed class AuthorModel
