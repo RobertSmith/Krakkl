@@ -17,6 +17,15 @@ namespace Krakkl.Persistence.Authorship
             _orchestrate = new Orchestrate.Net.Orchestrate(configuration["Data:Orchestrate:ApiKey"]);
         }
 
+        public void ProcessEvent(CloudQueueMessage message)
+        {
+            var eventModel = JsonConvert.DeserializeObject<AuthorshipEventModel>(message.AsString);
+            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            var json = JsonConvert.SerializeObject(eventModel, settings);
+
+            _orchestrate.Put(Definitions.BookEventsCollection, message.Id, json);
+        }
+
         internal async Task ProcessMessageAsync(CloudQueueMessage message)
         {
             var eventModel = JsonConvert.DeserializeObject<AuthorshipEventModel>(message.AsString);
@@ -90,7 +99,7 @@ namespace Krakkl.Persistence.Authorship
             var state = new BookState
             {
                 Key = eventModel.BookKey,
-                Authors = eventModel.ValidAuthors,
+//                Authors = eventModel.ValidAuthors,
                 Language = language,
                 CreatedAt = eventModel.CreatedAt.GetValueOrDefault(),
                 CreatedBy = eventModel.AddedAuthor.Key
@@ -112,7 +121,7 @@ namespace Krakkl.Persistence.Authorship
         {
             var patchItems = new List<object>
             {
-                new PatchItemObject { Op = "replace", Path = "/Authors", Value = eventModel.ValidAuthors },
+//                new PatchItemObject { Op = "replace", Path = "/Authors", Value = eventModel.ValidAuthors },
                 new PatchItemString { Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString() },
                 new PatchItemDate { Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault() }
             };

@@ -3,6 +3,7 @@ using System.Threading;
 using Microsoft.Framework.ConfigurationModel;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
+using Newtonsoft.Json;
 
 namespace Krakkl.Persistence.Authorship
 {
@@ -37,15 +38,16 @@ namespace Krakkl.Persistence.Authorship
                 {
                     try
                     {
-                        Console.WriteLine(message.InsertionTime + " " + message.DequeueCount);
-                        await processor.ProcessMessageAsync(message);
+                        var eventModel = JsonConvert.DeserializeObject<AuthorshipEventModel>(message.AsString);
+                        Console.WriteLine(eventModel.EventType + ": " + message.InsertionTime + " " + message.DequeueCount);
+                        processor.ProcessEvent(message);
                         await _queue.DeleteMessageAsync(message);
                     }
                     catch (Exception)
                     {
                     }
 
-                    _idleCount = 0;
+                    _idleCount = -1;
                 }
                 else
                     _idleCount++;

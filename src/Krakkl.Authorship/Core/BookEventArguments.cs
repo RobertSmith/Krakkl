@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
 using Krakkl.Authorship.Repository;
@@ -11,12 +10,13 @@ namespace Krakkl.Authorship.Core
     internal class BookEventArgs : EventArgs
     {
         public Guid BookKey { get; private set; }
-        public DateTime TimeStamp => DateTime.UtcNow;
+        public DateTime TimeStamp { get; private set; }
         public string EventSource => "Book.Authorship.Krakkl";
 
         public BookEventArgs(BookState state)
         {
             BookKey = state.Key;
+            TimeStamp = state.UpdatedAt.GetValueOrDefault(state.CreatedAt);
         }
 
         public override string ToString()
@@ -29,7 +29,6 @@ namespace Krakkl.Authorship.Core
     internal sealed class BookCreatedEventArgs : BookEventArgs
     {
         public AuthorModel AddedAuthor { get; private set; }
-        public List<AuthorModel> ValidAuthors { get; private set; }
         public string LanguageKey { get; private set; }
         public string LanguageName { get; private set; }
         public DateTime CreatedAt { get; private set; }
@@ -39,7 +38,6 @@ namespace Krakkl.Authorship.Core
         public BookCreatedEventArgs(BookState state) : base(state)
         {
             AddedAuthor = state.Authors.First();
-            ValidAuthors = state.Authors;
             LanguageKey = state.Language?.Key;
             LanguageName = state.Language?.Name;
             CreatedAt = state.CreatedAt;
@@ -50,7 +48,6 @@ namespace Krakkl.Authorship.Core
     internal sealed class AuthorAddedToBookEventArgs : BookEventArgs
     {
         public AuthorModel AddedAuthor { get; private set; }
-        public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "AuthorAddedToBook";
@@ -58,7 +55,6 @@ namespace Krakkl.Authorship.Core
         public AuthorAddedToBookEventArgs(BookState state, AuthorModel addedAuthor) : base(state)
         {
             AddedAuthor = addedAuthor;
-            ValidAuthors = state.Authors;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
@@ -67,7 +63,6 @@ namespace Krakkl.Authorship.Core
     internal sealed class AuthorRemovedFromBookEventArgs : BookEventArgs
     {
         public AuthorModel RemovedAuthor { get; private set; }
-        public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "AuthorRemovedFromBook";
@@ -75,7 +70,6 @@ namespace Krakkl.Authorship.Core
         public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor) : base(state)
         {
             RemovedAuthor = removedAuthor;
-            ValidAuthors = state.Authors;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }
