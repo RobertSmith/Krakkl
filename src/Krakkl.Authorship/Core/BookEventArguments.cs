@@ -11,6 +11,7 @@ namespace Krakkl.Authorship.Core
     internal class BookEventArgs : EventArgs
     {
         public Guid BookKey { get; private set; }
+        public DateTime TimeStamp => DateTime.UtcNow;
         public string EventSource => "Book.Authorship.Krakkl";
 
         public BookEventArgs(BookState state)
@@ -82,15 +83,13 @@ namespace Krakkl.Authorship.Core
 
     internal sealed class BookRetitledEventArgs : BookEventArgs
     {
-        public string OldTitle { get; private set; }
         public string NewTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookRetitled";
 
-        public BookRetitledEventArgs(BookState state, string oldTitle) : base(state)
+        public BookRetitledEventArgs(BookState state) : base(state)
         {
-            OldTitle = oldTitle;
             NewTitle = state.Title;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
@@ -99,15 +98,13 @@ namespace Krakkl.Authorship.Core
 
     internal sealed class BookSubTitleChangedEventArgs : BookEventArgs
     {
-        public string OldSubTitle { get; private set; }
         public string NewSubTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSubTitleChanged";
 
-        public BookSubTitleChangedEventArgs(BookState state, string oldSubTitle) : base(state)
+        public BookSubTitleChangedEventArgs(BookState state) : base(state)
         {
-            OldSubTitle = oldSubTitle;
             NewSubTitle = state.SubTitle;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
@@ -116,15 +113,13 @@ namespace Krakkl.Authorship.Core
 
     internal sealed class BookSeriesTitleChangedEventArgs : BookEventArgs
     {
-        public string OldSeriesTitle { get; private set; }
         public string NewSeriesTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSeriesTitleChanged";
 
-        public BookSeriesTitleChangedEventArgs(BookState state, string oldSeriesTitle) : base(state)
+        public BookSeriesTitleChangedEventArgs(BookState state) : base(state)
         {
-            OldSeriesTitle = oldSeriesTitle;
             NewSeriesTitle = state.SeriesTitle;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
@@ -133,15 +128,13 @@ namespace Krakkl.Authorship.Core
 
     internal sealed class BookSeriesVolumeChangedEventArgs : BookEventArgs
     {
-        public string OldSeriesVolume { get; private set; }
         public string NewSeriesVolume { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSeriesVolumeChanged";
 
-        public BookSeriesVolumeChangedEventArgs(BookState state, string oldSeriesVolume) : base(state)
+        public BookSeriesVolumeChangedEventArgs(BookState state) : base(state)
         {
-            OldSeriesVolume = oldSeriesVolume;
             NewSeriesVolume = state.SeriesTitle;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
@@ -150,15 +143,13 @@ namespace Krakkl.Authorship.Core
 
     internal sealed class BookGenreChangedEventArgs : BookEventArgs
     {
-        public GenreModel OldGenre { get; private set; }
         public GenreModel NewGenre { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookGenreChanged";
 
-        public BookGenreChangedEventArgs(BookState state, GenreModel oldGenre) : base(state)
+        public BookGenreChangedEventArgs(BookState state) : base(state)
         {
-            OldGenre = oldGenre;
             NewGenre = state.Genre;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
@@ -167,15 +158,13 @@ namespace Krakkl.Authorship.Core
 
     internal sealed class BookLanguageChangedEventArgs : BookEventArgs
     {
-        public LanguageModel OldLanguage { get; private set; }
         public LanguageModel NewLanguage { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookLanguageChanged";
 
-        public BookLanguageChangedEventArgs(BookState state, LanguageModel oldLanguage) : base(state)
+        public BookLanguageChangedEventArgs(BookState state) : base(state)
         {
-            OldLanguage = oldLanguage;
             NewLanguage = state.Language;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
@@ -184,15 +173,13 @@ namespace Krakkl.Authorship.Core
 
     internal sealed class BookSynopsisUpdatedEventArgs : BookEventArgs
     {
-        public string OldSynopsis { get; private set; }
         public string NewSynopsis { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSynopsisUpdated";
 
-        public BookSynopsisUpdatedEventArgs(BookState state, string oldSynopsis) : base(state)
+        public BookSynopsisUpdatedEventArgs(BookState state) : base(state)
         {
-            OldSynopsis = oldSynopsis;
             NewSynopsis = state.SeriesTitle;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();

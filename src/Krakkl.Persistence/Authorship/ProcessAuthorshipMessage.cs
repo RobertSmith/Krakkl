@@ -99,8 +99,9 @@ namespace Krakkl.Persistence.Authorship
             var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 
             var json = JsonConvert.SerializeObject(state, settings);
+            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Put Started - " + eventModel.EventType);
             await _orchestrate.PutAsync(Definitions.BookCollection, bookKey, json);
-            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Put - " + eventModel.EventType);
+            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Put Complete - " + eventModel.EventType);
 
             var eventJson = JsonConvert.SerializeObject(eventModel, settings);
             await _orchestrate.PutEventAsync(Definitions.BookCollection, bookKey, "update", eventModel.UpdatedAt, eventJson);
@@ -268,9 +269,10 @@ namespace Krakkl.Persistence.Authorship
             var bookKey = eventModel.BookKey.ToString();
             var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
             var json = JsonConvert.SerializeObject(patchItems, settings);
-        
+
+            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Patch Started - " + eventModel.EventType);
             await _orchestrate.PatchAsync(Definitions.BookCollection, bookKey, json);
-            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Patch - " + eventModel.EventType);
+            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Patch Complete - " + eventModel.EventType);
 
             var eventJson = JsonConvert.SerializeObject(eventModel, settings);
             await _orchestrate.PutEventAsync(Definitions.BookCollection, bookKey, "update", eventModel.UpdatedAt, eventJson);

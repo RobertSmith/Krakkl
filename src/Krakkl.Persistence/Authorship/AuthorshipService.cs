@@ -37,12 +37,12 @@ namespace Krakkl.Persistence.Authorship
                 {
                     try
                     {
+                        Console.WriteLine(message.InsertionTime + " " + message.DequeueCount);
                         await processor.ProcessMessageAsync(message);
                         await _queue.DeleteMessageAsync(message);
                     }
                     catch (Exception)
                     {
-                        
                     }
 
                     _idleCount = 0;

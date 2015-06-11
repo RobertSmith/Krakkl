@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Repository
 {
+    //TODO: THIS NEEDS TO GO THROUGH THE QUERY SIDE
     internal class BookAggregateRepositoryOrchestrate : IBookAggregateRepository
     {
         private readonly Orchestrate.Net.Orchestrate _orchestrate;

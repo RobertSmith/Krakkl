@@ -104,15 +104,13 @@ namespace Krakkl.Authorship.Core
             if (!IsValidAuthor(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            var oldTitle = _state.Title;
-
             _state.Title = newTitle;
             _state.UpdatedAt = DateTime.UtcNow;
             _state.UpdatedBy = authorKey;
 
             // Fire BookRetitled Event
             var target = BookRetitled;
-            target?.Invoke(this, new BookRetitledEventArgs(_state, oldTitle));
+            target?.Invoke(this, new BookRetitledEventArgs(_state));
         }
 
         public void ChangeSubTitle(Guid authorKey, string newSubTitle)
@@ -123,15 +121,13 @@ namespace Krakkl.Authorship.Core
             if (!IsValidAuthor(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            var oldSubTitle = _state.SubTitle;
-
             _state.SubTitle = newSubTitle;
             _state.UpdatedAt = DateTime.UtcNow;
             _state.UpdatedBy = authorKey;
 
             // Fire BookSubTitleChanged Event
             var target = BookSubTitleChanged;
-            target?.Invoke(this, new BookSubTitleChangedEventArgs(_state, oldSubTitle));
+            target?.Invoke(this, new BookSubTitleChangedEventArgs(_state));
         }
 
         public void ChangeSeriesTitle(Guid authorKey, string newSeriesTitle)
@@ -142,15 +138,13 @@ namespace Krakkl.Authorship.Core
             if (!IsValidAuthor(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            var oldSeriesTitle = _state.SeriesTitle;
-
             _state.SeriesTitle = newSeriesTitle;
             _state.UpdatedAt = DateTime.UtcNow;
             _state.UpdatedBy = authorKey;
 
             // Fire BookSeriesTitleChanged Event
             var target = BookSeriesTitleChanged;
-            target?.Invoke(this, new BookSeriesTitleChangedEventArgs(_state, oldSeriesTitle));
+            target?.Invoke(this, new BookSeriesTitleChangedEventArgs(_state));
         }
 
         public void ChangeSeriesVolume(Guid authorKey, string newSeriesVolume)
@@ -161,15 +155,13 @@ namespace Krakkl.Authorship.Core
             if (!IsValidAuthor(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            var oldSeriesVolume = _state.SeriesVolume;
-
             _state.SeriesVolume = newSeriesVolume;
             _state.UpdatedAt = DateTime.UtcNow;
             _state.UpdatedBy = authorKey;
 
             // Fire BookSeriesVolumeChanged Event
             var target = BookSeriesVolumeChanged;
-            target?.Invoke(this, new BookSeriesVolumeChangedEventArgs(_state, oldSeriesVolume));
+            target?.Invoke(this, new BookSeriesVolumeChangedEventArgs(_state));
         }
 
         public void ChangeGenre(Guid authorKey, GenreModel newGenre)
@@ -180,15 +172,13 @@ namespace Krakkl.Authorship.Core
             if (!IsValidAuthor(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            var oldGenre = _state.Genre;
-
             _state.Genre = newGenre;
             _state.UpdatedAt = DateTime.UtcNow;
             _state.UpdatedBy = authorKey;
 
             // Fire BookGenreChanged Event
             var target = BookGenreChanged;
-            target?.Invoke(this, new BookGenreChangedEventArgs(_state, oldGenre));
+            target?.Invoke(this, new BookGenreChangedEventArgs(_state));
         }
 
         public void ChangeEditorLanguage(Guid authorKey, LanguageModel newLanguage)
@@ -199,15 +189,13 @@ namespace Krakkl.Authorship.Core
             if (!IsValidAuthor(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            var oldLanguage = _state.Language;
-
             _state.Language = newLanguage;
             _state.UpdatedAt = DateTime.UtcNow;
             _state.UpdatedBy = authorKey;
 
             // Fire BookLanguageChanged Event
             var target = BookLanguageChanged;
-            target?.Invoke(this, new BookLanguageChangedEventArgs(_state, oldLanguage));
+            target?.Invoke(this, new BookLanguageChangedEventArgs(_state));
         }
 
         public void UpdateSynopsis(Guid authorKey, string newSynopsis)
@@ -218,15 +206,13 @@ namespace Krakkl.Authorship.Core
             if (!IsValidAuthor(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            var oldSynopsis = _state.Synopsis;
-
             _state.Synopsis = newSynopsis;
             _state.UpdatedAt = DateTime.UtcNow;
             _state.UpdatedBy = authorKey;
 
             // Fire SynopsisUpdated Event
             var target = BookSynopsisUpdated;
-            target?.Invoke(this, new BookSynopsisUpdatedEventArgs(_state, oldSynopsis));
+            target?.Invoke(this, new BookSynopsisUpdatedEventArgs(_state));
         }
 
         public void CompleteBook(Guid authorKey)
