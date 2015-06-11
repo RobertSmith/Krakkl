@@ -7,7 +7,10 @@
             "ConnectionString": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-Krakkl-0d797734-bbff-4829-9c1d-1ad5809938f5;Trusted_Connection=True;MultipleActiveResultSets=true"
         },
         "Orchestrate": {
-            "ApiKey" : "09e2f337-263e-4ab3-9fda-c7cd1ff822bb"
+            "ApiKey": "09e2f337-263e-4ab3-9fda-c7cd1ff822bb"
+        },
+        "AzureStorage": {
+            "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=krakkl;AccountKey=S2rp/5tfLenvwScudL6H+dfXxJVOGHoG2k4ubi4LZXV9O884Ta98VyoyrAVEzubdZP/UkSy0Vl5cRNxqtfbo4Q=="
         }
     },
     "Authentication": {

@@ -8,7 +8,8 @@
 
     "dependencies": {
         "Krakkl.Authorship": "1.0.0-*",
-        "Krakkl.Query": "1.0.0-*"
+        "Krakkl.Query": "1.0.0-*",
+        "Krakkl.Persistence": "1.0.0-*"
     },
 
     "commands": {
@@ -17,6 +18,5 @@
 
     "frameworks": {
         "dnx451": { }
-        }
     }
-}
+} }

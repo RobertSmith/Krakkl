@@ -2,28 +2,43 @@
 using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
+using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Core
 {
     // all event arguments should inherit from EventArgs
-    internal class BookCreatedEventArgs : EventArgs
+    internal class BookEventArgs : EventArgs
     {
         public Guid BookKey { get; private set; }
-        public Guid AuthorKey { get; private set; }
-        public string AuthorName { get; private set; }
+        public string EventSource => "Book.Authorship.Krakkl";
+
+        public BookEventArgs(BookState state)
+        {
+            BookKey = state.Key;
+        }
+
+        public override string ToString()
+        {
+            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            return JsonConvert.SerializeObject(this, settings);
+        }
+    }
+
+    internal sealed class BookCreatedEventArgs : BookEventArgs
+    {
+        public AuthorModel AddedAuthor { get; private set; }
+        public List<AuthorModel> ValidAuthors { get; private set; }
         public string LanguageKey { get; private set; }
         public string LanguageName { get; private set; }
         public string Title { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public Guid CreatedBy { get; private set; }
         public string EventType => "BookCreated";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookCreatedEventArgs(BookState state)
+        public BookCreatedEventArgs(BookState state) : base(state)
         {
-            BookKey = state.Key;
-            AuthorKey = state.Authors.First().Key;
-            AuthorName = state.Authors.First().Name;
+            AddedAuthor = state.Authors.First();
+            ValidAuthors = state.Authors;
             LanguageKey = state.Language?.Key;
             LanguageName = state.Language?.Name;
             Title = state.Title;
@@ -32,39 +47,33 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class AuthorAddedToBookEventArgs : EventArgs
+    internal sealed class AuthorAddedToBookEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
-        public AuthorModel NewAuthor { get; private set; }
+        public AuthorModel AddedAuthor { get; private set; }
         public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "AuthorAddedToBook";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public AuthorAddedToBookEventArgs(BookState state, AuthorModel newAuthor)
+        public AuthorAddedToBookEventArgs(BookState state, AuthorModel addedAuthor) : base(state)
         {
-            BookKey = state.Key;
-            NewAuthor = newAuthor;
+            AddedAuthor = addedAuthor;
             ValidAuthors = state.Authors;
             UpdatedAt = state.UpdatedAt;
             UpdatedBy = state.UpdatedBy;
         }
     }
 
-    internal class AuthorRemovedFromBookEventArgs : EventArgs
+    internal sealed class AuthorRemovedFromBookEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public AuthorModel RemovedAuthor { get; private set; }
         public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "AuthorRemovedFromBook";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor)
+        public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor) : base(state)
         {
-            BookKey = state.Key;
             RemovedAuthor = removedAuthor;
             ValidAuthors = state.Authors;
             UpdatedAt = state.UpdatedAt;
@@ -72,19 +81,16 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class BookRetitledEventArgs : EventArgs
+    internal sealed class BookRetitledEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public string OldTitle { get; private set; }
         public string NewTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookRetitled";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookRetitledEventArgs(BookState state, string oldTitle)
+        public BookRetitledEventArgs(BookState state, string oldTitle) : base(state)
         {
-            BookKey = state.Key;
             OldTitle = oldTitle;
             NewTitle = state.Title;
             UpdatedAt = state.UpdatedAt;
@@ -92,19 +98,16 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class BookSubTitleChangedEventArgs : EventArgs
+    internal sealed class BookSubTitleChangedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public string OldSubTitle { get; private set; }
         public string NewSubTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSubTitleChanged";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookSubTitleChangedEventArgs(BookState state, string oldSubTitle)
+        public BookSubTitleChangedEventArgs(BookState state, string oldSubTitle) : base(state)
         {
-            BookKey = state.Key;
             OldSubTitle = oldSubTitle;
             NewSubTitle = state.SubTitle;
             UpdatedAt = state.UpdatedAt;
@@ -112,19 +115,16 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class BookSeriesTitleChangedEventArgs : EventArgs
+    internal sealed class BookSeriesTitleChangedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public string OldSeriesTitle { get; private set; }
         public string NewSeriesTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSeriesTitleChanged";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookSeriesTitleChangedEventArgs(BookState state, string oldSeriesTitle)
+        public BookSeriesTitleChangedEventArgs(BookState state, string oldSeriesTitle) : base(state)
         {
-            BookKey = state.Key;
             OldSeriesTitle = oldSeriesTitle;
             NewSeriesTitle = state.SeriesTitle;
             UpdatedAt = state.UpdatedAt;
@@ -132,19 +132,16 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class BookSeriesVolumeChangedEventArgs : EventArgs
+    internal sealed class BookSeriesVolumeChangedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public string OldSeriesVolume { get; private set; }
         public string NewSeriesVolume { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSeriesVolumeChanged";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookSeriesVolumeChangedEventArgs(BookState state, string oldSeriesVolume)
+        public BookSeriesVolumeChangedEventArgs(BookState state, string oldSeriesVolume) : base(state)
         {
-            BookKey = state.Key;
             OldSeriesVolume = oldSeriesVolume;
             NewSeriesVolume = state.SeriesTitle;
             UpdatedAt = state.UpdatedAt;
@@ -152,19 +149,16 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class BookGenreChangedEventArgs : EventArgs
+    internal sealed class BookGenreChangedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public GenreModel OldGenre { get; private set; }
         public GenreModel NewGenre { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookGenreChanged";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookGenreChangedEventArgs(BookState state, GenreModel oldGenre)
+        public BookGenreChangedEventArgs(BookState state, GenreModel oldGenre) : base(state)
         {
-            BookKey = state.Key;
             OldGenre = oldGenre;
             NewGenre = state.Genre;
             UpdatedAt = state.UpdatedAt;
@@ -172,19 +166,16 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class BookLanguageChangedEventArgs : EventArgs
+    internal sealed class BookLanguageChangedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public LanguageModel OldLanguage { get; private set; }
         public LanguageModel NewLanguage { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookLanguageChanged";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookLanguageChangedEventArgs(BookState state, LanguageModel oldLanguage)
+        public BookLanguageChangedEventArgs(BookState state, LanguageModel oldLanguage) : base(state)
         {
-            BookKey = state.Key;
             OldLanguage = oldLanguage;
             NewLanguage = state.Language;
             UpdatedAt = state.UpdatedAt;
@@ -192,19 +183,16 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class BookSynopsisUpdatedEventArgs : EventArgs
+    internal sealed class BookSynopsisUpdatedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public string OldSynopsis { get; private set; }
         public string NewSynopsis { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "SynopsisUpdated";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookSynopsisUpdatedEventArgs(BookState state, string oldSynopsis)
+        public BookSynopsisUpdatedEventArgs(BookState state, string oldSynopsis) : base(state)
         {
-            BookKey = state.Key;
             OldSynopsis = oldSynopsis;
             NewSynopsis = state.SeriesTitle;
             UpdatedAt = state.UpdatedAt;
@@ -212,81 +200,66 @@ namespace Krakkl.Authorship.Core
         }
     }
 
-    internal class BookCompletedEventArgs : EventArgs
+    internal sealed class BookCompletedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookCompleted";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookCompletedEventArgs(BookState state)
+        public BookCompletedEventArgs(BookState state) : base(state)
         {
-            BookKey = state.Key;
             UpdatedAt = state.UpdatedAt;
             UpdatedBy = state.UpdatedBy;
         }
     }
 
-    internal class BookSetAsInProgressEventArgs : EventArgs
+    internal sealed class BookSetAsInProgressEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSetAsInProgress";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookSetAsInProgressEventArgs(BookState state)
+        public BookSetAsInProgressEventArgs(BookState state) : base(state)
         {
-            BookKey = state.Key;
             UpdatedAt = state.UpdatedAt;
             UpdatedBy = state.UpdatedBy;
         }
     }
 
-    internal class BookAbandonedEventArgs : EventArgs
+    internal sealed class BookAbandonedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookAbandoned";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookAbandonedEventArgs(BookState state)
+        public BookAbandonedEventArgs(BookState state) : base(state)
         {
-            BookKey = state.Key;
             UpdatedAt = state.UpdatedAt;
             UpdatedBy = state.UpdatedBy;
         }
     }
 
-    internal class BookRevivedEventArgs : EventArgs
+    internal sealed class BookRevivedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookRevived";
-        public string EventSource => "Book.Authorship.Krakkl";
 
-        public BookRevivedEventArgs(BookState state)
+        public BookRevivedEventArgs(BookState state) : base(state)
         {
-            BookKey = state.Key;
             UpdatedAt = state.UpdatedAt;
             UpdatedBy = state.UpdatedBy;
         }
     }
 
-    internal class BookPublishedEventArgs : EventArgs
+    internal sealed class BookPublishedEventArgs : BookEventArgs
     {
-        public Guid BookKey { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
-        public string EventType => "BookPublisheds";
-        public string EventSource => "Book.Authorship.Krakkl";
+        public string EventType => "BookPublished";
 
-        public BookPublishedEventArgs(BookState state)
+        public BookPublishedEventArgs(BookState state) : base(state)
         {
-            BookKey = state.Key;
             UpdatedAt = state.UpdatedAt;
             UpdatedBy = state.UpdatedBy;
         }

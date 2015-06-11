@@ -1,9 +1,8 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Krakkl.Authorship.Infrastructure
+namespace Krakkl.Persistence
 {
-    public class PatchItemDate
+    public class PatchItemObject
     {
         [JsonProperty("op")]
         public string Op { get; set; }
@@ -12,6 +11,6 @@ namespace Krakkl.Authorship.Infrastructure
         [JsonProperty("path")]
         public string Path { get; set; }
         [JsonProperty("value")]
-        public DateTime Value { get; set; }
+        public object Value { get; set; }
     }
 }

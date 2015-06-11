@@ -14,12 +14,12 @@ namespace Krakkl.Authorship.Service
     {
         public long CacheCount => BookAggregateCache.Count();
 
-        private readonly BookEventSourcePersistance _bookEventSourcePersistance;
+        private readonly BookEventSourcePersistence _bookEventSourcePersistance;
 
         public BookService()
         {
             //TODO: Init Moderation Module
-            _bookEventSourcePersistance = new BookEventSourcePersistance();
+            _bookEventSourcePersistance = new BookEventSourcePersistence();
         }
 
         public Guid StartANewBook(Guid authorKey, string authorName, string languageKey, string languageName)
@@ -293,21 +293,21 @@ namespace Krakkl.Authorship.Service
         private void AddBookAggregateEventHandlers(BookAggregate bookAggregate)
         {
             //TODO: Add more!
-            bookAggregate.BookCreated += _bookEventSourcePersistance.OnBookCreated;
-            bookAggregate.AuthorAddedToBook += _bookEventSourcePersistance.OnAuthorAddedToBook;
-            bookAggregate.AuthorRemovedFromBook += _bookEventSourcePersistance.OnAuthorRemovedFromBook;
-            bookAggregate.BookRetitled += _bookEventSourcePersistance.OnBookRetitled;
-            bookAggregate.BookSubTitleChanged += _bookEventSourcePersistance.OnBookSubTitleChanged;
-            bookAggregate.BookSeriesTitleChanged += _bookEventSourcePersistance.OnBookSeriesTitleChanged;
-            bookAggregate.BookSeriesVolumeChanged += _bookEventSourcePersistance.OnBookSeriesVolumeChanged;
-            bookAggregate.BookGenreChanged += _bookEventSourcePersistance.OnBookGenreChanged;
-            bookAggregate.BookLanguageChanged += _bookEventSourcePersistance.OnBookLanguageChanged;
-            bookAggregate.BookSynopsisUpdated += _bookEventSourcePersistance.OnBookSynopsisUpdated;
-            bookAggregate.BookCompleted += _bookEventSourcePersistance.OnBookCompleted;
-            bookAggregate.BookSetAsInProgress += _bookEventSourcePersistance.OnBookSetAsInProgress;
-            bookAggregate.BookAbandoned += _bookEventSourcePersistance.OnBookAbandoned;
-            bookAggregate.BookRevived += _bookEventSourcePersistance.OnBookRevived;
-            bookAggregate.BookPublished += _bookEventSourcePersistance.OnBookPublished;
+            bookAggregate.BookCreated += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.AuthorAddedToBook += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.AuthorRemovedFromBook += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookRetitled += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookSubTitleChanged += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookSeriesTitleChanged += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookSeriesVolumeChanged += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookGenreChanged += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookLanguageChanged += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookSynopsisUpdated += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookCompleted += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookSetAsInProgress += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookAbandoned += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookRevived += _bookEventSourcePersistance.OnBookPersistenceEvent;
+            bookAggregate.BookPublished += _bookEventSourcePersistance.OnBookPersistenceEvent;
         }
 
         #endregion

@@ -6,13 +6,14 @@
     "projectUrl": "",
     "licenseUrl": "",
 
-  "dependencies": {
-    "Microsoft.Bcl.Async": "1.0.168",
-    "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
-    "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
-    "Newtonsoft.Json": "7.0.1-beta3",
-    "Orchestrate.NET": "1.3.0"
-  },
+    "dependencies": {
+        "Microsoft.Bcl.Async": "1.0.168",
+        "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+        "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+        "Newtonsoft.Json": "7.0.1-beta3",
+        "Orchestrate.NET": "1.3.0",
+        "WindowsAzure.Storage": "4.4.1-preview"
+    },
 
     "frameworks": {
         "dnx451": {
