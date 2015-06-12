@@ -29,7 +29,8 @@
         "Microsoft.Framework.Logging.Console": "1.0.0-beta4",
         "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-beta4",
         "System.Threading": "4.0.10-beta-22816",
-        "Krakkl.Persistence": "1.0.0-*"
+        "Krakkl.Persistence": "1.0.0-*",
+        "Krakkl.EventTranslator": "1.0.0-*"
     },
 
     "commands": {

@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace Krakkl.Persistence
+namespace Krakkl.EventTranslator
 {
-    public class PatchItemString
+    public class PatchItemInt
     {
         [JsonProperty("op")]
         public string Op { get; set; }
@@ -11,6 +11,6 @@ namespace Krakkl.Persistence
         [JsonProperty("path")]
         public string Path { get; set; }
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public int Value { get; set; }
     }
 }

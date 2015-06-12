@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Krakkl.Authorship.Service;
+using Krakkl.EventTranslator;
 using Krakkl.Persistence.Authorship;
 
 namespace Krakkl.Console
@@ -9,6 +10,7 @@ namespace Krakkl.Console
     {
         private BookService _bookService;
         private AuthorshipService _authorshipService = new AuthorshipService(); // spin up message handler
+        private BookEventTranslator _bookEventTranslator = new BookEventTranslator(); // spin up translator
 
         public void Main(string[] args)
         {
@@ -19,14 +21,17 @@ namespace Krakkl.Console
             var timer = new Stopwatch();
             timer.Start();
 
-            var bookKey = _bookService.StartANewBook(authorKey, "Joe Shmoe", "en", "English");
-            _bookService.AddAuthorToBook(bookKey, authorKey, newAuthorKey, "Jimmy the Greek");
-            _bookService.RemoveAuthorFromBook(bookKey, newAuthorKey, authorKey, "Joe Shmoe");
-            _bookService.ChangeBookGenre(bookKey, newAuthorKey, "ActionAdventure", "Action & Adventure", true);
+//            var bookKey = _bookService.StartANewBook(authorKey, "Joe Shmoe", "en", "English");
+//            _bookService.AddAuthorToBook(bookKey, authorKey, newAuthorKey, "Jimmy the Greek");
+//            _bookService.RemoveAuthorFromBook(bookKey, newAuthorKey, authorKey, "Joe Shmoe");
+//            _bookService.ChangeBookGenre(bookKey, newAuthorKey, "ActionAdventure", "Action & Adventure", true);
 
             timer.Stop();
 
             System.Console.WriteLine("Done in " + timer.ElapsedMilliseconds + "ms");
+
+            _bookEventTranslator.Run();
+
             System.Console.ReadLine();
         }
     }

@@ -93,7 +93,7 @@ namespace Krakkl.Authorship.Core
 
             // Fire AuthorRemovedFromBook Event
             var target = AuthorRemovedFromBook;
-            target?.Invoke(this, new AuthorRemovedFromBookEventArgs(_state, removedAuthor));
+            target?.Invoke(this, new AuthorRemovedFromBookEventArgs(_state, removedAuthor, _state.Authors));
         }
 
         public void Retitle(Guid authorKey, string newTitle)

@@ -38,8 +38,6 @@ namespace Krakkl.Persistence.Authorship
                 {
                     try
                     {
-                        var eventModel = JsonConvert.DeserializeObject<AuthorshipEventModel>(message.AsString);
-                        Console.WriteLine(eventModel.EventType + ": " + message.InsertionTime + " " + message.DequeueCount);
                         processor.ProcessEvent(message);
                         await _queue.DeleteMessageAsync(message);
                     }

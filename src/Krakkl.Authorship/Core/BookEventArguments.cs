@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
 using Krakkl.Authorship.Repository;
@@ -12,6 +13,7 @@ namespace Krakkl.Authorship.Core
         public Guid BookKey { get; private set; }
         public DateTime TimeStamp { get; private set; }
         public string EventSource => "Book.Authorship.Krakkl";
+        public bool TranslatedToQueryStorage => false;
 
         public BookEventArgs(BookState state)
         {
@@ -63,13 +65,15 @@ namespace Krakkl.Authorship.Core
     internal sealed class AuthorRemovedFromBookEventArgs : BookEventArgs
     {
         public AuthorModel RemovedAuthor { get; private set; }
+        public List<AuthorModel> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
         public string EventType => "AuthorRemovedFromBook";
 
-        public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor) : base(state)
+        public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor, List<AuthorModel> validAuthors) : base(state)
         {
             RemovedAuthor = removedAuthor;
+            ValidAuthors = validAuthors;
             UpdatedAt = state.UpdatedAt.GetValueOrDefault();
             UpdatedBy = state.UpdatedBy.GetValueOrDefault();
         }

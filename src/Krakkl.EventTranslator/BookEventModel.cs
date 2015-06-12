@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace Krakkl.Persistence.Authorship
+namespace Krakkl.EventTranslator
 {
-    internal sealed class AuthorshipEventModel
+    internal sealed class BookEventModel
     {
         public Guid BookKey { get; set; }
         public string EventSource { get; set; }
@@ -13,6 +15,7 @@ namespace Krakkl.Persistence.Authorship
         public string Title { get; set; }
         public AuthorModel AddedAuthor { get; set; }
         public AuthorModel RemovedAuthor { get; set; }
+        public List<AuthorModel> ValidAuthors { get; set; } 
         public string NewTitle { get; set; }
         public string NewSubTitle { get; set; }
         public string NewSeriesTitle { get; set; }
@@ -50,5 +53,21 @@ namespace Krakkl.Persistence.Authorship
     {
         public string Field { get; set; }
         public string Reason { get; set; }
+    }
+
+    internal sealed class NewBookModel
+    {
+        [JsonIgnore]
+        public Guid Key { get; set; }
+
+        public List<AuthorModel> Authors { get; set; }
+        public LanguageModel Language { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public Guid? CreatedBy { get; set; }
+
+        public NewBookModel()
+        {
+            Authors = new List<AuthorModel>();
+        }
     }
 }
