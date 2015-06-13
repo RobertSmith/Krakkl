@@ -98,7 +98,7 @@ namespace Krakkl.Authorship.Core
 
         public void Retitle(Guid authorKey, string newTitle)
         {
-            if (_state.Title.Equals(newTitle))
+            if (_state.Title == newTitle)
                 return;
 
             if (!IsValidAuthor(authorKey))
@@ -115,7 +115,7 @@ namespace Krakkl.Authorship.Core
 
         public void ChangeSubTitle(Guid authorKey, string newSubTitle)
         {
-            if (_state.SubTitle.Equals(newSubTitle))
+            if (_state.SubTitle == newSubTitle)
                 return;
 
             if (!IsValidAuthor(authorKey))
@@ -132,7 +132,7 @@ namespace Krakkl.Authorship.Core
 
         public void ChangeSeriesTitle(Guid authorKey, string newSeriesTitle)
         {
-            if (_state.SeriesTitle.Equals(newSeriesTitle))
+            if (_state.SeriesTitle == newSeriesTitle)
                 return;
 
             if (!IsValidAuthor(authorKey))
@@ -149,7 +149,7 @@ namespace Krakkl.Authorship.Core
 
         public void ChangeSeriesVolume(Guid authorKey, string newSeriesVolume)
         {
-            if (_state.SeriesVolume.Equals(newSeriesVolume))
+            if (_state.SeriesVolume == newSeriesVolume)
                 return;
 
             if (!IsValidAuthor(authorKey))
@@ -200,7 +200,7 @@ namespace Krakkl.Authorship.Core
 
         public void UpdateSynopsis(Guid authorKey, string newSynopsis)
         {
-            if (_state.Synopsis.Equals(newSynopsis))
+            if (_state.Synopsis == newSynopsis)
                 return;
 
             if (!IsValidAuthor(authorKey))

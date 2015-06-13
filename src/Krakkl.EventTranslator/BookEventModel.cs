@@ -28,6 +28,8 @@ namespace Krakkl.EventTranslator
         public DateTime? UpdatedAt { get; set; }
         public Guid? UpdatedBy { get; set; }
         public bool TranslatedToQueryStorage { get; set; }
+        public int TranslationAttemptCount { get; set; }
+        public string TranslationFailureMessage { get; set; }
     }
 
     internal sealed class AuthorModel

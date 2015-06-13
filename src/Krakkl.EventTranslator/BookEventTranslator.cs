@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Framework.ConfigurationModel;
 using Newtonsoft.Json;
+using Orchestrate.Net;
 
 namespace Krakkl.EventTranslator
 {
@@ -15,9 +18,11 @@ namespace Krakkl.EventTranslator
         {
             var configuration = new Configuration().AddJsonFile("config.json");
             _orchestrate = new Orchestrate.Net.Orchestrate(configuration["Data:Orchestrate:ApiKey"]);
+
+            Task.Run(() => Run());
         }
 
-        public void Run()
+        private void Run()
         {
             while (true)
             {
@@ -40,67 +45,93 @@ namespace Krakkl.EventTranslator
                 {
                     var bookEvent = JsonConvert.DeserializeObject<BookEventModel>(newBookEvent.Value.ToString());
 
-                    switch (bookEvent.EventType)
+                    try
                     {
-                        case "BookCreated":
-                            BookCreatedHandler(bookEvent);
-                            break;
+                        switch (bookEvent.EventType)
+                        {
+                            case "BookCreated":
+                                BookCreatedHandler(bookEvent);
+                                break;
 
-                        case "AuthorAddedToBook":
-                            AuthorAddedHandler(bookEvent);
-                            break;
+                            case "AuthorAddedToBook":
+                                AuthorAddedHandler(bookEvent);
+                                break;
 
-                        case "AuthorRemovedFromBook":
-                            AuthorRemovedHandler(bookEvent);
-                            break;
+                            case "AuthorRemovedFromBook":
+                                AuthorRemovedHandler(bookEvent);
+                                break;
 
-                        case "BookRetitled":
-                            BookRetitledHandler(bookEvent);
-                            break;
+                            case "BookRetitled":
+                                BookRetitledHandler(bookEvent);
+                                break;
 
-                        case "BookSubTitleChanged":
-                            BookSubTitleChangedHandler(bookEvent);
-                            break;
+                            case "BookSubTitleChanged":
+                                BookSubTitleChangedHandler(bookEvent);
+                                break;
 
-                        case "BookSeriesTitleChanged":
-                            BookSeriesTitleChangedHandler(bookEvent);
-                            break;
+                            case "BookSeriesTitleChanged":
+                                BookSeriesTitleChangedHandler(bookEvent);
+                                break;
 
-                        case "BookSeriesVolumeChanged":
-                            BookSeriesVolumeChangedHandler(bookEvent);
-                            break;
+                            case "BookSeriesVolumeChanged":
+                                BookSeriesVolumeChangedHandler(bookEvent);
+                                break;
 
-                        case "BookGenreChanged":
-                            BookGenreChangedHandler(bookEvent);
-                            break;
+                            case "BookGenreChanged":
+                                BookGenreChangedHandler(bookEvent);
+                                break;
 
-                        case "BookLanguageChanged":
-                            BookLanguageChangedHandler(bookEvent);
-                            break;
+                            case "BookLanguageChanged":
+                                BookLanguageChangedHandler(bookEvent);
+                                break;
 
-                        case "BookSynopsisUpdated":
-                            BookSynopsisUpdatedHandler(bookEvent);
-                            break;
+                            case "BookSynopsisUpdated":
+                                BookSynopsisUpdatedHandler(bookEvent);
+                                break;
 
-                        case "BookCompleted":
-                            BookCompletedHandler(bookEvent);
-                            break;
+                            case "BookCompleted":
+                                BookCompletedHandler(bookEvent);
+                                break;
 
-                        case "BookSetAsInProgress":
-                            BookSetAsInProgressHandler(bookEvent);
-                            break;
+                            case "BookSetAsInProgress":
+                                BookSetAsInProgressHandler(bookEvent);
+                                break;
 
-                        case "BookAbandoned":
-                            BookAbandonedHandler(bookEvent);
-                            break;
+                            case "BookAbandoned":
+                                BookAbandonedHandler(bookEvent);
+                                break;
 
-                        case "BookRevived":
-                            BookRevivedHandler(bookEvent);
-                            break;
+                            case "BookRevived":
+                                BookRevivedHandler(bookEvent);
+                                break;
 
-                        case "BookPublished":
-                            BookPublishedHanlder(bookEvent);
-                            break;
+                            case "BookPublished":
+                                BookPublishedHanlder(bookEvent);
+                                break;
+                        }
+
+                        UpdateEventAsTranslated(newBookEvent);
+                    }
+                    catch (AggregateException ex)
+                    {
+                        var patchItems = new List<object>();
+
+                        if (bookEvent.TranslationAttemptCount >= 10)
+                        {
+                            patchItems.Add(new PatchItemString { Op = "add", Path = "/TranslationFailureMessage", Value = ex.InnerException.Message });
+                            patchItems.Add(new PatchItemObject { Op = "add", Path = "/TranslatedToQueryStorage", Value = true });
+                        }
+                        else
+                            patchItems.Add(new PatchItemInt { Op = "add", Path = "/TranslationAttemptCount", Value = ++bookEvent.TranslationAttemptCount });
+
+                        var bookEventKey = newBookEvent.Path.Key;
+                        var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+                        var json = JsonConvert.SerializeObject(patchItems, settings);
+
+                        _orchestrate.Patch(Definitions.BookEventsCollection, bookEventKey, json);
+
+                        // wait one sec before processing next batch
+                        _idleCount = 1;
                     }
                 }
             }
@@ -124,9 +155,7 @@ namespace Krakkl.EventTranslator
             var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
             var json = JsonConvert.SerializeObject(state, settings);
 
-            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Put Started - " + eventModel.EventType);
             _orchestrate.Put(Definitions.BookCollection, bookKey, json);
-            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Put Complete - " + eventModel.EventType);
         }
 
         private void AuthorAddedHandler(BookEventModel eventModel)
@@ -135,7 +164,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "append", Path = "/Authors", Value = eventModel.AddedAuthor},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -147,7 +177,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "replace", Path = "/Authors", Value = eventModel.ValidAuthors},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -159,7 +190,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemString {Op = "add", Path = "/Title", Value = eventModel.NewTitle},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -171,7 +203,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemString {Op = "add", Path = "/SubTitle", Value = eventModel.NewSubTitle},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -183,7 +216,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemString {Op = "add", Path = "/SeriesTitle", Value = eventModel.NewSeriesTitle},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -195,7 +229,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemString {Op = "add", Path = "/SeriesVolume", Value = eventModel.NewSeriesVolume},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -207,7 +242,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "add", Path = "/Genre", Value = eventModel.NewGenre},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -219,7 +255,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "add", Path = "/Language", Value = eventModel.NewLanguage},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -231,7 +268,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemString {Op = "add", Path = "/Synopsis", Value = eventModel.NewSynopsis},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -243,7 +281,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "add", Path = "/Completed", Value = true},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -255,7 +294,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "add", Path = "/Completed", Value = false},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -267,7 +307,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "add", Path = "/Abandoned", Value = true},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -279,7 +320,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "add", Path = "/Abandoned", Value = false},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -291,7 +333,8 @@ namespace Krakkl.EventTranslator
             {
                 new PatchItemObject {Op = "add", Path = "/Published", Value = true},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()}
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
             PatchBook(patchItems, eventModel);
@@ -303,9 +346,21 @@ namespace Krakkl.EventTranslator
             var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
             var json = JsonConvert.SerializeObject(patchItems, settings);
 
-            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Patch Started - " + eventModel.EventType);
             _orchestrate.Patch(Definitions.BookCollection, bookKey, json);
-            Console.WriteLine(DateTime.UtcNow.ToLongTimeString() + " Patch Complete - " + eventModel.EventType);
+        }
+
+        private void UpdateEventAsTranslated(Result result)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject { Op = "add", Path = "/TranslatedToQueryStorage", Value = true }
+            };
+
+            var bookEventKey = result.Path.Key;
+            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            var json = JsonConvert.SerializeObject(patchItems, settings);
+
+            _orchestrate.Patch(Definitions.BookEventsCollection, bookEventKey, json);
         }
     }
 }
