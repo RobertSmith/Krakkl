@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Framework.ConfigurationModel;
@@ -31,7 +30,7 @@ namespace Krakkl.EventTranslator
 
                 Thread.Sleep(_idleCount * 1000);
 
-                var newBookEvents = _orchestrate.Search("BookEvents", "TranslatedToQueryStorage = false", 50, 0, "TimeStamp:asc");
+                var newBookEvents = _orchestrate.Search("BookEvents", "TranslatedToQueryStorage = false AND TranslationFailed = false", 50, 0, "TimeStamp:asc");
 
                 if (newBookEvents?.Count == 0)
                 {
@@ -114,13 +113,13 @@ namespace Krakkl.EventTranslator
                     }
                     catch (AggregateException ex)
                     {
-                        var patchItems = new List<object>();
+                        var patchItems = new List<object>
+                        {
+                            new PatchItemString { Op = "add", Path = "/TranslationFailureMessage", Value = ex.InnerException.Message }
+                        };
 
                         if (bookEvent.TranslationAttemptCount >= 10)
-                        {
-                            patchItems.Add(new PatchItemString { Op = "add", Path = "/TranslationFailureMessage", Value = ex.InnerException.Message });
-                            patchItems.Add(new PatchItemObject { Op = "add", Path = "/TranslatedToQueryStorage", Value = true });
-                        }
+                            patchItems.Add(new PatchItemObject {Op = "add", Path = "/TranslationFailed", Value = true});
                         else
                             patchItems.Add(new PatchItemInt { Op = "add", Path = "/TranslationAttemptCount", Value = ++bookEvent.TranslationAttemptCount });
 
@@ -130,7 +129,7 @@ namespace Krakkl.EventTranslator
 
                         _orchestrate.Patch(Definitions.BookEventsCollection, bookEventKey, json);
 
-                        // wait one sec before processing next batch
+                        // wait one sec before processing next batch due to failure
                         _idleCount = 1;
                     }
                 }

@@ -30,6 +30,7 @@ namespace Krakkl.EventTranslator
         public bool TranslatedToQueryStorage { get; set; }
         public int TranslationAttemptCount { get; set; }
         public string TranslationFailureMessage { get; set; }
+        public bool TranslationFailed { get; set; }
     }
 
     internal sealed class AuthorModel

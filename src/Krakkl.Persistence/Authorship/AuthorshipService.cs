@@ -3,7 +3,6 @@ using System.Threading;
 using Microsoft.Framework.ConfigurationModel;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
-using Newtonsoft.Json;
 
 namespace Krakkl.Persistence.Authorship
 {
