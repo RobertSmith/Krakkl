@@ -1,4 +1,6 @@
-﻿using Microsoft.Framework.ConfigurationModel;
+﻿using System;
+using System.Threading;
+using Microsoft.Framework.ConfigurationModel;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 
@@ -21,8 +23,28 @@ namespace Krakkl.Authorship.Service
 
         public async void OnBookEventSendMessage(object sender, object e)
         {
-            CloudQueueMessage message = new CloudQueueMessage(e.ToString());
-            await _queue.AddMessageAsync(message);
+            var retryCount = 0;
+            var maxTries = 5;
+
+            while (true)
+            {
+                try
+                {
+                    CloudQueueMessage message = new CloudQueueMessage(e.ToString());
+                    await _queue.AddMessageAsync(message);
+                    break;
+                }
+                catch (Exception)
+                {
+                    if (retryCount < maxTries)
+                    {
+                        retryCount++;
+                        Thread.Sleep(retryCount * 1000);
+                    }
+                    else
+                        throw;
+                }
+            }
         }
     }
 }
