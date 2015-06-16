@@ -7,5 +7,6 @@ namespace Krakkl.Authorship.Repository
     {
         BookState FindByKey(Guid key);
         Task<BookState> FindByKeyAsync(Guid key);
+        void Save(BookState state);
     }
 }
