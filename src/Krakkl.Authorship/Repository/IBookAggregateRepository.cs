@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Krakkl.Authorship.Core;
 
 namespace Krakkl.Authorship.Repository
 {

@@ -3,7 +3,7 @@ using System.Linq;
 using Krakkl.Authorship.Models;
 using Krakkl.Authorship.Repository;
 
-namespace Krakkl.Authorship.Core
+namespace Krakkl.Authorship.Aggregates
 {
     internal class BookAggregate
     {

@@ -21,11 +21,55 @@ namespace Krakkl.Console
             var timer = new Stopwatch();
             timer.Start();
 
-            var bookKey = _bookService.StartANewBook(authorKey, "Joe Shmoe", "en", "English");
-            _bookService.AddAuthorToBook(bookKey, authorKey, newAuthorKey, "Jimmy the Greek");
-            _bookService.RemoveAuthorFromBook(bookKey, newAuthorKey, authorKey, "Joe Shmoe");
-            _bookService.ChangeBookGenre(bookKey, newAuthorKey, "ActionAdventure", "Action & Adventure", true);
-            _bookService.RetitleBook(bookKey, newAuthorKey, "The End of All Things");
+            var startANewBook = new StartANewBookCommand
+            {
+                AuthorKey = authorKey,
+                AuthorName = "Joe Shmoe",
+                LanguageKey = "en",
+                LanguageName = "English"
+            };
+
+            var bookKey = _bookService.When(startANewBook);
+
+            var addAuthor = new AddAuthorToBookCommand
+            {
+                BookKey = bookKey,
+                AuthorKey = authorKey,
+                NewAuthorKey = newAuthorKey,
+                NewAuthorName = "Jimmy the Greek"
+            };
+
+            _bookService.When(addAuthor);
+
+            var removeAuthor = new RemoveAuthorFromBookCommand
+            {
+                BookKey = bookKey,
+                AuthorKey = newAuthorKey,
+                RemoveAuthorKey = authorKey,
+                RemoveAuthorName = "Joe Shmoe"
+            };
+
+            _bookService.When(removeAuthor);
+
+            var changeGenre = new ChangeBookGenreCommand
+            {
+                BookKey = bookKey,
+                AuthorKey = newAuthorKey,
+                GenreKey = "ActionAdventure",
+                GenreName = "Action & Adventure",
+                IsFiction = true
+            };
+
+            _bookService.When(changeGenre);
+
+            var changeTitle = new RetitleBookCommand
+            {
+                BookKey = bookKey,
+                AuthorKey = newAuthorKey,
+                Title = "The End of all Things"
+            };
+
+            _bookService.When(changeTitle);
 
             timer.Stop();
 

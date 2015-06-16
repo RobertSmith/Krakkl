@@ -5,7 +5,7 @@ using Krakkl.Authorship.Models;
 using Krakkl.Authorship.Repository;
 using Newtonsoft.Json;
 
-namespace Krakkl.Authorship.Core
+namespace Krakkl.Authorship.Aggregates
 {
     // all event arguments should inherit from EventArgs
     internal class BookEventArgs : EventArgs

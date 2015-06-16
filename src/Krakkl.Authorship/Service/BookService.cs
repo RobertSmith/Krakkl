@@ -1,12 +1,12 @@
 ﻿using System;
+using Krakkl.Authorship.Aggregates;
 using Krakkl.Authorship.Cache;
-using Krakkl.Authorship.Core;
 using Krakkl.Authorship.Models;
 
 namespace Krakkl.Authorship.Service
 {
     /// <summary>
-    /// This is the only public class available for the Authorship-Book domain. It is an Anti Corruption Layer and will provide translation 
+    /// This is the only public class available for the Authorship\Book domain. It is an Anti Corruption Layer and will provide translation 
     /// to and from the book aggregate.
     /// </summary>
     public class BookService
@@ -21,22 +21,22 @@ namespace Krakkl.Authorship.Service
             _messagingService = new MessagingService();
         }
 
-        public Guid StartANewBook(Guid authorKey, string authorName, string languageKey, string languageName)
+        public Guid When(StartANewBookCommand cmd)
         {
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            if (string.IsNullOrEmpty(authorName))
+            if (string.IsNullOrEmpty(cmd.AuthorName))
                 throw new Exception("Author Name is required");
 
-            if (string.IsNullOrEmpty(languageKey))
+            if (string.IsNullOrEmpty(cmd.LanguageKey))
                 throw new Exception("Language Key is required");
 
-            if (string.IsNullOrEmpty(languageName))
+            if (string.IsNullOrEmpty(cmd.LanguageName))
                 throw new Exception("Language Name is required");
 
-            var author = new AuthorModel(authorKey, authorName);
-            var language = new LanguageModel(languageKey, languageName);
+            var author = new AuthorModel(cmd.AuthorKey, cmd.AuthorName);
+            var language = new LanguageModel(cmd.LanguageKey, cmd.LanguageName);
 
             var bookAggregate = new BookAggregate(null);
             AddBookAggregateEventHandlers(bookAggregate);
@@ -47,231 +47,231 @@ namespace Krakkl.Authorship.Service
             return bookKey;
         }
 
-        public void AddAuthorToBook(Guid bookKey, Guid authorKey, Guid newAuthorKey, string newAuthorName)
+        public void When(AddAuthorToBookCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            if (newAuthorKey == null)
+            if (cmd.NewAuthorKey == null)
                 throw new Exception("New Author Key is required");
 
-            if (string.IsNullOrEmpty(newAuthorName))
+            if (string.IsNullOrEmpty(cmd.NewAuthorName))
                 throw new Exception("New Author Name is required");
 
-            var newAuthor = new AuthorModel(newAuthorKey, newAuthorName);
-            var bookAggregate = FindBookAggregate(bookKey);
+            var newAuthor = new AuthorModel(cmd.NewAuthorKey, cmd.NewAuthorName);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.AddAuthor(authorKey, newAuthor);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.AddAuthor(cmd.AuthorKey, newAuthor);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void RemoveAuthorFromBook(Guid bookKey, Guid authorKey, Guid removeAuthorKey, string removeAuthorName)
+        public void When(RemoveAuthorFromBookCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            if (removeAuthorKey == null)
+            if (cmd.RemoveAuthorKey == null)
                 throw new Exception("Remove Author Key is required");
 
-            if (string.IsNullOrEmpty(removeAuthorName))
+            if (string.IsNullOrEmpty(cmd.RemoveAuthorName))
                 throw new Exception("Remove Author Name is required");
 
-            var removeAuthor = new AuthorModel(removeAuthorKey, removeAuthorName);
-            var bookAggregate = FindBookAggregate(bookKey);
+            var removeAuthor = new AuthorModel(cmd.RemoveAuthorKey, cmd.RemoveAuthorName);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.RemoveAuthor(authorKey, removeAuthor);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.RemoveAuthor(cmd.AuthorKey, removeAuthor);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void RetitleBook(Guid bookKey, Guid authorKey, string newTitle)
+        public void When(RetitleBookCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            if (string.IsNullOrEmpty(newTitle))
-                newTitle = "Untitled";
+            if (string.IsNullOrEmpty(cmd.Title))
+                cmd.Title = "Untitled";
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.Retitle(authorKey, newTitle);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.Retitle(cmd.AuthorKey, cmd.Title);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void ChangeBookSubtitle(Guid bookKey, Guid authorKey, string subtitle)
+        public void When(ChangeBookSubtitleCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.ChangeSubTitle(authorKey, subtitle);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.ChangeSubTitle(cmd.AuthorKey, cmd.SubTitle);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void ChangeBookSeriesTitle(Guid bookKey, Guid authorKey, string seriesTitle)
+        public void When(ChangeBookSeriesTitleCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.ChangeSeriesTitle(authorKey, seriesTitle);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.ChangeSeriesTitle(cmd.AuthorKey, cmd.SeriesTitle);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void ChangeBookSeriesVolume(Guid bookKey, Guid authorKey, string seriesVolume)
+        public void When(ChangeBookSeriesVolumeCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.ChangeSeriesVolume(authorKey, seriesVolume);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.ChangeSeriesVolume(cmd.AuthorKey, cmd.SeriesVolume);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void ChangeBookGenre(Guid bookKey, Guid authorKey, string genreKey, string genreName, bool isFiction)
+        public void When(ChangeBookGenreCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            if (string.IsNullOrEmpty(genreKey))
+            if (string.IsNullOrEmpty(cmd.GenreKey))
                 throw new Exception("Gnere Key is required");
 
-            if (string.IsNullOrEmpty(genreName))
+            if (string.IsNullOrEmpty(cmd.GenreName))
                 throw new Exception("Gnere Name is required");
 
-            var newGenre = new GenreModel(genreKey, genreName, isFiction);
-            var bookAggregate = FindBookAggregate(bookKey);
+            var newGenre = new GenreModel(cmd.GenreKey, cmd.GenreName, cmd.IsFiction);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.ChangeGenre(authorKey, newGenre);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.ChangeGenre(cmd.AuthorKey, newGenre);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void ChangeBookEditorLanguage(Guid bookKey, Guid authorKey, string languageKey, string languageName)
+        public void When(ChangeBookEditorLanguageCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            if (string.IsNullOrEmpty(languageKey))
+            if (string.IsNullOrEmpty(cmd.LanguageKey))
                 throw new Exception("Language Key is required");
 
-            if (string.IsNullOrEmpty(languageName))
+            if (string.IsNullOrEmpty(cmd.LanguageName))
                 throw new Exception("Language Name is required");
 
-            var newLanguage = new LanguageModel(languageKey, languageName);
-            var bookAggregate = FindBookAggregate(bookKey);
+            var newLanguage = new LanguageModel(cmd.LanguageKey, cmd.LanguageName);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.ChangeEditorLanguage(authorKey, newLanguage);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.ChangeEditorLanguage(cmd.AuthorKey, newLanguage);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void ChangeBookSynopsis(Guid bookKey, Guid authorKey, string newSynopsis)
+        public void When(ChangeBookSynopsisCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.UpdateSynopsis(authorKey, newSynopsis);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.UpdateSynopsis(cmd.AuthorKey, cmd.Synopsis);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void CompleteBook(Guid bookKey, Guid authorKey)
+        public void When(CompleteBookCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.CompleteBook(authorKey);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.CompleteBook(cmd.AuthorKey);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void SetBookInProgress(Guid bookKey, Guid authorKey)
+        public void When(SetBookInProgressCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.SetBookAsInProgress(authorKey);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.SetBookAsInProgress(cmd.AuthorKey);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void AbandonBook(Guid bookKey, Guid authorKey)
+        public void When(AbandonBookCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.AbandonBook(authorKey);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.AbandonBook(cmd.AuthorKey);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void ReviveBook(Guid bookKey, Guid authorKey)
+        public void When(ReviveBookCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.ReviveBook(authorKey);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.ReviveBook(cmd.AuthorKey);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
-        public void PublishBook(Guid bookKey, Guid authorKey)
+        public void When(PublishBookCommand cmd)
         {
-            if (bookKey == null)
+            if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
 
-            if (authorKey == null)
+            if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(bookKey);
+            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.PublishBook(authorKey);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            bookAggregate.PublishBook(cmd.AuthorKey);
+            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
         }
 
         #region Private Methods
