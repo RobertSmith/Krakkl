@@ -28,5 +28,8 @@ namespace Krakkl.Authorship.Repository
             var result = await _orchestrate.GetAsync(Definitions.BookCollection, key.ToString());
             return JsonConvert.DeserializeObject<BookState>(result.Value.ToString());
         }
+
+        public void Save(BookState state)
+        { }
     }
 }

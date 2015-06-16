@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Krakkl.Authorship.Core;
 
 namespace Krakkl.Authorship.Repository
 {
@@ -8,5 +7,6 @@ namespace Krakkl.Authorship.Repository
     {
         BookState FindByKey(Guid key);
         Task<BookState> FindByKeyAsync(Guid key);
+        void Save(BookState state);
     }
 }
