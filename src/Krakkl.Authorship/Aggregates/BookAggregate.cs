@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
 using Krakkl.Authorship.Repository;
@@ -8,34 +9,18 @@ namespace Krakkl.Authorship.Aggregates
     internal class BookAggregate
     {
         private BookState _state;
-
-        public event EventHandler<BookCreatedEventArgs> BookCreated;
-        public event EventHandler<AuthorAddedToBookEventArgs> AuthorAddedToBook;
-        public event EventHandler<AuthorRemovedFromBookEventArgs> AuthorRemovedFromBook;
-        public event EventHandler<BookRetitledEventArgs> BookRetitled;
-        public event EventHandler<BookSubTitleChangedEventArgs> BookSubTitleChanged;
-        public event EventHandler<BookSeriesTitleChangedEventArgs> BookSeriesTitleChanged;
-        public event EventHandler<BookSeriesVolumeChangedEventArgs> BookSeriesVolumeChanged;
-        public event EventHandler<BookGenreChangedEventArgs> BookGenreChanged;
-        public event EventHandler<BookLanguageChangedEventArgs> BookLanguageChanged;
-        public event EventHandler<BookSynopsisUpdatedEventArgs> BookSynopsisUpdated;
-        public event EventHandler<BookCompletedEventArgs> BookCompleted;
-        public event EventHandler<BookSetAsInProgressEventArgs> BookSetAsInProgress;
-        public event EventHandler<BookAbandonedEventArgs> BookAbandoned;
-        public event EventHandler<BookRevivedEventArgs> BookRevived;
-        public event EventHandler<BookPublishedEventArgs> BookPublished;
-
-        public Guid Key => _state.Key;
+        private int _version;
+        private List<object> _uncommittedEvents = new List<object>();
 
         public BookAggregate(BookState state)
         {
             _state = state;
         }
 
-        public BookAggregate(Guid key)
+        public BookAggregate(IEnumerable<object> events)
         {
-            var repo = new BookAggregateRepositoryOrchestrate();
-            _state = repo.FindByKey<BookState>(key);
+            foreach (var e in events)
+                Apply(e);
         }
 
         public Guid StartANewBook(AuthorModel author, LanguageModel language)
@@ -49,12 +34,8 @@ namespace Krakkl.Authorship.Aggregates
             _state.Key = Guid.NewGuid();
             _state.Authors.Add(author);
             _state.Language = language;
-            _state.CreatedAt = DateTime.UtcNow;
-            _state.CreatedBy = author.Key;
 
-            // Fire BookCreated Event
-            var target = BookCreated;
-            target?.Invoke(this, new BookCreatedEventArgs(_state));
+            Publish(new BookCreatedEventArgs(_state, author.Key));
 
             return _state.Key;
         }
@@ -68,12 +49,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Authors.Add(newAuthor);
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire AuthorAddedToBook Event
-            var target = AuthorAddedToBook;
-            target?.Invoke(this, new AuthorAddedToBookEventArgs(_state, newAuthor));
+            Publish(new AuthorAddedToBookEventArgs(_state, newAuthor, authorKey));
         }
 
         public void RemoveAuthor(Guid authorKey, AuthorModel removedAuthor)
@@ -88,12 +65,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Authors.Remove(_state.Authors.Single(a => a.Key == removedAuthor.Key));
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire AuthorRemovedFromBook Event
-            var target = AuthorRemovedFromBook;
-            target?.Invoke(this, new AuthorRemovedFromBookEventArgs(_state, removedAuthor, _state.Authors));
+            Publish(new AuthorRemovedFromBookEventArgs(_state, removedAuthor, _state.Authors, authorKey));
         }
 
         public void Retitle(Guid authorKey, string newTitle)
@@ -105,12 +78,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Title = newTitle;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookRetitled Event
-            var target = BookRetitled;
-            target?.Invoke(this, new BookRetitledEventArgs(_state));
+            Publish(new BookRetitledEventArgs(_state, authorKey));
         }
 
         public void ChangeSubTitle(Guid authorKey, string newSubTitle)
@@ -122,12 +91,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.SubTitle = newSubTitle;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookSubTitleChanged Event
-            var target = BookSubTitleChanged;
-            target?.Invoke(this, new BookSubTitleChangedEventArgs(_state));
+            Publish(new BookSubTitleChangedEventArgs(_state, authorKey));
         }
 
         public void ChangeSeriesTitle(Guid authorKey, string newSeriesTitle)
@@ -139,12 +104,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.SeriesTitle = newSeriesTitle;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookSeriesTitleChanged Event
-            var target = BookSeriesTitleChanged;
-            target?.Invoke(this, new BookSeriesTitleChangedEventArgs(_state));
+            Publish(new BookSeriesTitleChangedEventArgs(_state, authorKey));
         }
 
         public void ChangeSeriesVolume(Guid authorKey, string newSeriesVolume)
@@ -156,12 +117,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.SeriesVolume = newSeriesVolume;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookSeriesVolumeChanged Event
-            var target = BookSeriesVolumeChanged;
-            target?.Invoke(this, new BookSeriesVolumeChangedEventArgs(_state));
+            Publish(new BookSeriesVolumeChangedEventArgs(_state, authorKey));
         }
 
         public void ChangeGenre(Guid authorKey, GenreModel newGenre)
@@ -173,12 +130,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Genre = newGenre;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookGenreChanged Event
-            var target = BookGenreChanged;
-            target?.Invoke(this, new BookGenreChangedEventArgs(_state));
+            Publish(new BookGenreChangedEventArgs(_state, authorKey));
         }
 
         public void ChangeEditorLanguage(Guid authorKey, LanguageModel newLanguage)
@@ -190,12 +143,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Language = newLanguage;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookLanguageChanged Event
-            var target = BookLanguageChanged;
-            target?.Invoke(this, new BookLanguageChangedEventArgs(_state));
+            Publish(new BookLanguageChangedEventArgs(_state, authorKey));
         }
 
         public void UpdateSynopsis(Guid authorKey, string newSynopsis)
@@ -207,12 +156,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Synopsis = newSynopsis;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire SynopsisUpdated Event
-            var target = BookSynopsisUpdated;
-            target?.Invoke(this, new BookSynopsisUpdatedEventArgs(_state));
+            Publish(new BookSynopsisUpdatedEventArgs(_state, authorKey));
         }
 
         public void CompleteBook(Guid authorKey)
@@ -224,12 +169,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Completed = true;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookCompleted Event
-            var target = BookCompleted;
-            target?.Invoke(this, new BookCompletedEventArgs(_state));
+            Publish(new BookCompletedEventArgs(_state, authorKey));
         }
 
         public void SetBookAsInProgress(Guid authorKey)
@@ -241,12 +182,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Completed = false;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookSetAsInProgress Event
-            var target = BookSetAsInProgress;
-            target?.Invoke(this, new BookSetAsInProgressEventArgs(_state));
+            Publish(new BookSetAsInProgressEventArgs(_state, authorKey));
         }
 
         public void AbandonBook(Guid authorKey)
@@ -258,12 +195,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Abandoned = true;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookAbandoned Event
-            var target = BookAbandoned;
-            target?.Invoke(this, new BookAbandonedEventArgs(_state));
+            Publish(new BookAbandonedEventArgs(_state, authorKey));
         }
 
         public void ReviveBook(Guid authorKey)
@@ -275,12 +208,8 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Abandoned = false;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookRevived Event
-            var target = BookRevived;
-            target?.Invoke(this, new BookRevivedEventArgs(_state));
+            Publish(new BookRevivedEventArgs(_state, authorKey));
         }
 
         public void PublishBook(Guid authorKey)
@@ -292,17 +221,116 @@ namespace Krakkl.Authorship.Aggregates
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Published = true;
-            _state.UpdatedAt = DateTime.UtcNow;
-            _state.UpdatedBy = authorKey;
 
-            // Fire BookPublished Event
-            var target = BookPublished;
-            target?.Invoke(this, new BookPublishedEventArgs(_state));
+            Publish(new BookPublishedEventArgs(_state, authorKey));
         }
 
         private bool IsValidAuthor(Guid authorKey)
         {
             return _state.Authors.Any(author => author.Key.Equals(authorKey));
         }
+
+        private void Publish(object e)
+        {
+            _uncommittedEvents.Add(e);
+        }
+
+        #region Re-Hydrate Aggregate
+
+        private void Apply(object e)
+        {
+            _version++;
+            RedirectToWhen.InvokeEventOptional(this, e);
+        }
+
+        // ReSharper disable UnusedMember.Local
+        private void When(BookCreatedEventArgs e)
+        {
+            _state.Key = e.BookKey;
+            _state.Authors.Add(e.AddedAuthor);
+            _state.Language = new LanguageModel(e.LanguageKey, e.LanguageName);
+        }
+
+        private void When(AuthorAddedToBookEventArgs e)
+        {
+            _state.Authors.Add(e.AddedAuthor);
+        }
+
+        private void When(AuthorRemovedFromBookEventArgs e)
+        {
+            foreach (var author in _state.Authors)
+            {
+                if (author.Key == e.RemovedAuthor.Key)
+                {
+                    _state.Authors.Remove(author);
+                    break;
+                }
+            }
+        }
+
+        private void When(BookRetitledEventArgs e)
+        {
+            _state.Title = e.NewTitle;
+        }
+
+        private void When(BookSubTitleChangedEventArgs e)
+        {
+            _state.SubTitle = e.NewSubTitle;
+        }
+
+        private void When(BookSeriesTitleChangedEventArgs e)
+        {
+            _state.SeriesTitle = e.NewSeriesTitle;
+        }
+
+        private void When(BookSeriesVolumeChangedEventArgs e)
+        {
+            _state.SeriesVolume = e.NewSeriesVolume;
+        }
+
+        private void When(BookGenreChangedEventArgs e)
+        {
+            _state.Genre = e.NewGenre;
+        }
+
+        private void When(BookLanguageChangedEventArgs e)
+        {
+            _state.Language = e.NewLanguage;
+        }
+
+        private void When(BookSynopsisUpdatedEventArgs e)
+        {
+            _state.Synopsis = e.NewSynopsis;
+        }
+
+        // ReSharper disable UnusedParameter.Local
+        private void When(BookCompletedEventArgs e)
+        {
+            _state.Completed = true;
+        }
+
+        private void When(BookSetAsInProgressEventArgs e)
+        {
+            _state.Completed = false;
+        }
+
+        private void When(BookAbandonedEventArgs e)
+        {
+            _state.Abandoned = true;
+        }
+
+        private void When(BookRevivedEventArgs e)
+        {
+            _state.Abandoned = false;
+        }
+
+        private void When(BookPublishedEventArgs e)
+        {
+            _state.Published = true;
+        }
+        // ReSharper restore UnusedParameter.Local
+        // ReSharper restore UnusedMember.Local
+
+        #endregion
     }
 }

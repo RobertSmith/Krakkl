@@ -41,11 +41,10 @@ namespace Krakkl.Authorship.Service
             var author = new AuthorModel(cmd.AuthorKey, cmd.AuthorName);
             var language = new LanguageModel(cmd.LanguageKey, cmd.LanguageName);
 
-            var bookAggregate = new BookAggregate(null);
-            AddBookAggregateEventHandlers(bookAggregate);
-
+            var bookAggregate = new BookAggregate(new BookState());
             var bookKey = bookAggregate.StartANewBook(author, language);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
+            _bookAggregateRepository.Save(bookAggregate);
 
             return bookKey;
         }
@@ -65,10 +64,8 @@ namespace Krakkl.Authorship.Service
                 throw new Exception("New Author Name is required");
 
             var newAuthor = new AuthorModel(cmd.NewAuthorKey, cmd.NewAuthorName);
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.AddAuthor(cmd.AuthorKey, newAuthor);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.AddAuthor(cmd.AuthorKey, newAuthor));
         }
 
         public void When(RemoveAuthorFromBookCommand cmd)
@@ -86,10 +83,8 @@ namespace Krakkl.Authorship.Service
                 throw new Exception("Remove Author Name is required");
 
             var removeAuthor = new AuthorModel(cmd.RemoveAuthorKey, cmd.RemoveAuthorName);
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.RemoveAuthor(cmd.AuthorKey, removeAuthor);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.RemoveAuthor(cmd.AuthorKey, removeAuthor));
         }
 
         public void When(RetitleBookCommand cmd)
@@ -103,10 +98,7 @@ namespace Krakkl.Authorship.Service
             if (string.IsNullOrEmpty(cmd.Title))
                 cmd.Title = "Untitled";
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.Retitle(cmd.AuthorKey, cmd.Title);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.Retitle(cmd.AuthorKey, cmd.Title));
         }
 
         public void When(ChangeBookSubtitleCommand cmd)
@@ -117,10 +109,7 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.ChangeSubTitle(cmd.AuthorKey, cmd.SubTitle);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeSubTitle(cmd.AuthorKey, cmd.SubTitle));
         }
 
         public void When(ChangeBookSeriesTitleCommand cmd)
@@ -131,10 +120,7 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.ChangeSeriesTitle(cmd.AuthorKey, cmd.SeriesTitle);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeSeriesTitle(cmd.AuthorKey, cmd.SeriesTitle));
         }
 
         public void When(ChangeBookSeriesVolumeCommand cmd)
@@ -145,10 +131,7 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.ChangeSeriesVolume(cmd.AuthorKey, cmd.SeriesVolume);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeSeriesVolume(cmd.AuthorKey, cmd.SeriesVolume));
         }
 
         public void When(ChangeBookGenreCommand cmd)
@@ -166,10 +149,8 @@ namespace Krakkl.Authorship.Service
                 throw new Exception("Gnere Name is required");
 
             var newGenre = new GenreModel(cmd.GenreKey, cmd.GenreName, cmd.IsFiction);
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.ChangeGenre(cmd.AuthorKey, newGenre);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeGenre(cmd.AuthorKey, newGenre));
         }
 
         public void When(ChangeBookEditorLanguageCommand cmd)
@@ -187,10 +168,8 @@ namespace Krakkl.Authorship.Service
                 throw new Exception("Language Name is required");
 
             var newLanguage = new LanguageModel(cmd.LanguageKey, cmd.LanguageName);
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
 
-            bookAggregate.ChangeEditorLanguage(cmd.AuthorKey, newLanguage);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeEditorLanguage(cmd.AuthorKey, newLanguage));
         }
 
         public void When(ChangeBookSynopsisCommand cmd)
@@ -201,10 +180,7 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.UpdateSynopsis(cmd.AuthorKey, cmd.Synopsis);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.UpdateSynopsis(cmd.AuthorKey, cmd.Synopsis));
         }
 
         public void When(CompleteBookCommand cmd)
@@ -215,10 +191,7 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.CompleteBook(cmd.AuthorKey);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.CompleteBook(cmd.AuthorKey));
         }
 
         public void When(SetBookInProgressCommand cmd)
@@ -229,10 +202,7 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.SetBookAsInProgress(cmd.AuthorKey);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.SetBookAsInProgress(cmd.AuthorKey));
         }
 
         public void When(AbandonBookCommand cmd)
@@ -243,10 +213,7 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.AbandonBook(cmd.AuthorKey);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.AbandonBook(cmd.AuthorKey));
         }
 
         public void When(ReviveBookCommand cmd)
@@ -257,10 +224,7 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.ReviveBook(cmd.AuthorKey);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ReviveBook(cmd.AuthorKey));
         }
 
         public void When(PublishBookCommand cmd)
@@ -271,52 +235,16 @@ namespace Krakkl.Authorship.Service
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
 
-            var bookAggregate = FindBookAggregate(cmd.BookKey);
-
-            bookAggregate.PublishBook(cmd.AuthorKey);
-            BookAggregateCache.UpdateItem(cmd.BookKey, bookAggregate);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.PublishBook(cmd.AuthorKey));
         }
 
         #region Private Methods
 
-        private void Act<T>(Guid id, Action<T> action)
+        private void Act<T>(Guid key, Action<T> action)
         {
-            var aggregate = _bookAggregateRepository.FindByKey<T>(id);
+            var aggregate = _bookAggregateRepository.FindByKey<T>(key);
             action(aggregate);
             _bookAggregateRepository.Save(aggregate);
-        }
-
-        private BookAggregate FindBookAggregate(Guid key)
-        {
-            var bookAggregate = BookAggregateCache.Get(key) as BookAggregate;
-
-            if (bookAggregate == null)
-            {
-                bookAggregate = new BookAggregate(key);
-                AddBookAggregateEventHandlers(bookAggregate);
-            }
-
-            return bookAggregate;
-        }
-
-        private void AddBookAggregateEventHandlers(BookAggregate bookAggregate)
-        {
-            //TODO: Add more!
-            bookAggregate.BookCreated += _messagingService.OnBookEventSendMessage;
-            bookAggregate.AuthorAddedToBook += _messagingService.OnBookEventSendMessage;
-            bookAggregate.AuthorRemovedFromBook += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookRetitled += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookSubTitleChanged += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookSeriesTitleChanged += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookSeriesVolumeChanged += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookGenreChanged += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookLanguageChanged += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookSynopsisUpdated += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookCompleted += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookSetAsInProgress += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookAbandoned += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookRevived += _messagingService.OnBookEventSendMessage;
-            bookAggregate.BookPublished += _messagingService.OnBookEventSendMessage;
         }
 
         #endregion

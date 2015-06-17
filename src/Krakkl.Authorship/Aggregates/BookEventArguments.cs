@@ -18,7 +18,7 @@ namespace Krakkl.Authorship.Aggregates
         public BookEventArgs(BookState state)
         {
             BookKey = state.Key;
-            TimeStamp = state.UpdatedAt.GetValueOrDefault(state.CreatedAt);
+            TimeStamp = DateTime.UtcNow;
         }
 
         public override string ToString()
@@ -37,13 +37,13 @@ namespace Krakkl.Authorship.Aggregates
         public Guid CreatedBy { get; private set; }
         public string EventType => "BookCreated";
 
-        public BookCreatedEventArgs(BookState state) : base(state)
+        public BookCreatedEventArgs(BookState state, Guid createdBy) : base(state)
         {
             AddedAuthor = state.Authors.First();
             LanguageKey = state.Language?.Key;
             LanguageName = state.Language?.Name;
-            CreatedAt = state.CreatedAt;
-            CreatedBy = state.CreatedBy;
+            CreatedAt = TimeStamp;
+            CreatedBy = createdBy;
         }
     }
 
@@ -54,11 +54,11 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "AuthorAddedToBook";
 
-        public AuthorAddedToBookEventArgs(BookState state, AuthorModel addedAuthor) : base(state)
+        public AuthorAddedToBookEventArgs(BookState state, AuthorModel addedAuthor, Guid updatedBy) : base(state)
         {
             AddedAuthor = addedAuthor;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -70,12 +70,12 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "AuthorRemovedFromBook";
 
-        public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor, List<AuthorModel> validAuthors) : base(state)
+        public AuthorRemovedFromBookEventArgs(BookState state, AuthorModel removedAuthor, List<AuthorModel> validAuthors, Guid updatedBy) : base(state)
         {
             RemovedAuthor = removedAuthor;
             ValidAuthors = validAuthors;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -86,11 +86,11 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookRetitled";
 
-        public BookRetitledEventArgs(BookState state) : base(state)
+        public BookRetitledEventArgs(BookState state, Guid updatedBy) : base(state)
         {
             NewTitle = state.Title;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -101,11 +101,11 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSubTitleChanged";
 
-        public BookSubTitleChangedEventArgs(BookState state) : base(state)
+        public BookSubTitleChangedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
             NewSubTitle = state.SubTitle;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -116,11 +116,11 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSeriesTitleChanged";
 
-        public BookSeriesTitleChangedEventArgs(BookState state) : base(state)
+        public BookSeriesTitleChangedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
             NewSeriesTitle = state.SeriesTitle;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -131,11 +131,11 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSeriesVolumeChanged";
 
-        public BookSeriesVolumeChangedEventArgs(BookState state) : base(state)
+        public BookSeriesVolumeChangedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
             NewSeriesVolume = state.SeriesTitle;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -146,11 +146,11 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookGenreChanged";
 
-        public BookGenreChangedEventArgs(BookState state) : base(state)
+        public BookGenreChangedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
             NewGenre = state.Genre;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -161,11 +161,11 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookLanguageChanged";
 
-        public BookLanguageChangedEventArgs(BookState state) : base(state)
+        public BookLanguageChangedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
             NewLanguage = state.Language;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -176,11 +176,11 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSynopsisUpdated";
 
-        public BookSynopsisUpdatedEventArgs(BookState state) : base(state)
+        public BookSynopsisUpdatedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
             NewSynopsis = state.SeriesTitle;
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -190,10 +190,10 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookCompleted";
 
-        public BookCompletedEventArgs(BookState state) : base(state)
+        public BookCompletedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -203,10 +203,10 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookSetAsInProgress";
 
-        public BookSetAsInProgressEventArgs(BookState state) : base(state)
+        public BookSetAsInProgressEventArgs(BookState state, Guid updatedBy) : base(state)
         {
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -216,10 +216,10 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookAbandoned";
 
-        public BookAbandonedEventArgs(BookState state) : base(state)
+        public BookAbandonedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -229,10 +229,10 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookRevived";
 
-        public BookRevivedEventArgs(BookState state) : base(state)
+        public BookRevivedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -242,10 +242,10 @@ namespace Krakkl.Authorship.Aggregates
         public Guid UpdatedBy { get; private set; }
         public string EventType => "BookPublished";
 
-        public BookPublishedEventArgs(BookState state) : base(state)
+        public BookPublishedEventArgs(BookState state, Guid updatedBy) : base(state)
         {
-            UpdatedAt = state.UpdatedAt.GetValueOrDefault();
-            UpdatedBy = state.UpdatedBy.GetValueOrDefault();
+            UpdatedAt = TimeStamp;
+            UpdatedBy = updatedBy;
         }
     }
 }
