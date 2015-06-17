@@ -2,7 +2,7 @@
 
 namespace Krakkl.Authorship.Models
 {
-    internal sealed class AuthorModel
+    public sealed class AuthorModel
     {
         public Guid Key { get; set; }
         public string Name { get; set; }

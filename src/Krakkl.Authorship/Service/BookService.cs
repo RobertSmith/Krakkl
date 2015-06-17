@@ -2,11 +2,12 @@
 using Krakkl.Authorship.Aggregates;
 using Krakkl.Authorship.Cache;
 using Krakkl.Authorship.Models;
+using Krakkl.Authorship.Repository;
 
 namespace Krakkl.Authorship.Service
 {
     /// <summary>
-    /// This is the only public class available for the Authorship\Book domain. It is an Anti Corruption Layer and will provide translation 
+    /// This is the only class available for the Authorship\Book domain. It is an Anti Corruption Layer and will provide translation 
     /// to and from the book aggregate.
     /// </summary>
     public class BookService
@@ -14,11 +15,13 @@ namespace Krakkl.Authorship.Service
         public long CacheCount => BookAggregateCache.Count();
 
         private readonly MessagingService _messagingService;
+        private readonly IBookAggregateRepository _bookAggregateRepository;
 
-        public BookService()
+        public BookService(IBookAggregateRepository repository)
         {
             //TODO: Init Moderation Module
             _messagingService = new MessagingService();
+            _bookAggregateRepository = repository;
         }
 
         public Guid When(StartANewBookCommand cmd)
@@ -275,6 +278,13 @@ namespace Krakkl.Authorship.Service
         }
 
         #region Private Methods
+
+        private void Act<T>(Guid id, Action<T> action)
+        {
+            var aggregate = _bookAggregateRepository.FindByKey<T>(id);
+            action(aggregate);
+            _bookAggregateRepository.Save(aggregate);
+        }
 
         private BookAggregate FindBookAggregate(Guid key)
         {

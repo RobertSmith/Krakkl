@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Microsoft.Framework.ConfigurationModel;
 using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Repository
 {
     //TODO: THIS NEEDS TO GO THROUGH THE QUERY SIDE
-    internal class BookAggregateRepositoryOrchestrate : IBookAggregateRepository
+    public class BookAggregateRepositoryOrchestrate : IBookAggregateRepository
     {
         private readonly Orchestrate.Net.Orchestrate _orchestrate;
 
@@ -17,19 +16,13 @@ namespace Krakkl.Authorship.Repository
             _orchestrate = new Orchestrate.Net.Orchestrate(configuration["Data:Orchestrate:ApiKey"]);
         }
 
-        public BookState FindByKey(Guid key)
+        public T FindByKey<T>(Guid key)
         {
             var result = _orchestrate.Get(Definitions.BookCollection, key.ToString());
-            return JsonConvert.DeserializeObject<BookState>(result.Value.ToString());
+            return JsonConvert.DeserializeObject<T>(result.Value.ToString());
         }
 
-        public async Task<BookState> FindByKeyAsync(Guid key)
-        {
-            var result = await _orchestrate.GetAsync(Definitions.BookCollection, key.ToString());
-            return JsonConvert.DeserializeObject<BookState>(result.Value.ToString());
-        }
-
-        public void Save(BookState state)
+        public void Save(object state)
         { }
     }
 }

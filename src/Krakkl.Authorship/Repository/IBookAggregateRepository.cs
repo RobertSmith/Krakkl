@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Krakkl.Authorship.Repository
 {
-    internal interface IBookAggregateRepository
+    public interface IBookAggregateRepository
     {
-        BookState FindByKey(Guid key);
-        Task<BookState> FindByKeyAsync(Guid key);
-        void Save(BookState state);
+        T FindByKey<T>(Guid key);
+        void Save(object state);
     }
 }

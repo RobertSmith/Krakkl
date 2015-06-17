@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Repository
 {
-    internal sealed class BookState
+    public sealed class BookState
     {
         [JsonIgnore]
         public Guid Key { get; set; }

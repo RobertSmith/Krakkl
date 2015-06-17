@@ -1,6 +1,6 @@
 ﻿namespace Krakkl.Authorship.Models
 {
-    internal sealed class GenreModel
+    public sealed class GenreModel
     {
         public string Key { get; set; }
         public string Name { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Krakkl.Authorship.Models
 {
-    internal sealed class ModerationIssueModel
+    public sealed class ModerationIssueModel
     {
         public string Field { get; set; }
         public string Reason { get; set; }

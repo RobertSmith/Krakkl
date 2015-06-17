@@ -35,7 +35,7 @@ namespace Krakkl.Authorship.Aggregates
         public BookAggregate(Guid key)
         {
             var repo = new BookAggregateRepositoryOrchestrate();
-            _state = repo.FindByKey(key);
+            _state = repo.FindByKey<BookState>(key);
         }
 
         public Guid StartANewBook(AuthorModel author, LanguageModel language)
