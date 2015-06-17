@@ -2,7 +2,7 @@
 using Krakkl.Authorship.Aggregates;
 using Krakkl.Authorship.Cache;
 using Krakkl.Authorship.Models;
-using Krakkl.Authorship.Repository;
+using Krakkl.Repository;
 
 namespace Krakkl.Authorship.Service
 {
@@ -15,13 +15,13 @@ namespace Krakkl.Authorship.Service
         public long CacheCount => BookAggregateCache.Count();
 
         private readonly MessagingService _messagingService;
-        private readonly IBookAggregateRepository _bookAggregateRepository;
+        private readonly IBookEventsRepository _bookEventsRepository;
 
-        public BookService(IBookAggregateRepository repository)
+        public BookService(IBookEventsRepository repository)
         {
             //TODO: Init Moderation Module
             _messagingService = new MessagingService();
-            _bookAggregateRepository = repository;
+            _bookEventsRepository = repository;
         }
 
         public Guid When(StartANewBookCommand cmd)
@@ -44,7 +44,7 @@ namespace Krakkl.Authorship.Service
             var bookAggregate = new BookAggregate(new BookState());
             var bookKey = bookAggregate.StartANewBook(author, language);
             BookAggregateCache.UpdateItem(bookKey, bookAggregate);
-            _bookAggregateRepository.Save(bookAggregate);
+            _bookEventsRepository.Save(bookAggregate);
 
             return bookKey;
         }
@@ -242,9 +242,9 @@ namespace Krakkl.Authorship.Service
 
         private void Act<T>(Guid key, Action<T> action)
         {
-            var aggregate = _bookAggregateRepository.FindByKey<T>(key);
+            var aggregate = _bookEventsRepository.FindByKey<T>(key);
             action(aggregate);
-            _bookAggregateRepository.Save(aggregate);
+            _bookEventsRepository.Save(aggregate);
         }
 
         #endregion

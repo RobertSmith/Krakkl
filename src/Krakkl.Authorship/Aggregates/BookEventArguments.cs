@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
-using Krakkl.Authorship.Repository;
 using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Aggregates

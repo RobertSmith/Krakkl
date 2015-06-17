@@ -1,0 +1,10 @@
+{
+    "Data": {
+        "Orchestrate": {
+            "ApiKey" : "09e2f337-263e-4ab3-9fda-c7cd1ff822bb"
+        },
+        "AzureStorage": {
+            "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=krakkl;AccountKey=S2rp/5tfLenvwScudL6H+dfXxJVOGHoG2k4ubi4LZXV9O884Ta98VyoyrAVEzubdZP/UkSy0Vl5cRNxqtfbo4Q=="
+        }
+    }
+}

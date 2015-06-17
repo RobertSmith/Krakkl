@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Models;
-using Krakkl.Authorship.Repository;
 
 namespace Krakkl.Authorship.Aggregates
 {
@@ -45,7 +44,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Authors.Any(author => author.Key == newAuthor.Key))
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Authors.Add(newAuthor);
@@ -61,7 +60,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Authors.Count == 1)
                 throw new Exception("There must be at least one author assigned to a book");
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Authors.Remove(_state.Authors.Single(a => a.Key == removedAuthor.Key));
@@ -74,7 +73,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Title == newTitle)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Title = newTitle;
@@ -87,7 +86,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.SubTitle == newSubTitle)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.SubTitle = newSubTitle;
@@ -100,7 +99,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.SeriesTitle == newSeriesTitle)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.SeriesTitle = newSeriesTitle;
@@ -113,7 +112,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.SeriesVolume == newSeriesVolume)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.SeriesVolume = newSeriesVolume;
@@ -126,7 +125,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Genre == newGenre)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Genre = newGenre;
@@ -139,7 +138,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Language == newLanguage)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Language = newLanguage;
@@ -152,7 +151,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Synopsis == newSynopsis)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Synopsis = newSynopsis;
@@ -165,7 +164,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Completed)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Completed = true;
@@ -178,7 +177,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!_state.Completed)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Completed = false;
@@ -191,7 +190,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Abandoned)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Abandoned = true;
@@ -204,7 +203,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!_state.Abandoned)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Abandoned = false;
@@ -217,7 +216,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Published)
                 return;
 
-            if (!IsValidAuthor(authorKey))
+            if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
             _state.Published = true;
@@ -225,7 +224,7 @@ namespace Krakkl.Authorship.Aggregates
             Publish(new BookPublishedEventArgs(_state, authorKey));
         }
 
-        private bool IsValidAuthor(Guid authorKey)
+        private bool AuthorCanEditBook(Guid authorKey)
         {
             return _state.Authors.Any(author => author.Key.Equals(authorKey));
         }
@@ -258,14 +257,7 @@ namespace Krakkl.Authorship.Aggregates
 
         private void When(AuthorRemovedFromBookEventArgs e)
         {
-            foreach (var author in _state.Authors)
-            {
-                if (author.Key == e.RemovedAuthor.Key)
-                {
-                    _state.Authors.Remove(author);
-                    break;
-                }
-            }
+            _state.Authors.Remove(_state.Authors.Single(a => a.Key == e.RemovedAuthor.Key));
         }
 
         private void When(BookRetitledEventArgs e)

@@ -4,9 +4,10 @@
   "projectFileDependencyGroups": {
     "": [
       "Krakkl.Authorship >= 1.0.0-*",
-      "Krakkl.Query >= 1.0.0-*",
+      "Krakkl.EventTranslator >= 1.0.0-*",
       "Krakkl.Persistence >= 1.0.0-*",
-      "Krakkl.EventTranslator >= 1.0.0-*"
+      "Krakkl.Query >= 1.0.0-*",
+      "Krakkl.Repository >= 1.0.0-*"
     ],
     "DNX,Version=v4.5.1": []
   },

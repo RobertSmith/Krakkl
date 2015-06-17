@@ -21,7 +21,7 @@ namespace Krakkl.Authorship.Cache
         {
             var policy = new CacheItemPolicy
             {
-                SlidingExpiration = TimeSpan.FromSeconds(30)
+                SlidingExpiration = TimeSpan.FromHours(12)
             };
 
             Cache.Set(key.ToString(), item, policy);

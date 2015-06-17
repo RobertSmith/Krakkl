@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using Krakkl.Authorship.Repository;
 using Krakkl.Authorship.Service;
 using Krakkl.EventTranslator;
 using Krakkl.Persistence.Authorship;
+using Krakkl.Repository;
 
 namespace Krakkl.Console
 {
@@ -17,7 +17,7 @@ namespace Krakkl.Console
         {
             var authorKey = Guid.NewGuid();
             var newAuthorKey = Guid.NewGuid();
-            _bookService = new BookService(new BookAggregateRepositoryOrchestrate());
+            _bookService = new BookService(new BookEventsRepository());
 
             var timer = new Stopwatch();
             timer.Start();
