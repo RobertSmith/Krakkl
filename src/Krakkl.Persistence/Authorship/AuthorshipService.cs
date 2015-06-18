@@ -56,10 +56,10 @@ namespace Krakkl.Persistence.Authorship
 
         private void CalcSleepLength()
         {
-            _sleepLength = (_idleCount + 1) * 1000;
+            _sleepLength = (_idleCount + 1) * 100;
 
-            if (_sleepLength > 20000)
-                _sleepLength = 20000;
+            if (_sleepLength > 2000)
+                _sleepLength = 2000;
         }
     }
 }

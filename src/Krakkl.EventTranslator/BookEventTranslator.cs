@@ -1,138 +1,133 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Framework.ConfigurationModel;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
-using Orchestrate.Net;
 
 namespace Krakkl.EventTranslator
 {
     public class BookEventTranslator
     {
         private readonly Orchestrate.Net.Orchestrate _orchestrate;
-        private int _idleCount;
+        private readonly CloudQueue _queue;
 
         public BookEventTranslator()
         {
             var configuration = new Configuration().AddJsonFile("config.json");
+            var storageConnectionString = configuration["Data:AzureStorage:ConnectionString"];
             _orchestrate = new Orchestrate.Net.Orchestrate(configuration["Data:Orchestrate:ApiKey"]);
 
-            Task.Run(() => Run());
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
+            CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
+            _queue = queueClient.GetQueueReference("authorship");
+
+            Run();
         }
 
-        private void Run()
+        private async void Run()
         {
+            await _queue.CreateIfNotExistsAsync();
+
             while (true)
             {
-                if (_idleCount > 30)
-                    _idleCount = 30;
+                var message = await _queue.GetMessageAsync();
 
-                Thread.Sleep(_idleCount * 1000);
-
-                var newBookEvents = _orchestrate.Search("BookEvents", "TranslatedToQueryStorage = false AND TranslationFailed = false", 50, 0, "TimeStamp:asc");
-
-                if (newBookEvents?.Count == 0)
+                if (message != null)
                 {
-                    _idleCount++;
-                    continue;
-                }
-
-                _idleCount = 0;
-
-                foreach (var newBookEvent in newBookEvents.Results)
-                {
-                    var bookEvent = JsonConvert.DeserializeObject<BookEventModel>(newBookEvent.Value.ToString());
-
                     try
                     {
-                        switch (bookEvent.EventType)
-                        {
-                            case "BookCreated":
-                                BookCreatedHandler(bookEvent);
-                                break;
-
-                            case "AuthorAddedToBook":
-                                AuthorAddedHandler(bookEvent);
-                                break;
-
-                            case "AuthorRemovedFromBook":
-                                AuthorRemovedHandler(bookEvent);
-                                break;
-
-                            case "BookRetitled":
-                                BookRetitledHandler(bookEvent);
-                                break;
-
-                            case "BookSubTitleChanged":
-                                BookSubTitleChangedHandler(bookEvent);
-                                break;
-
-                            case "BookSeriesTitleChanged":
-                                BookSeriesTitleChangedHandler(bookEvent);
-                                break;
-
-                            case "BookSeriesVolumeChanged":
-                                BookSeriesVolumeChangedHandler(bookEvent);
-                                break;
-
-                            case "BookGenreChanged":
-                                BookGenreChangedHandler(bookEvent);
-                                break;
-
-                            case "BookLanguageChanged":
-                                BookLanguageChangedHandler(bookEvent);
-                                break;
-
-                            case "BookSynopsisUpdated":
-                                BookSynopsisUpdatedHandler(bookEvent);
-                                break;
-
-                            case "BookCompleted":
-                                BookCompletedHandler(bookEvent);
-                                break;
-
-                            case "BookSetAsInProgress":
-                                BookSetAsInProgressHandler(bookEvent);
-                                break;
-
-                            case "BookAbandoned":
-                                BookAbandonedHandler(bookEvent);
-                                break;
-
-                            case "BookRevived":
-                                BookRevivedHandler(bookEvent);
-                                break;
-
-                            case "BookPublished":
-                                BookPublishedHanlder(bookEvent);
-                                break;
-                        }
-
-                        UpdateEventAsTranslated(newBookEvent);
+                        ProcessEvent(message);
+                        await _queue.DeleteMessageAsync(message);
                     }
-                    catch (AggregateException ex)
+                    catch (Exception)
                     {
-                        var patchItems = new List<object>
-                        {
-                            new PatchItemString { Op = "add", Path = "/TranslationFailureMessage", Value = ex.InnerException.Message }
-                        };
-
-                        if (bookEvent.TranslationAttemptCount >= 10)
-                            patchItems.Add(new PatchItemObject {Op = "add", Path = "/TranslationFailed", Value = true});
-                        else
-                            patchItems.Add(new PatchItemInt { Op = "add", Path = "/TranslationAttemptCount", Value = ++bookEvent.TranslationAttemptCount });
-
-                        var bookEventKey = newBookEvent.Path.Key;
-                        var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-                        var json = JsonConvert.SerializeObject(patchItems, settings);
-
-                        _orchestrate.Patch(Definitions.BookEventsCollection, bookEventKey, json);
-
-                        // wait one sec before processing next batch due to failure
-                        _idleCount = 1;
                     }
                 }
+                else
+                    Thread.Sleep(1000);
+            }
+        }
+
+        private void ProcessEvent(CloudQueueMessage message)
+        {
+            var bookEvent = JsonConvert.DeserializeObject<BookEventModel>(message.AsString);
+
+            try
+            {
+                switch (bookEvent.EventType)
+                {
+                    case "BookCreated":
+                        BookCreatedHandler(bookEvent);
+                        break;
+
+                    case "AuthorAddedToBook":
+                        AuthorAddedHandler(bookEvent);
+                        break;
+
+                    case "AuthorRemovedFromBook":
+                        AuthorRemovedHandler(bookEvent);
+                        break;
+
+                    case "BookRetitled":
+                        BookRetitledHandler(bookEvent);
+                        break;
+
+                    case "BookSubTitleChanged":
+                        BookSubTitleChangedHandler(bookEvent);
+                        break;
+
+                    case "BookSeriesTitleChanged":
+                        BookSeriesTitleChangedHandler(bookEvent);
+                        break;
+
+                    case "BookSeriesVolumeChanged":
+                        BookSeriesVolumeChangedHandler(bookEvent);
+                        break;
+
+                    case "BookGenreChanged":
+                        BookGenreChangedHandler(bookEvent);
+                        break;
+
+                    case "BookLanguageChanged":
+                        BookLanguageChangedHandler(bookEvent);
+                        break;
+
+                    case "BookSynopsisUpdated":
+                        BookSynopsisUpdatedHandler(bookEvent);
+                        break;
+
+                    case "BookCompleted":
+                        BookCompletedHandler(bookEvent);
+                        break;
+
+                    case "BookSetAsInProgress":
+                        BookSetAsInProgressHandler(bookEvent);
+                        break;
+
+                    case "BookAbandoned":
+                        BookAbandonedHandler(bookEvent);
+                        break;
+
+                    case "BookRevived":
+                        BookRevivedHandler(bookEvent);
+                        break;
+
+                    case "BookPublished":
+                        BookPublishedHanlder(bookEvent);
+                        break;
+                }
+            }
+            catch (AggregateException ex)
+            {
+                var failedTranslationMessage = new FailedTranslationMessage
+                {
+                    EventData = bookEvent.ToString(),
+                    Exception = ex.ToString()
+                };
+
+                _orchestrate.Post(Definitions.TranslationFailureCollection, failedTranslationMessage);
             }
         }
 
@@ -345,20 +340,6 @@ namespace Krakkl.EventTranslator
             var json = JsonConvert.SerializeObject(patchItems, settings);
 
             _orchestrate.Patch(Definitions.BookCollection, bookKey, json);
-        }
-
-        private void UpdateEventAsTranslated(Result result)
-        {
-            var patchItems = new List<object>
-            {
-                new PatchItemObject { Op = "add", Path = "/TranslatedToQueryStorage", Value = true }
-            };
-
-            var bookEventKey = result.Path.Key;
-            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-            var json = JsonConvert.SerializeObject(patchItems, settings);
-
-            _orchestrate.Patch(Definitions.BookEventsCollection, bookEventKey, json);
         }
     }
 }

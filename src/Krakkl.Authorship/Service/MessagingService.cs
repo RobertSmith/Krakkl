@@ -21,7 +21,7 @@ namespace Krakkl.Authorship.Service
             _queue.CreateIfNotExistsAsync();
         }
 
-        public async void OnBookEventSendMessage(object sender, object e)
+        public async void SendBookEventMessage(object e)
         {
             var retryCount = 0;
             var maxTries = 5;

@@ -11,13 +11,11 @@ namespace Krakkl.Authorship.Service
     /// </summary>
     public class BookService
     {
-        private readonly MessagingService _messagingService;
         private readonly IBookAggregateRepository _bookAggregateRepository;
 
         public BookService(IBookAggregateRepository repository)
         {
             //TODO: Init Moderation Module
-            _messagingService = new MessagingService();
             _bookAggregateRepository = repository;
         }
 

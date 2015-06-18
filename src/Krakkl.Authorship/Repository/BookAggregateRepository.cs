@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.Aggregates;
+using Krakkl.Authorship.Service;
 using Microsoft.Framework.ConfigurationModel;
 using Newtonsoft.Json;
 
@@ -9,6 +10,7 @@ namespace Krakkl.Authorship.Repository
 {
     public class BookAggregateRepository : IBookAggregateRepository
     {
+        private readonly MessagingService _messagingService;
         private readonly Orchestrate.Net.Orchestrate _orchestrate;
         private const string BookEventsCollection = "BookEvents";
 
@@ -17,6 +19,7 @@ namespace Krakkl.Authorship.Repository
             var configuration = new Configuration().AddJsonFile("config.json");
 
             _orchestrate = new Orchestrate.Net.Orchestrate(configuration["Data:Orchestrate:ApiKey"]);
+            _messagingService = new MessagingService();
         }
 
         public BookAggregate FindByKey<T>(Guid key)
@@ -25,78 +28,91 @@ namespace Krakkl.Authorship.Repository
 
             if (aggregate == null)
             {
+                const int limit = 50;
+                var offset = 0;
+                var more = true;
                 var events = new List<object>();
-                var searchResults = _orchestrate.Search(BookEventsCollection, "BookKey = " + key, 50, 0, "TimeStamp:asc").Results.ToList();
 
-                if (!searchResults.Any())
-                    throw new Exception("Book not found");
-
-                foreach (var result in searchResults)
+                while (more)
                 {
-                    var i = JsonConvert.DeserializeObject<BookEventArgs>(result.Value.ToString());
+                    var query = _orchestrate.Search(BookEventsCollection, "BookKey = " + key, limit, offset, "TimeStamp:asc");
+                    var searchResults = query.Results.ToList();
 
-                    switch (i.EventType)
+                    if (!searchResults.Any())
+                        throw new Exception("Book not found");
+
+                    foreach (var result in searchResults)
                     {
-                        case "BookCreated":
-                            events.Add(JsonConvert.DeserializeObject<BookCreatedEventArgs>(result.Value.ToString()));
-                            break;
+                        var i = JsonConvert.DeserializeObject<BookEventArgs>(result.Value.ToString());
 
-                        case "AuthorAddedToBook":
-                            events.Add(JsonConvert.DeserializeObject<AuthorAddedToBookEventArgs>(result.Value.ToString()));
-                            break;
+                        switch (i.EventType)
+                        {
+                            case "BookCreated":
+                                events.Add(JsonConvert.DeserializeObject<BookCreatedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "AuthorRemovedFromBook":
-                            events.Add(JsonConvert.DeserializeObject<AuthorRemovedFromBookEventArgs>(result.Value.ToString()));
-                            break;
+                            case "AuthorAddedToBook":
+                                events.Add(JsonConvert.DeserializeObject<AuthorAddedToBookEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookRetitled":
-                            events.Add(JsonConvert.DeserializeObject<BookRetitledEventArgs>(result.Value.ToString()));
-                            break;
+                            case "AuthorRemovedFromBook":
+                                events.Add(JsonConvert.DeserializeObject<AuthorRemovedFromBookEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookSubTitleChanged":
-                            events.Add(JsonConvert.DeserializeObject<BookSubTitleChangedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookRetitled":
+                                events.Add(JsonConvert.DeserializeObject<BookRetitledEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookSeriesTitleChanged":
-                            events.Add(JsonConvert.DeserializeObject<BookSeriesTitleChangedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookSubTitleChanged":
+                                events.Add(JsonConvert.DeserializeObject<BookSubTitleChangedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookSeriesVolumeChanged":
-                            events.Add(JsonConvert.DeserializeObject<BookSeriesVolumeChangedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookSeriesTitleChanged":
+                                events.Add(JsonConvert.DeserializeObject<BookSeriesTitleChangedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookGenreChanged":
-                            events.Add(JsonConvert.DeserializeObject<BookGenreChangedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookSeriesVolumeChanged":
+                                events.Add(JsonConvert.DeserializeObject<BookSeriesVolumeChangedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookLanguageChanged":
-                            events.Add(JsonConvert.DeserializeObject<BookLanguageChangedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookGenreChanged":
+                                events.Add(JsonConvert.DeserializeObject<BookGenreChangedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookSynopsisUpdated":
-                            events.Add(JsonConvert.DeserializeObject<BookSynopsisUpdatedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookLanguageChanged":
+                                events.Add(JsonConvert.DeserializeObject<BookLanguageChangedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookCompleted":
-                            events.Add(JsonConvert.DeserializeObject<BookCompletedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookSynopsisUpdated":
+                                events.Add(JsonConvert.DeserializeObject<BookSynopsisUpdatedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookSetAsInProgress":
-                            events.Add(JsonConvert.DeserializeObject<BookSetAsInProgressEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookCompleted":
+                                events.Add(JsonConvert.DeserializeObject<BookCompletedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookAbandoned":
-                            events.Add(JsonConvert.DeserializeObject<BookAbandonedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookSetAsInProgress":
+                                events.Add(JsonConvert.DeserializeObject<BookSetAsInProgressEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookRevived":
-                            events.Add(JsonConvert.DeserializeObject<BookRevivedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookAbandoned":
+                                events.Add(JsonConvert.DeserializeObject<BookAbandonedEventArgs>(result.Value.ToString()));
+                                break;
 
-                        case "BookPublished":
-                            events.Add(JsonConvert.DeserializeObject<BookPublishedEventArgs>(result.Value.ToString()));
-                            break;
+                            case "BookRevived":
+                                events.Add(JsonConvert.DeserializeObject<BookRevivedEventArgs>(result.Value.ToString()));
+                                break;
+
+                            case "BookPublished":
+                                events.Add(JsonConvert.DeserializeObject<BookPublishedEventArgs>(result.Value.ToString()));
+                                break;
+                        }
                     }
+
+                    if (!string.IsNullOrEmpty(query.Next))
+                        offset += limit;
+                    else
+                        more = false;
                 }
 
                 var newAggregate = new BookAggregate(events);
@@ -113,6 +129,7 @@ namespace Krakkl.Authorship.Repository
             for (var x = aggregate.UncommittedEvents.Count; x > 0; x--)
             {
                 _orchestrate.Post(BookEventsCollection, aggregate.UncommittedEvents[x - 1]);
+                _messagingService.SendBookEventMessage(aggregate.UncommittedEvents[x - 1]);
                 aggregate.UncommittedEvents.RemoveAt(x - 1);
             }
 
