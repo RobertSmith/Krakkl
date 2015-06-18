@@ -12,7 +12,6 @@ namespace Krakkl.Authorship.Aggregates
         public DateTime TimeStamp { get; private set; }
         public string EventSource => "Book.Authorship.Krakkl";
         public string EventType { get; private set; }
-        public bool TranslatedToQueryStorage => false;
 
         public BookEventArgs(Guid bookKey, string eventType)
         {
