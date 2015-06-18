@@ -139,12 +139,11 @@ namespace Krakkl.EventTranslator
         private void BookCreatedHandler(BookEventModel eventModel)
         {
             var bookKey = eventModel.BookKey.ToString();
-            var language = new LanguageModel {Key = eventModel.LanguageKey, Name = eventModel.LanguageName};
 
             var state = new NewBookModel
             {
                 Key = eventModel.BookKey,
-                Language = language,
+                Language = eventModel.Language,
                 CreatedAt = eventModel.CreatedAt.GetValueOrDefault(),
                 CreatedBy = eventModel.AddedAuthor.Key
             };
@@ -216,7 +215,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemString {Op = "add", Path = "/SeriesTitle", Value = eventModel.NewSeriesTitle},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
                 new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
-                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
+                new PatchItemDate {Op = "add", Path = "/LastEventTimeStamp", Value = eventModel.TimeStamp}
             };
 
             PatchBook(patchItems, eventModel);

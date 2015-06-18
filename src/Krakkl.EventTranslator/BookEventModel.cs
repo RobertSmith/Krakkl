@@ -10,8 +10,7 @@ namespace Krakkl.EventTranslator
         public string EventSource { get; set; }
         public string EventType { get; set; }
         public DateTime TimeStamp { get; set; }
-        public string LanguageKey { get; set; }
-        public string LanguageName { get; set; }
+        public LanguageModel Language { get; set; }
         public string Title { get; set; }
         public AuthorModel AddedAuthor { get; set; }
         public AuthorModel RemovedAuthor { get; set; }

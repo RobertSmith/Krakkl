@@ -22,55 +22,64 @@ namespace Krakkl.Console
             var timer = new Stopwatch();
             timer.Start();
 
-            var startANewBook = new StartANewBookCommand
+//            var startANewBook = new StartANewBookCommand
+//            {
+//                AuthorKey = authorKey,
+//                AuthorName = "Joe Shmoe",
+//                LanguageKey = "en",
+//                LanguageName = "English"
+//            };
+//
+//            var bookKey = _bookService.Start(startANewBook);
+//
+//            var addAuthor = new AddAuthorToBookCommand
+//            {
+//                BookKey = bookKey,
+//                AuthorKey = authorKey,
+//                NewAuthorKey = newAuthorKey,
+//                NewAuthorName = "Jimmy the Greek"
+//            };
+//
+//            _bookService.Apply(addAuthor);
+//
+//            var removeAuthor = new RemoveAuthorFromBookCommand
+//            {
+//                BookKey = bookKey,
+//                AuthorKey = newAuthorKey,
+//                RemoveAuthorKey = authorKey,
+//                RemoveAuthorName = "Joe Shmoe"
+//            };
+//
+//            _bookService.Apply(removeAuthor);
+//
+//            var changeGenre = new ChangeBookGenreCommand
+//            {
+//                BookKey = bookKey,
+//                AuthorKey = newAuthorKey,
+//                GenreKey = "ActionAdventure",
+//                GenreName = "Action & Adventure",
+//                IsFiction = true
+//            };
+//
+//            _bookService.Apply(changeGenre);
+//
+//            var changeTitle = new RetitleBookCommand
+//            {
+//                BookKey = bookKey,
+//                AuthorKey = newAuthorKey,
+//                Title = "The End of all Things"
+//            };
+//
+//            _bookService.Apply(changeTitle);
+
+            var changeSynopsis = new ChangeBookSynopsisCommand
             {
-                AuthorKey = authorKey,
-                AuthorName = "Joe Shmoe",
-                LanguageKey = "en",
-                LanguageName = "English"
+                BookKey = Guid.Parse("7cbb2741-d8e4-4d93-8550-7ab5d0675be3"),
+                AuthorKey = Guid.Parse("bc76debb-cf3f-4f17-b40a-0f59adae85d4"),
+                Synopsis = "A quaint little story about a boy and his llama."
             };
 
-            var bookKey = _bookService.Start(startANewBook);
-
-            var addAuthor = new AddAuthorToBookCommand
-            {
-                BookKey = bookKey,
-                AuthorKey = authorKey,
-                NewAuthorKey = newAuthorKey,
-                NewAuthorName = "Jimmy the Greek"
-            };
-
-            _bookService.Apply(addAuthor);
-
-            var removeAuthor = new RemoveAuthorFromBookCommand
-            {
-                BookKey = bookKey,
-                AuthorKey = newAuthorKey,
-                RemoveAuthorKey = authorKey,
-                RemoveAuthorName = "Joe Shmoe"
-            };
-
-            _bookService.Apply(removeAuthor);
-
-            var changeGenre = new ChangeBookGenreCommand
-            {
-                BookKey = bookKey,
-                AuthorKey = newAuthorKey,
-                GenreKey = "ActionAdventure",
-                GenreName = "Action & Adventure",
-                IsFiction = true
-            };
-
-            _bookService.Apply(changeGenre);
-
-            var changeTitle = new RetitleBookCommand
-            {
-                BookKey = bookKey,
-                AuthorKey = newAuthorKey,
-                Title = "The End of all Things"
-            };
-
-            _bookService.Apply(changeTitle);
+            _bookService.Apply(changeSynopsis);
 
             timer.Stop();
 

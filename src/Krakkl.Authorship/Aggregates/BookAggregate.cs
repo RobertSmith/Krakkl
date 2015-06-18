@@ -9,8 +9,8 @@ namespace Krakkl.Authorship.Aggregates
     {
         private BookState _state;
         private int _version;
-        private List<object> _uncommittedEvents = new List<object>();
 
+        public List<object> UncommittedEvents = new List<object>();
         public Guid Key => _state.Key;
 
         public BookAggregate(BookState state)
@@ -32,7 +32,9 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Key != Guid.Empty)
                 throw new Exception("Can not start a new book, this one is already in progress.");
 
-            Publish(new BookCreatedEventArgs(Guid.NewGuid(), author, language, author.Key));
+            var bookKey = Guid.NewGuid();
+
+            Publish(new BookCreatedEventArgs(bookKey, author, language, author.Key));
         }
 
         public void AddAuthor(Guid authorKey, AuthorModel newAuthor)
@@ -211,7 +213,7 @@ namespace Krakkl.Authorship.Aggregates
 
         private void Publish(object e)
         {
-            _uncommittedEvents.Add(e);
+            UncommittedEvents.Add(e);
             Apply(e);
         }
 
@@ -226,9 +228,12 @@ namespace Krakkl.Authorship.Aggregates
         // ReSharper disable UnusedMember.Local
         private void When(BookCreatedEventArgs e)
         {
+            if (_state == null)
+                _state = new BookState();
+
             _state.Key = e.BookKey;
             _state.Authors.Add(e.AddedAuthor);
-            _state.Language = new LanguageModel(e.LanguageKey, e.LanguageName);
+            _state.Language = e.Language;
         }
 
         private void When(AuthorAddedToBookEventArgs e)

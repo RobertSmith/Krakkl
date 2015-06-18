@@ -51,6 +51,7 @@ namespace Krakkl.Authorship.Service
             RedirectToWhen.InvokeCommand(this, cmd);
         }
 
+        // ReSharper disable UnusedMember.Local
         private void When(AddAuthorToBookCommand cmd)
         {
             if (cmd.BookKey == null)
@@ -239,6 +240,7 @@ namespace Krakkl.Authorship.Service
 
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.PublishBook(cmd.AuthorKey));
         }
+        // ReSharper restore UnusedMember.Local
 
         private void Act<T>(Guid key, Action<BookAggregate> action)
         {
