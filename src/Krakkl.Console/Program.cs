@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using Krakkl.Authorship.Repository;
 using Krakkl.Authorship.Service;
 using Krakkl.EventTranslator;
 using Krakkl.Persistence.Authorship;
-using Krakkl.Repository;
 
 namespace Krakkl.Console
 {
@@ -17,7 +17,7 @@ namespace Krakkl.Console
         {
             var authorKey = Guid.NewGuid();
             var newAuthorKey = Guid.NewGuid();
-            _bookService = new BookService(new BookEventsRepository());
+            _bookService = new BookService(new BookAggregateRepository());
 
             var timer = new Stopwatch();
             timer.Start();
@@ -30,7 +30,7 @@ namespace Krakkl.Console
                 LanguageName = "English"
             };
 
-            var bookKey = _bookService.When(startANewBook);
+            var bookKey = _bookService.Start(startANewBook);
 
             var addAuthor = new AddAuthorToBookCommand
             {
@@ -40,7 +40,7 @@ namespace Krakkl.Console
                 NewAuthorName = "Jimmy the Greek"
             };
 
-            _bookService.When(addAuthor);
+            _bookService.Apply(addAuthor);
 
             var removeAuthor = new RemoveAuthorFromBookCommand
             {
@@ -50,7 +50,7 @@ namespace Krakkl.Console
                 RemoveAuthorName = "Joe Shmoe"
             };
 
-            _bookService.When(removeAuthor);
+            _bookService.Apply(removeAuthor);
 
             var changeGenre = new ChangeBookGenreCommand
             {
@@ -61,7 +61,7 @@ namespace Krakkl.Console
                 IsFiction = true
             };
 
-            _bookService.When(changeGenre);
+            _bookService.Apply(changeGenre);
 
             var changeTitle = new RetitleBookCommand
             {
@@ -70,7 +70,7 @@ namespace Krakkl.Console
                 Title = "The End of all Things"
             };
 
-            _bookService.When(changeTitle);
+            _bookService.Apply(changeTitle);
 
             timer.Stop();
 

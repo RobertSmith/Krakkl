@@ -1,8 +1,7 @@
 ﻿using System;
 using Krakkl.Authorship.Aggregates;
-using Krakkl.Authorship.Cache;
 using Krakkl.Authorship.Models;
-using Krakkl.Repository;
+using Krakkl.Authorship.Repository;
 
 namespace Krakkl.Authorship.Service
 {
@@ -12,19 +11,17 @@ namespace Krakkl.Authorship.Service
     /// </summary>
     public class BookService
     {
-        public long CacheCount => BookAggregateCache.Count();
-
         private readonly MessagingService _messagingService;
-        private readonly IBookEventsRepository _bookEventsRepository;
+        private readonly IBookAggregateRepository _bookAggregateRepository;
 
-        public BookService(IBookEventsRepository repository)
+        public BookService(IBookAggregateRepository repository)
         {
             //TODO: Init Moderation Module
             _messagingService = new MessagingService();
-            _bookEventsRepository = repository;
+            _bookAggregateRepository = repository;
         }
 
-        public Guid When(StartANewBookCommand cmd)
+        public Guid Start(StartANewBookCommand cmd)
         {
             if (cmd.AuthorKey == null)
                 throw new Exception("Author Key is required");
@@ -42,14 +39,19 @@ namespace Krakkl.Authorship.Service
             var language = new LanguageModel(cmd.LanguageKey, cmd.LanguageName);
 
             var bookAggregate = new BookAggregate(new BookState());
-            var bookKey = bookAggregate.StartANewBook(author, language);
-            BookAggregateCache.UpdateItem(bookKey, bookAggregate);
-            _bookEventsRepository.Save(bookAggregate);
 
-            return bookKey;
+            bookAggregate.StartANewBook(author, language);
+            _bookAggregateRepository.Save(bookAggregate);
+
+            return bookAggregate.Key;
         }
 
-        public void When(AddAuthorToBookCommand cmd)
+        public void Apply(object cmd)
+        {
+            RedirectToWhen.InvokeCommand(this, cmd);
+        }
+
+        private void When(AddAuthorToBookCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -68,7 +70,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.AddAuthor(cmd.AuthorKey, newAuthor));
         }
 
-        public void When(RemoveAuthorFromBookCommand cmd)
+        private void When(RemoveAuthorFromBookCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -87,7 +89,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.RemoveAuthor(cmd.AuthorKey, removeAuthor));
         }
 
-        public void When(RetitleBookCommand cmd)
+        private void When(RetitleBookCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -101,7 +103,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.Retitle(cmd.AuthorKey, cmd.Title));
         }
 
-        public void When(ChangeBookSubtitleCommand cmd)
+        private void When(ChangeBookSubtitleCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -112,7 +114,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeSubTitle(cmd.AuthorKey, cmd.SubTitle));
         }
 
-        public void When(ChangeBookSeriesTitleCommand cmd)
+        private void When(ChangeBookSeriesTitleCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -123,7 +125,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeSeriesTitle(cmd.AuthorKey, cmd.SeriesTitle));
         }
 
-        public void When(ChangeBookSeriesVolumeCommand cmd)
+        private void When(ChangeBookSeriesVolumeCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -134,7 +136,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeSeriesVolume(cmd.AuthorKey, cmd.SeriesVolume));
         }
 
-        public void When(ChangeBookGenreCommand cmd)
+        private void When(ChangeBookGenreCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -153,7 +155,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeGenre(cmd.AuthorKey, newGenre));
         }
 
-        public void When(ChangeBookEditorLanguageCommand cmd)
+        private void When(ChangeBookEditorLanguageCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -172,7 +174,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeEditorLanguage(cmd.AuthorKey, newLanguage));
         }
 
-        public void When(ChangeBookSynopsisCommand cmd)
+        private void When(ChangeBookSynopsisCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -183,7 +185,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.UpdateSynopsis(cmd.AuthorKey, cmd.Synopsis));
         }
 
-        public void When(CompleteBookCommand cmd)
+        private void When(CompleteBookCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -194,7 +196,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.CompleteBook(cmd.AuthorKey));
         }
 
-        public void When(SetBookInProgressCommand cmd)
+        private void When(SetBookInProgressCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -205,7 +207,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.SetBookAsInProgress(cmd.AuthorKey));
         }
 
-        public void When(AbandonBookCommand cmd)
+        private void When(AbandonBookCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -216,7 +218,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.AbandonBook(cmd.AuthorKey));
         }
 
-        public void When(ReviveBookCommand cmd)
+        private void When(ReviveBookCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -227,7 +229,7 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ReviveBook(cmd.AuthorKey));
         }
 
-        public void When(PublishBookCommand cmd)
+        private void When(PublishBookCommand cmd)
         {
             if (cmd.BookKey == null)
                 throw new Exception("Book Key is required");
@@ -238,15 +240,11 @@ namespace Krakkl.Authorship.Service
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.PublishBook(cmd.AuthorKey));
         }
 
-        #region Private Methods
-
-        private void Act<T>(Guid key, Action<T> action)
+        private void Act<T>(Guid key, Action<BookAggregate> action)
         {
-            var aggregate = _bookEventsRepository.FindByKey<T>(key);
+            var aggregate = _bookAggregateRepository.FindByKey<T>(key);
             action(aggregate);
-            _bookEventsRepository.Save(aggregate);
+            _bookAggregateRepository.Save(aggregate);
         }
-
-        #endregion
     }
 }

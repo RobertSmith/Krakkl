@@ -5,11 +5,13 @@ using Krakkl.Authorship.Models;
 
 namespace Krakkl.Authorship.Aggregates
 {
-    internal class BookAggregate
+    public class BookAggregate
     {
         private BookState _state;
         private int _version;
         private List<object> _uncommittedEvents = new List<object>();
+
+        public Guid Key => _state.Key;
 
         public BookAggregate(BookState state)
         {
@@ -22,7 +24,7 @@ namespace Krakkl.Authorship.Aggregates
                 Apply(e);
         }
 
-        public Guid StartANewBook(AuthorModel author, LanguageModel language)
+        public void StartANewBook(AuthorModel author, LanguageModel language)
         {
             if (_state == null)
                 _state = new BookState();
@@ -35,8 +37,6 @@ namespace Krakkl.Authorship.Aggregates
             _state.Language = language;
 
             Publish(new BookCreatedEventArgs(_state, author.Key));
-
-            return _state.Key;
         }
 
         public void AddAuthor(Guid authorKey, AuthorModel newAuthor)
