@@ -34,6 +34,7 @@ namespace Krakkl.Authorship.Aggregates
                 // they are persisted anyway
                 return;
             }
+
             try
             {
                 info.Invoke(instance, new[] { @event });
@@ -56,6 +57,7 @@ namespace Krakkl.Authorship.Aggregates
                 var s = $"Failed to locate {typeof (T).Name}.When({type.Name})";
                 throw new InvalidOperationException(s);
             }
+
             try
             {
                 info.Invoke(instance, new[] { command });

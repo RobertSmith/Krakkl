@@ -32,11 +32,7 @@ namespace Krakkl.Authorship.Aggregates
             if (_state.Key != Guid.Empty)
                 throw new Exception("Can not start a new book, this one is already in progress.");
 
-            _state.Key = Guid.NewGuid();
-            _state.Authors.Add(author);
-            _state.Language = language;
-
-            Publish(new BookCreatedEventArgs(_state, author.Key));
+            Publish(new BookCreatedEventArgs(Guid.NewGuid(), author, language, author.Key));
         }
 
         public void AddAuthor(Guid authorKey, AuthorModel newAuthor)
@@ -47,9 +43,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.Authors.Add(newAuthor);
-
-            Publish(new AuthorAddedToBookEventArgs(_state, newAuthor, authorKey));
+            Publish(new AuthorAddedToBookEventArgs(_state.Key, newAuthor, authorKey));
         }
 
         public void RemoveAuthor(Guid authorKey, AuthorModel removedAuthor)
@@ -63,9 +57,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.Authors.Remove(_state.Authors.Single(a => a.Key == removedAuthor.Key));
-
-            Publish(new AuthorRemovedFromBookEventArgs(_state, removedAuthor, _state.Authors, authorKey));
+            Publish(new AuthorRemovedFromBookEventArgs(_state.Key, removedAuthor, _state.Authors, authorKey));
         }
 
         public void Retitle(Guid authorKey, string newTitle)
@@ -78,7 +70,7 @@ namespace Krakkl.Authorship.Aggregates
 
             _state.Title = newTitle;
 
-            Publish(new BookRetitledEventArgs(_state, authorKey));
+            Publish(new BookRetitledEventArgs(_state.Key, newTitle, authorKey));
         }
 
         public void ChangeSubTitle(Guid authorKey, string newSubTitle)
@@ -89,9 +81,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.SubTitle = newSubTitle;
-
-            Publish(new BookSubTitleChangedEventArgs(_state, authorKey));
+            Publish(new BookSubTitleChangedEventArgs(_state.Key, newSubTitle, authorKey));
         }
 
         public void ChangeSeriesTitle(Guid authorKey, string newSeriesTitle)
@@ -102,9 +92,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.SeriesTitle = newSeriesTitle;
-
-            Publish(new BookSeriesTitleChangedEventArgs(_state, authorKey));
+            Publish(new BookSeriesTitleChangedEventArgs(_state.Key, newSeriesTitle, authorKey));
         }
 
         public void ChangeSeriesVolume(Guid authorKey, string newSeriesVolume)
@@ -115,9 +103,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.SeriesVolume = newSeriesVolume;
-
-            Publish(new BookSeriesVolumeChangedEventArgs(_state, authorKey));
+            Publish(new BookSeriesVolumeChangedEventArgs(_state.Key, newSeriesVolume, authorKey));
         }
 
         public void ChangeGenre(Guid authorKey, GenreModel newGenre)
@@ -128,9 +114,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.Genre = newGenre;
-
-            Publish(new BookGenreChangedEventArgs(_state, authorKey));
+            Publish(new BookGenreChangedEventArgs(_state.Key, newGenre, authorKey));
         }
 
         public void ChangeEditorLanguage(Guid authorKey, LanguageModel newLanguage)
@@ -141,9 +125,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.Language = newLanguage;
-
-            Publish(new BookLanguageChangedEventArgs(_state, authorKey));
+            Publish(new BookLanguageChangedEventArgs(_state.Key, newLanguage, authorKey));
         }
 
         public void UpdateSynopsis(Guid authorKey, string newSynopsis)
@@ -156,7 +138,7 @@ namespace Krakkl.Authorship.Aggregates
 
             _state.Synopsis = newSynopsis;
 
-            Publish(new BookSynopsisUpdatedEventArgs(_state, authorKey));
+            Publish(new BookSynopsisUpdatedEventArgs(_state.Key, newSynopsis, authorKey));
         }
 
         public void CompleteBook(Guid authorKey)
@@ -167,9 +149,7 @@ namespace Krakkl.Authorship.Aggregates
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _state.Completed = true;
-
-            Publish(new BookCompletedEventArgs(_state, authorKey));
+            Publish(new BookCompletedEventArgs(_state.Key, authorKey));
         }
 
         public void SetBookAsInProgress(Guid authorKey)
@@ -182,7 +162,7 @@ namespace Krakkl.Authorship.Aggregates
 
             _state.Completed = false;
 
-            Publish(new BookSetAsInProgressEventArgs(_state, authorKey));
+            Publish(new BookSetAsInProgressEventArgs(_state.Key, authorKey));
         }
 
         public void AbandonBook(Guid authorKey)
@@ -195,7 +175,7 @@ namespace Krakkl.Authorship.Aggregates
 
             _state.Abandoned = true;
 
-            Publish(new BookAbandonedEventArgs(_state, authorKey));
+            Publish(new BookAbandonedEventArgs(_state.Key, authorKey));
         }
 
         public void ReviveBook(Guid authorKey)
@@ -208,7 +188,7 @@ namespace Krakkl.Authorship.Aggregates
 
             _state.Abandoned = false;
 
-            Publish(new BookRevivedEventArgs(_state, authorKey));
+            Publish(new BookRevivedEventArgs(_state.Key, authorKey));
         }
 
         public void PublishBook(Guid authorKey)
@@ -221,7 +201,7 @@ namespace Krakkl.Authorship.Aggregates
 
             _state.Published = true;
 
-            Publish(new BookPublishedEventArgs(_state, authorKey));
+            Publish(new BookPublishedEventArgs(_state.Key, authorKey));
         }
 
         private bool AuthorCanEditBook(Guid authorKey)
@@ -232,6 +212,7 @@ namespace Krakkl.Authorship.Aggregates
         private void Publish(object e)
         {
             _uncommittedEvents.Add(e);
+            Apply(e);
         }
 
         #region Re-Hydrate Aggregate
