@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Krakkl.Query.Models;
 using Newtonsoft.Json;
 
 namespace Krakkl.Query
@@ -14,15 +15,9 @@ namespace Krakkl.Query
 
             foreach (var lang in query.Results)
             {
-                LanguageObject val = JsonConvert.DeserializeObject<LanguageObject>(lang.Value.ToString());
+                var val = JsonConvert.DeserializeObject<LanguageModel>(lang.Value.ToString());
                 Languages.Add(lang.Path.Key, val.Name);
             }
         }
-    }
-
-    public class LanguageObject
-    {
-        public string Key { get; set; }
-        public string Name { get; set; }
     }
 }

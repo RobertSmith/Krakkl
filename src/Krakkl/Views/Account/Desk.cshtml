@@ -1,13 +1,10 @@
-﻿@using System.Collections.Generic
-@using System.Threading.Tasks
-@using Krakkl.Query
+﻿@using System.Threading.Tasks
+@using Krakkl.Query.Models
 @model IEnumerable<BookModel>
 
 @{
     ViewBag.Title = "Desk";
-}
 
-@{
     if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
     {
         <p class="alert alert-success">
@@ -25,25 +22,25 @@
 
 <legend>Books in progress</legend>
 @{
-    foreach (BookModel book in Model.Where(x => !x.Abandoned && !x.Complete && !x.DMCA))
+    foreach (BookModel book in Model.Where(x => !x.Abandoned && !x.Completed && !x.DMCA))
     {
-        @Html.Partial("_DeskListItem", book);
+        @Html.Partial("_DeskListItem", book)
     }
 }
 
 <legend>Books completed</legend>
 @{
-    foreach (BookModel book in Model.Where(x => x.Complete && !x.DMCA))
+    foreach (BookModel book in Model.Where(x => x.Completed && !x.DMCA))
     {
-        @Html.Partial("_DeskListItem", book);
+        @Html.Partial("_DeskListItem", book)
     }
 }
 
 <legend>Books abandoned</legend>
 @{
-    foreach (BookModel book in Model.Where(x => x.Abandoned && !x.Complete && !x.DMCA))
+    foreach (BookModel book in Model.Where(x => x.Abandoned && !x.Completed && !x.DMCA))
     {
-        @Html.Partial("_DeskListItem", book);
+        @Html.Partial("_DeskListItem", book)
     }
 }
 
@@ -53,7 +50,7 @@
         <legend>Copyright Issues</legend>
         foreach (BookModel book in Model.Where(x => x.DMCA))
         {
-            @Html.Partial("_DeskListItem", book);
+            @Html.Partial("_DeskListItem", book)
         }
     }
 }

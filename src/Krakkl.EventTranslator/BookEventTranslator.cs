@@ -161,7 +161,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void AuthorRemovedHandler(BookEventModel eventModel)
@@ -174,7 +174,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookRetitledHandler(BookEventModel eventModel)
@@ -187,7 +187,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookSubTitleChangedHandler(BookEventModel eventModel)
@@ -200,7 +200,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookSeriesTitleChangedHandler(BookEventModel eventModel)
@@ -213,7 +213,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op = "add", Path = "/LastEventTimeStamp", Value = eventModel.TimeStamp}
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookSeriesVolumeChangedHandler(BookEventModel eventModel)
@@ -226,7 +226,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookGenreChangedHandler(BookEventModel eventModel)
@@ -239,7 +239,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookLanguageChangedHandler(BookEventModel eventModel)
@@ -252,7 +252,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookSynopsisUpdatedHandler(BookEventModel eventModel)
@@ -265,7 +265,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookCompletedHandler(BookEventModel eventModel)
@@ -278,7 +278,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookSetAsInProgressHandler(BookEventModel eventModel)
@@ -291,7 +291,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookAbandonedHandler(BookEventModel eventModel)
@@ -304,7 +304,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookRevivedHandler(BookEventModel eventModel)
@@ -317,7 +317,7 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
         private void BookPublishedHanlder(BookEventModel eventModel)
@@ -330,12 +330,11 @@ namespace Krakkl.EventTranslator
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
             };
 
-            PatchBook(patchItems, eventModel);
+            PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
-        private void PatchBook(List<object> patchItems, BookEventModel eventModel)
+        private void PatchBook(List<object> patchItems, string bookKey)
         {
-            var bookKey = eventModel.BookKey.ToString();
             var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
             var json = JsonConvert.SerializeObject(patchItems, settings);
 

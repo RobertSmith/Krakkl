@@ -190,9 +190,9 @@ namespace Krakkl.Controllers
             ViewBag.Tab = "Desk";
             var query = new Books();
             var user = await GetCurrentUserAsync();
-            var books = query.GetAuthorBooks(user.Id);
+            var books = query.GetAuthorBooksAsyc(user.Id);
 
-            return View(books);
+            return View(books.Result);
         }
 
         // GET: /Account/NewBook

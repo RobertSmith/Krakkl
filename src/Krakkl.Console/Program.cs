@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using Krakkl.Authorship.Repository;
 using Krakkl.Authorship.Service;
 using Krakkl.EventTranslator;
@@ -69,6 +70,14 @@ namespace Krakkl.Console
             };
 
             _bookService.Apply(changeTitle);
+
+            var bookQuery = new Query.Books();
+            var books = bookQuery.GetAuthorBooksAsyc("40b789a6-63a1-4488-a1f5-6a102f509542");
+
+            foreach (var book in books.Result)
+            {
+                System.Console.WriteLine(book.Title + " by " + book.Authors.First().Name);
+            }
 
 //            var changeSynopsis = new ChangeBookSynopsisCommand
 //            {
