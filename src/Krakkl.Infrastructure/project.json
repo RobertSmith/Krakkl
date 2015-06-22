@@ -8,12 +8,7 @@
 
     "dependencies": {
         "Krakkl.Authorship": "1.0.0-*",
-        "Krakkl.Query": "1.0.0-*",
-        "Krakkl.Infrastructure": "1.0.0-*"
-    },
-
-    "commands": {
-        "Krakkl.Console": "Krakkl.Console"
+        "Orchestrate.NET": "1.3.3"
     },
 
     "frameworks": {

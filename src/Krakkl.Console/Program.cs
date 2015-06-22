@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using Krakkl.Authorship.Repository;
-using Krakkl.Authorship.Service;
-using Krakkl.EventTranslator;
+using Krakkl.Authorship.Book.Service;
+using Krakkl.Infrastructure.Authorship.Book.EventTranslator;
+using Krakkl.Infrastructure.Authorship.Book.Repository;
 
 namespace Krakkl.Console
 {
