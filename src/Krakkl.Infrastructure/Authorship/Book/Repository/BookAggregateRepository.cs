@@ -40,7 +40,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
 
             while (more)
             {
-                var query = _orchestrate.Search(BookEventsCollection, searchQuery, limit, offset, "TimeStamp:asc");
+                var query = _orchestrate.Search(BookEventsCollection, searchQuery, limit, offset, "@path.reftime:asc");
                 var searchResults = query.Results.ToList();
 
                 if (!searchResults.Any())
@@ -124,7 +124,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
 
             var newAggregate = new BookAggregate(bookState, events);
 
-            if (events.Count >= 5)
+            if (events.Count >= 10)
                 TakeBookSnapshot(newAggregate);
 
             return newAggregate;

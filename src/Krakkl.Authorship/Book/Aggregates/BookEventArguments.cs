@@ -9,7 +9,6 @@ namespace Krakkl.Authorship.Book.Aggregates
     public class BookEventArgs : EventArgs
     {
         public Guid BookKey { get; private set; }
-        public DateTime TimeStamp { get; private set; }
         public string EventSource => "Book.Authorship.Krakkl";
         public string EventType { get; private set; }
 
@@ -17,7 +16,6 @@ namespace Krakkl.Authorship.Book.Aggregates
         {
             BookKey = bookKey;
             EventType = eventType;
-            TimeStamp = DateTime.UtcNow;
         }
 
         public override string ToString()
@@ -34,11 +32,11 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime CreatedAt { get; private set; }
         public Guid CreatedBy { get; private set; }
 
-        public BookCreatedEventArgs(Guid bookKey, AuthorModel addedAuthor, LanguageModel language, Guid createdBy) : base(bookKey, "BookCreated")
+        public BookCreatedEventArgs(Guid bookKey, AuthorModel addedAuthor, LanguageModel language, DateTime createdAt, Guid createdBy) : base(bookKey, "BookCreated")
         {
             AddedAuthor = addedAuthor;
             Language = language;
-            CreatedAt = TimeStamp;
+            CreatedAt = createdAt;
             CreatedBy = createdBy;
         }
     }
@@ -49,10 +47,10 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public AuthorAddedToBookEventArgs(Guid bookKey, AuthorModel addedAuthor, Guid updatedBy) : base(bookKey, "AuthorAddedToBook")
+        public AuthorAddedToBookEventArgs(Guid bookKey, AuthorModel addedAuthor, DateTime updatedAt, Guid updatedBy) : base(bookKey, "AuthorAddedToBook")
         {
             AddedAuthor = addedAuthor;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -64,11 +62,11 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public AuthorRemovedFromBookEventArgs(Guid bookKey, AuthorModel removedAuthor, List<AuthorModel> validAuthors, Guid updatedBy) : base(bookKey, "AuthorRemovedFromBook")
+        public AuthorRemovedFromBookEventArgs(Guid bookKey, AuthorModel removedAuthor, List<AuthorModel> validAuthors, DateTime updatedAt, Guid updatedBy) : base(bookKey, "AuthorRemovedFromBook")
         {
             RemovedAuthor = removedAuthor;
             ValidAuthors = validAuthors;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -79,10 +77,10 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookRetitledEventArgs(Guid bookKey, string newTitle, Guid updatedBy) : base(bookKey, "BookRetitled")
+        public BookRetitledEventArgs(Guid bookKey, string newTitle, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookRetitled")
         {
             NewTitle = newTitle;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -93,10 +91,10 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSubTitleChangedEventArgs(Guid bookKey, string newSubTitle, Guid updatedBy) : base(bookKey, "BookSubTitleChanged")
+        public BookSubTitleChangedEventArgs(Guid bookKey, string newSubTitle, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookSubTitleChanged")
         {
             NewSubTitle = newSubTitle;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -107,10 +105,10 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSeriesTitleChangedEventArgs(Guid bookKey, string newSeriesTitle, Guid updatedBy) : base(bookKey, "BookSeriesTitleChanged")
+        public BookSeriesTitleChangedEventArgs(Guid bookKey, string newSeriesTitle, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookSeriesTitleChanged")
         {
             NewSeriesTitle = newSeriesTitle;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -121,10 +119,10 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSeriesVolumeChangedEventArgs(Guid bookKey, string newSeriesVolume, Guid updatedBy) : base(bookKey, "BookSeriesVolumeChanged")
+        public BookSeriesVolumeChangedEventArgs(Guid bookKey, string newSeriesVolume, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookSeriesVolumeChanged")
         {
             NewSeriesVolume = newSeriesVolume;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -135,10 +133,10 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookGenreChangedEventArgs(Guid bookKey, GenreModel newGenre, Guid updatedBy) : base(bookKey, "BookGenreChanged")
+        public BookGenreChangedEventArgs(Guid bookKey, GenreModel newGenre, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookGenreChanged")
         {
             NewGenre = newGenre;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -149,10 +147,10 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookLanguageChangedEventArgs(Guid bookKey, LanguageModel newLanguage, Guid updatedBy) : base(bookKey, "BookLanguageChanged")
+        public BookLanguageChangedEventArgs(Guid bookKey, LanguageModel newLanguage, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookLanguageChanged")
         {
             NewLanguage = newLanguage;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -163,10 +161,10 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSynopsisUpdatedEventArgs(Guid bookKey, string newSynopsis, Guid updatedBy) : base(bookKey, "BookSynopsisUpdated")
+        public BookSynopsisUpdatedEventArgs(Guid bookKey, string newSynopsis, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookSynopsisUpdated")
         {
             NewSynopsis = newSynopsis;
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -176,9 +174,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookCompletedEventArgs(Guid bookKey, Guid updatedBy) : base(bookKey, "BookCompleted")
+        public BookCompletedEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookCompleted")
         {
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -188,9 +186,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSetAsInProgressEventArgs(Guid bookKey, Guid updatedBy) : base(bookKey, "BookSetAsInProgress")
+        public BookSetAsInProgressEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookSetAsInProgress")
         {
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -200,9 +198,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookAbandonedEventArgs(Guid bookKey, Guid updatedBy) : base(bookKey, "BookAbandoned")
+        public BookAbandonedEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookAbandoned")
         {
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -212,9 +210,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookRevivedEventArgs(Guid bookKey, Guid updatedBy) : base(bookKey, "BookRevived")
+        public BookRevivedEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookRevived")
         {
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
@@ -224,9 +222,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookPublishedEventArgs(Guid bookKey, Guid updatedBy) : base(bookKey, "BookPublished")
+        public BookPublishedEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookPublished")
         {
-            UpdatedAt = TimeStamp;
+            UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
     }
