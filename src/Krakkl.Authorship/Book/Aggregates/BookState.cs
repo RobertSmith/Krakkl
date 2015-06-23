@@ -4,7 +4,7 @@ using Krakkl.Authorship.Book.Models;
 
 namespace Krakkl.Authorship.Book.Aggregates
 {
-    internal sealed class BookState
+    public sealed class BookState
     {
         public Guid Key { get; set; }
         public List<AuthorModel> Authors { get; set; }
@@ -25,6 +25,7 @@ namespace Krakkl.Authorship.Book.Aggregates
 //        public Guid CreatedBy { get; set; }
 //        public DateTime? UpdatedAt { get; set; }
 //        public Guid? UpdatedBy { get; set; }
+        public long LastEventRefTime { get; set; }
 
         public BookState()
         {

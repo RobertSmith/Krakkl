@@ -29,14 +29,18 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
             if (aggregate != null)
                 return aggregate;
 
-            const int limit = 50;
+            BookState bookState = GetBookSnapshot(key);
+
+            const int limit = 20;
             var offset = 0;
             var more = true;
             var events = new List<object>();
+            var minRefTime = bookState.LastEventRefTime;
+            var searchQuery = $"BookKey = {key} AND @path.reftime:[{minRefTime + 1} TO {long.MaxValue}]";
 
             while (more)
             {
-                var query = _orchestrate.Search(BookEventsCollection, "BookKey = " + key, limit, offset, "TimeStamp:asc");
+                var query = _orchestrate.Search(BookEventsCollection, searchQuery, limit, offset, "TimeStamp:asc");
                 var searchResults = query.Results.ToList();
 
                 if (!searchResults.Any())
@@ -44,6 +48,8 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
 
                 foreach (var result in searchResults)
                 {
+                    bookState.LastEventRefTime = long.Parse(result.Path.RefTime);
+
                     var i = JsonConvert.DeserializeObject<BookEventArgs>(result.Value.ToString());
 
                     switch (i.EventType)
@@ -116,8 +122,10 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
                     more = false;
             }
 
-            var newAggregate = new BookAggregate(events);
-            Save(newAggregate);
+            var newAggregate = new BookAggregate(bookState, events);
+
+            if (events.Count >= 5)
+                TakeBookSnapshot(newAggregate);
 
             return newAggregate;
         }
@@ -132,6 +140,21 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
             }
 
             BookAggregateCache.UpdateItem(aggregate.Key, aggregate);
+        }
+
+        private BookState GetBookSnapshot(Guid key)
+        {
+            var searchResult = _orchestrate.Search(Definitions.BookSnapshotCollection, "@path.key:" + key);
+
+            if (searchResult.Count == 0)
+                return new BookState();
+
+            return JsonConvert.DeserializeObject<BookState>(searchResult.Results.First().Value.ToString());
+        }
+
+        private void TakeBookSnapshot(BookAggregate aggregate)
+        {
+            _orchestrate.Put(Definitions.BookSnapshotCollection, aggregate.Key.ToString(), aggregate.State);
         }
     }
 }

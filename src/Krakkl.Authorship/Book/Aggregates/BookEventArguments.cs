@@ -79,9 +79,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookRetitledEventArgs(Guid bookKey, string title, Guid updatedBy) : base(bookKey, "BookRetitled")
+        public BookRetitledEventArgs(Guid bookKey, string newTitle, Guid updatedBy) : base(bookKey, "BookRetitled")
         {
-            NewTitle = title;
+            NewTitle = newTitle;
             UpdatedAt = TimeStamp;
             UpdatedBy = updatedBy;
         }
@@ -93,9 +93,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSubTitleChangedEventArgs(Guid bookKey, string subTitle, Guid updatedBy) : base(bookKey, "BookSubTitleChanged")
+        public BookSubTitleChangedEventArgs(Guid bookKey, string newSubTitle, Guid updatedBy) : base(bookKey, "BookSubTitleChanged")
         {
-            NewSubTitle = subTitle;
+            NewSubTitle = newSubTitle;
             UpdatedAt = TimeStamp;
             UpdatedBy = updatedBy;
         }
@@ -107,9 +107,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSeriesTitleChangedEventArgs(Guid bookKey, string seriesTitle, Guid updatedBy) : base(bookKey, "BookSeriesTitleChanged")
+        public BookSeriesTitleChangedEventArgs(Guid bookKey, string newSeriesTitle, Guid updatedBy) : base(bookKey, "BookSeriesTitleChanged")
         {
-            NewSeriesTitle = seriesTitle;
+            NewSeriesTitle = newSeriesTitle;
             UpdatedAt = TimeStamp;
             UpdatedBy = updatedBy;
         }
@@ -121,9 +121,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSeriesVolumeChangedEventArgs(Guid bookKey, string seriesTitle, Guid updatedBy) : base(bookKey, "BookSeriesVolumeChanged")
+        public BookSeriesVolumeChangedEventArgs(Guid bookKey, string newSeriesVolume, Guid updatedBy) : base(bookKey, "BookSeriesVolumeChanged")
         {
-            NewSeriesVolume = seriesTitle;
+            NewSeriesVolume = newSeriesVolume;
             UpdatedAt = TimeStamp;
             UpdatedBy = updatedBy;
         }
@@ -135,9 +135,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookGenreChangedEventArgs(Guid bookKey, GenreModel genre, Guid updatedBy) : base(bookKey, "BookGenreChanged")
+        public BookGenreChangedEventArgs(Guid bookKey, GenreModel newGenre, Guid updatedBy) : base(bookKey, "BookGenreChanged")
         {
-            NewGenre = genre;
+            NewGenre = newGenre;
             UpdatedAt = TimeStamp;
             UpdatedBy = updatedBy;
         }
@@ -149,9 +149,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookLanguageChangedEventArgs(Guid bookKey, LanguageModel language, Guid updatedBy) : base(bookKey, "BookLanguageChanged")
+        public BookLanguageChangedEventArgs(Guid bookKey, LanguageModel newLanguage, Guid updatedBy) : base(bookKey, "BookLanguageChanged")
         {
-            NewLanguage = language;
+            NewLanguage = newLanguage;
             UpdatedAt = TimeStamp;
             UpdatedBy = updatedBy;
         }
@@ -163,9 +163,9 @@ namespace Krakkl.Authorship.Book.Aggregates
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookSynopsisUpdatedEventArgs(Guid bookKey, string synopsys, Guid updatedBy) : base(bookKey, "BookSynopsisUpdated")
+        public BookSynopsisUpdatedEventArgs(Guid bookKey, string newSynopsis, Guid updatedBy) : base(bookKey, "BookSynopsisUpdated")
         {
-            NewSynopsis = synopsys;
+            NewSynopsis = newSynopsis;
             UpdatedAt = TimeStamp;
             UpdatedBy = updatedBy;
         }

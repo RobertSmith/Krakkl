@@ -8,20 +8,25 @@ namespace Krakkl.Authorship.Book.Aggregates
     public class BookAggregate
     {
         private BookState _state;
-        private int _version;
 
         public List<object> UncommittedEvents = new List<object>();
         public Guid Key => _state.Key;
+        public BookState State => _state;
 
-        public BookAggregate() { }
-
-//        public BookAggregate(BookState state)
-//        {
-//            _state = state;
-//        }
-
-        public BookAggregate(IEnumerable<object> events)
+        public BookAggregate()
         {
+            _state = new BookState();
+        }
+
+        public BookAggregate(BookState state)
+        {
+            _state = state ?? new BookState();
+        }
+
+        public BookAggregate(BookState state, IEnumerable<object> events)
+        {
+            _state = state ?? new BookState();
+
             foreach (var e in events)
                 Apply(e);
         }
@@ -223,7 +228,6 @@ namespace Krakkl.Authorship.Book.Aggregates
 
         private void Apply(object e)
         {
-            _version++;
             RedirectToWhen.InvokeEventOptional(this, e);
         }
 
