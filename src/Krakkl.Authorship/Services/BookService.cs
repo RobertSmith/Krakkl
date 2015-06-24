@@ -1,5 +1,5 @@
 ﻿using System;
-using Krakkl.Authorship.Book.Aggregates;
+using Krakkl.Authorship.Book.Aggregate;
 using Krakkl.Authorship.Book.Repository;
 using Krakkl.Authorship.ValueObjects;
 

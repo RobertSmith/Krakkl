@@ -1,5 +1,5 @@
 ﻿using System;
-using Krakkl.Authorship.Book.Aggregates;
+using Krakkl.Authorship.Book.Aggregate;
 
 namespace Krakkl.Authorship.Book.Repository
 {

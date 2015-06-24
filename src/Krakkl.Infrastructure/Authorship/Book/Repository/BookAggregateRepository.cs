@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Krakkl.Authorship.Book.Aggregates;
+using Krakkl.Authorship.Book.Aggregate;
 using Krakkl.Authorship.Book.Repository;
 using Microsoft.Framework.ConfigurationModel;
 using Newtonsoft.Json;

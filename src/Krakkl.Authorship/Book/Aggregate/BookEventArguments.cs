@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Krakkl.Authorship.ValueObjects;
 using Newtonsoft.Json;
 
-namespace Krakkl.Authorship.Book.Aggregates
+namespace Krakkl.Authorship.Book.Aggregate
 {
     // all event arguments should inherit from EventArgs
     public class BookEventArgs : EventArgs

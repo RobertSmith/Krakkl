@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Krakkl.Authorship.ValueObjects;
 
-namespace Krakkl.Authorship.Book.Aggregates
+namespace Krakkl.Authorship.Book.Aggregate
 {
     public class BookAggregate
     {
