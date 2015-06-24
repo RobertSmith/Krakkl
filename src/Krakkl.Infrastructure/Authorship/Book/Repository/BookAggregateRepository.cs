@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Krakkl.Authorship.Book.Aggregate;
 using Krakkl.Authorship.Book.Repository;
 using Microsoft.Framework.ConfigurationModel;
@@ -22,14 +23,14 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
             _messagingService = new MessagingService();
         }
 
-        public BookAggregate FindByKey<T>(Guid key)
+        public async Task<BookAggregate> FindByKey<T>(Guid key)
         {
             var aggregate = (BookAggregate)BookAggregateCache.Get(key);
 
             if (aggregate != null)
                 return aggregate;
 
-            Krakkl.Authorship.Entities.Book book = GetBookSnapshot(key);
+            Krakkl.Authorship.Entities.Book book = await GetBookSnapshot(key);
 
             const int limit = 20;
             var offset = 0;
@@ -40,7 +41,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
 
             while (more)
             {
-                var query = _orchestrate.Search(BookEventsCollection, searchQuery, limit, offset, "@path.reftime:asc");
+                var query = await _orchestrate.SearchAsync(BookEventsCollection, searchQuery, limit, offset, "@path.reftime:asc");
                 var searchResults = query.Results.ToList();
 
                 if (!searchResults.Any())
@@ -130,11 +131,11 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
             return newAggregate;
         }
 
-        public void Save(BookAggregate aggregate)
+        public async void Save(BookAggregate aggregate)
         {
             for (var x = aggregate.UncommittedEvents.Count; x > 0; x--)
             {
-                _orchestrate.Post(BookEventsCollection, aggregate.UncommittedEvents[x - 1]);
+                await _orchestrate.PostAsync(BookEventsCollection, aggregate.UncommittedEvents[x - 1]);
                 _messagingService.SendBookEventMessage(aggregate.UncommittedEvents[x - 1]);
                 aggregate.UncommittedEvents.RemoveAt(x - 1);
             }
@@ -142,9 +143,9 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
             BookAggregateCache.UpdateItem(aggregate.Key, aggregate);
         }
 
-        private Krakkl.Authorship.Entities.Book GetBookSnapshot(Guid key)
+        private async Task<Krakkl.Authorship.Entities.Book> GetBookSnapshot(Guid key)
         {
-            var searchResult = _orchestrate.Search(Definitions.BookSnapshotCollection, "@path.key:" + key);
+            var searchResult = await _orchestrate.SearchAsync(Definitions.BookSnapshotCollection, "@path.key:" + key);
 
             if (searchResult.Count == 0)
                 return new Krakkl.Authorship.Entities.Book();
@@ -152,9 +153,9 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
             return JsonConvert.DeserializeObject<Krakkl.Authorship.Entities.Book>(searchResult.Results.First().Value.ToString());
         }
 
-        private void TakeBookSnapshot(BookAggregate aggregate)
+        private async void TakeBookSnapshot(BookAggregate aggregate)
         {
-            _orchestrate.Put(Definitions.BookSnapshotCollection, aggregate.Key.ToString(), aggregate.Book);
+            await _orchestrate.PutAsync(Definitions.BookSnapshotCollection, aggregate.Key.ToString(), aggregate.Book);
         }
     }
 }

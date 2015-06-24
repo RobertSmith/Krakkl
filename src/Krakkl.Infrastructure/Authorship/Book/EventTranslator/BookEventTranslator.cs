@@ -29,6 +29,9 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
 
         private async void Run()
         {
+            var maxRetries = 5;
+            var tryCount = 0;
+
             await _queue.CreateIfNotExistsAsync();
 
             while (true)
@@ -41,17 +44,27 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
                     {
                         ProcessEvent(message);
                         await _queue.DeleteMessageAsync(message);
+                        tryCount = 0;
                     }
                     catch (Exception)
                     {
+                        tryCount++;
+
+                        if (tryCount >= maxRetries)
+                        {
+                            tryCount = 0;
+                            await _queue.DeleteMessageAsync(message);
+                        }
                     }
                 }
                 else
                     Thread.Sleep(1000);
             }
+
+            // ReSharper disable once FunctionNeverReturns
         }
 
-        private void ProcessEvent(CloudQueueMessage message)
+        private async void ProcessEvent(CloudQueueMessage message)
         {
             var bookEvent = JsonConvert.DeserializeObject<BookEventModel>(message.AsString);
 
@@ -128,11 +141,13 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
                     Exception = ex.ToString()
                 };
 
-                _orchestrate.Post(Definitions.TranslationFailureCollection, failedTranslationMessage);
+                await _orchestrate.PostAsync(Definitions.TranslationFailureCollection, failedTranslationMessage);
+
+                throw;
             }
         }
 
-        private void BookCreatedHandler(BookEventModel eventModel)
+        private async void BookCreatedHandler(BookEventModel eventModel)
         {
             var bookKey = eventModel.BookKey.ToString();
 
@@ -149,7 +164,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
             var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
             var json = JsonConvert.SerializeObject(state, settings);
 
-            _orchestrate.Put(Definitions.BookCollection, bookKey, json);
+            await _orchestrate.PutAsync(Definitions.BookCollection, bookKey, json);
         }
 
         private void AuthorAddedHandler(BookEventModel eventModel)
@@ -334,12 +349,12 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
             PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
-        private void PatchBook(List<object> patchItems, string bookKey)
+        private async void PatchBook(List<object> patchItems, string bookKey)
         {
             var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
             var json = JsonConvert.SerializeObject(patchItems, settings);
 
-            _orchestrate.Patch(Definitions.BookCollection, bookKey, json);
+            await _orchestrate.PatchAsync(Definitions.BookCollection, bookKey, json);
         }
     }
 }

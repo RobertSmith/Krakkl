@@ -6,8 +6,8 @@ using Krakkl.Authorship.ValueObjects;
 namespace Krakkl.Authorship.Services
 {
     /// <summary>
-    /// This is the only class available for the Authorship\Book domain. It is an Anti Corruption Layer and will provide translation 
-    /// to and from the book aggregate.
+    /// This is the only class that should be used directlyfrom the Authorship\Book domain. It is an Anti Corruption Layer and will provide 
+    /// translation to and from the book aggregate.
     /// </summary>
     public class BookService
     {
@@ -240,9 +240,9 @@ namespace Krakkl.Authorship.Services
         }
         // ReSharper restore UnusedMember.Local
 
-        private void Act<T>(Guid key, Action<BookAggregate> action)
+        private async void Act<T>(Guid key, Action<BookAggregate> action)
         {
-            var aggregate = _bookAggregateRepository.FindByKey<T>(key);
+            var aggregate = await _bookAggregateRepository.FindByKey<T>(key);
             action(aggregate);
             _bookAggregateRepository.Save(aggregate);
         }
