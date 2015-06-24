@@ -42,7 +42,14 @@
             }
             <span class="text-muted"> by @Model.Authors.First().Name</span>
         </h4>
-        <p>@Model.Genre.Name (more info to go here, such as word count, last updated date, created date... whatever</p>
+        <p>
+            @{
+                if (Model.Genre != null)
+                {
+                    <text>@Model.Genre.Name</text>
+                }
+            } (more info to go here, such as word count, last updated date, created date... whatever
+        </p>
         <span class="label label-info" style="margin-bottom: 10px;">In Progress</span>
         @{
             if (@Model.Published)

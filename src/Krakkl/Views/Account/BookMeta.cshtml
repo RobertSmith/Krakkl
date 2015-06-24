@@ -1,5 +1,4 @@
 ﻿@using System.Threading.Tasks
-@using Krakkl.Authorship.ValueObjects
 @using Microsoft.AspNet.Mvc.Rendering
 @model Krakkl.Query.Models.BookModel
 
@@ -8,7 +7,7 @@
 @{
     ViewBag.Title = "Edit Book";
 
-    var genreList = ViewBag.Genres as List<Genre>;
+    var genreList = ViewBag.Genres as List<Krakkl.Query.Models.GenreModel>;
     var languages = ViewBag.Languages as Dictionary<string, string>;
 
     List<SelectListItem> languageList = languages.Select(language => new SelectListItem { Text = language.Value, Value = language.Key, Selected = language.Key == Model.Language.Key }).ToList();
@@ -76,7 +75,7 @@
                             {
                                 if (genre.IsFiction)
                                 {
-                                    if (genre.Key == Model.Genre.Key)
+                                    if (Model.Genre != null && genre.Key == Model.Genre.Key)
                                     {
                                         <option value="@genre.Key" selected="selected">(fiction) @genre.Name</option>
                                     }
@@ -87,7 +86,7 @@
                                 }
                                 else
                                 {
-                                    if (genre.Key == Model.Genre.Key)
+                                    if (Model.Genre != null && genre.Key == Model.Genre.Key)
                                     {
                                         <option value="@genre.Key" selected="selected">@genre.Name</option>
                                     }

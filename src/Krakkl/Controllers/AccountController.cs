@@ -64,41 +64,6 @@ namespace Krakkl.Controllers
         }
 
         //
-        // GET: /Account/Register
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Account/Register
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser {UserName = model.Email, Email = model.Email};
-                var result = await UserManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    await SignInManager.SignInAsync(user, false);
-
-                    return RedirectToAction("Index", "Home");
-                }
-
-                AddErrors(result);
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
-
-        //
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -194,9 +159,9 @@ namespace Krakkl.Controllers
             ViewBag.Tab = "Desk";
             var query = new Books();
             var user = await GetCurrentUserAsync();
-            var books = query.GetAuthorBooksAsyc(user.Id);
+            var books = await query.GetAuthorBooksAsyc(user.Id);
 
-            return View(books.Result);
+            return View(books);
         }
 
         // GET: /Account/NewBook
