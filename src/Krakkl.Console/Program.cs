@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using Krakkl.Authorship.Book.Service;
+using Krakkl.Authorship.Services;
 using Krakkl.Infrastructure.Authorship.Book.EventTranslator;
 using Krakkl.Infrastructure.Authorship.Book.Repository;
 

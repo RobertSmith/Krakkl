@@ -29,13 +29,13 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
             if (aggregate != null)
                 return aggregate;
 
-            BookState bookState = GetBookSnapshot(key);
+            Krakkl.Authorship.Entities.Book book = GetBookSnapshot(key);
 
             const int limit = 20;
             var offset = 0;
             var more = true;
             var events = new List<object>();
-            var minRefTime = bookState.LastEventRefTime;
+            var minRefTime = book.LastEventRefTime;
             var searchQuery = $"BookKey = {key} AND @path.reftime:[{minRefTime + 1} TO {long.MaxValue}]";
 
             while (more)
@@ -48,7 +48,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
 
                 foreach (var result in searchResults)
                 {
-                    bookState.LastEventRefTime = long.Parse(result.Path.RefTime);
+                    book.LastEventRefTime = long.Parse(result.Path.RefTime);
 
                     var i = JsonConvert.DeserializeObject<BookEventArgs>(result.Value.ToString());
 
@@ -122,7 +122,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
                     more = false;
             }
 
-            var newAggregate = new BookAggregate(bookState, events);
+            var newAggregate = new BookAggregate(book, events);
 
             if (events.Count >= 10)
                 TakeBookSnapshot(newAggregate);
@@ -142,19 +142,19 @@ namespace Krakkl.Infrastructure.Authorship.Book.Repository
             BookAggregateCache.UpdateItem(aggregate.Key, aggregate);
         }
 
-        private BookState GetBookSnapshot(Guid key)
+        private Krakkl.Authorship.Entities.Book GetBookSnapshot(Guid key)
         {
             var searchResult = _orchestrate.Search(Definitions.BookSnapshotCollection, "@path.key:" + key);
 
             if (searchResult.Count == 0)
-                return new BookState();
+                return new Krakkl.Authorship.Entities.Book();
 
-            return JsonConvert.DeserializeObject<BookState>(searchResult.Results.First().Value.ToString());
+            return JsonConvert.DeserializeObject<Krakkl.Authorship.Entities.Book>(searchResult.Results.First().Value.ToString());
         }
 
         private void TakeBookSnapshot(BookAggregate aggregate)
         {
-            _orchestrate.Put(Definitions.BookSnapshotCollection, aggregate.Key.ToString(), aggregate.State);
+            _orchestrate.Put(Definitions.BookSnapshotCollection, aggregate.Key.ToString(), aggregate.Book);
         }
     }
 }

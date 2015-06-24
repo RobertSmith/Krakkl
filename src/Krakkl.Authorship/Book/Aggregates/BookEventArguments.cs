@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Krakkl.Authorship.Book.Models;
+using Krakkl.Authorship.ValueObjects;
 using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Book.Aggregates
@@ -27,12 +27,12 @@ namespace Krakkl.Authorship.Book.Aggregates
 
     public sealed class BookCreatedEventArgs : BookEventArgs
     {
-        public AuthorModel AddedAuthor { get; private set; }
-        public LanguageModel Language { get; private set; }
+        public Author AddedAuthor { get; private set; }
+        public Language Language { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public Guid CreatedBy { get; private set; }
 
-        public BookCreatedEventArgs(Guid bookKey, AuthorModel addedAuthor, LanguageModel language, DateTime createdAt, Guid createdBy) : base(bookKey, "BookCreated")
+        public BookCreatedEventArgs(Guid bookKey, Author addedAuthor, Language language, DateTime createdAt, Guid createdBy) : base(bookKey, "BookCreated")
         {
             AddedAuthor = addedAuthor;
             Language = language;
@@ -43,11 +43,11 @@ namespace Krakkl.Authorship.Book.Aggregates
 
     public sealed class AuthorAddedToBookEventArgs : BookEventArgs
     {
-        public AuthorModel AddedAuthor { get; private set; }
+        public Author AddedAuthor { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public AuthorAddedToBookEventArgs(Guid bookKey, AuthorModel addedAuthor, DateTime updatedAt, Guid updatedBy) : base(bookKey, "AuthorAddedToBook")
+        public AuthorAddedToBookEventArgs(Guid bookKey, Author addedAuthor, DateTime updatedAt, Guid updatedBy) : base(bookKey, "AuthorAddedToBook")
         {
             AddedAuthor = addedAuthor;
             UpdatedAt = updatedAt;
@@ -57,12 +57,12 @@ namespace Krakkl.Authorship.Book.Aggregates
 
     public sealed class AuthorRemovedFromBookEventArgs : BookEventArgs
     {
-        public AuthorModel RemovedAuthor { get; private set; }
-        public List<AuthorModel> ValidAuthors { get; private set; }
+        public Author RemovedAuthor { get; private set; }
+        public List<Author> ValidAuthors { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public AuthorRemovedFromBookEventArgs(Guid bookKey, AuthorModel removedAuthor, List<AuthorModel> validAuthors, DateTime updatedAt, Guid updatedBy) : base(bookKey, "AuthorRemovedFromBook")
+        public AuthorRemovedFromBookEventArgs(Guid bookKey, Author removedAuthor, List<Author> validAuthors, DateTime updatedAt, Guid updatedBy) : base(bookKey, "AuthorRemovedFromBook")
         {
             RemovedAuthor = removedAuthor;
             ValidAuthors = validAuthors;
@@ -129,11 +129,11 @@ namespace Krakkl.Authorship.Book.Aggregates
 
     public sealed class BookGenreChangedEventArgs : BookEventArgs
     {
-        public GenreModel NewGenre { get; private set; }
+        public Genre NewGenre { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookGenreChangedEventArgs(Guid bookKey, GenreModel newGenre, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookGenreChanged")
+        public BookGenreChangedEventArgs(Guid bookKey, Genre newGenre, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookGenreChanged")
         {
             NewGenre = newGenre;
             UpdatedAt = updatedAt;
@@ -143,11 +143,11 @@ namespace Krakkl.Authorship.Book.Aggregates
 
     public sealed class BookLanguageChangedEventArgs : BookEventArgs
     {
-        public LanguageModel NewLanguage { get; private set; }
+        public Language NewLanguage { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
 
-        public BookLanguageChangedEventArgs(Guid bookKey, LanguageModel newLanguage, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookLanguageChanged")
+        public BookLanguageChangedEventArgs(Guid bookKey, Language newLanguage, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookLanguageChanged")
         {
             NewLanguage = newLanguage;
             UpdatedAt = updatedAt;

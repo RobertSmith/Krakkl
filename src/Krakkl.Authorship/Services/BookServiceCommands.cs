@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Krakkl.Authorship.Book.Service
+namespace Krakkl.Authorship.Services
 {
     public class StartANewBookCommand
     {

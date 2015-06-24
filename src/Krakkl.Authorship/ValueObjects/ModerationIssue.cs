@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Krakkl.Authorship.Book.Models
+namespace Krakkl.Authorship.ValueObjects
 {
-    public sealed class ModerationIssueModel
+    public sealed class ModerationIssue
     {
         public string Field { get; set; }
         public string Reason { get; set; }
@@ -11,7 +11,7 @@ namespace Krakkl.Authorship.Book.Models
         public DateTime CreatedAt { get; set; }
         public DateTime ClearedAt { get; set; }
 
-        public ModerationIssueModel(string field, string reason)
+        public ModerationIssue(string field, string reason)
         {
             Field = field;
             Reason = reason;

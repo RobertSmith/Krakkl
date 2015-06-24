@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace Krakkl.Authorship.Book.Models
+namespace Krakkl.Authorship.ValueObjects
 {
-    public sealed class AuthorModel
+    public sealed class Author
     {
         public Guid Key { get; set; }
         public string Name { get; set; }
 
-        public AuthorModel(Guid key, string name)
+        public Author(Guid key, string name)
         {
             Key = key;
             Name = name;

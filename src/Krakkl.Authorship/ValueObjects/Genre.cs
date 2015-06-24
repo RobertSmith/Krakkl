@@ -1,12 +1,12 @@
-﻿namespace Krakkl.Authorship.Book.Models
+﻿namespace Krakkl.Authorship.ValueObjects
 {
-    public sealed class GenreModel
+    public sealed class Genre
     {
         public string Key { get; set; }
         public string Name { get; set; }
         public bool IsFiction { get; set; }
 
-        public GenreModel(string key, string name, bool isFiction)
+        public Genre(string key, string name, bool isFiction)
         {
             Key = key;
             Name = name;

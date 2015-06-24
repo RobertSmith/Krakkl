@@ -1,9 +1,9 @@
 ﻿using System;
 using Krakkl.Authorship.Book.Aggregates;
-using Krakkl.Authorship.Book.Models;
 using Krakkl.Authorship.Book.Repository;
+using Krakkl.Authorship.ValueObjects;
 
-namespace Krakkl.Authorship.Book.Service
+namespace Krakkl.Authorship.Services
 {
     /// <summary>
     /// This is the only class available for the Authorship\Book domain. It is an Anti Corruption Layer and will provide translation 
@@ -33,10 +33,9 @@ namespace Krakkl.Authorship.Book.Service
             if (string.IsNullOrEmpty(cmd.LanguageName))
                 throw new Exception("Language Name is required");
 
-            var author = new AuthorModel(cmd.AuthorKey, cmd.AuthorName);
-            var language = new LanguageModel(cmd.LanguageKey, cmd.LanguageName);
+            var author = new Author(cmd.AuthorKey, cmd.AuthorName);
+            var language = new Language(cmd.LanguageKey, cmd.LanguageName);
 
-//            var bookAggregate = new BookAggregate(new BookState());
             var bookAggregate = new BookAggregate();
 
             bookAggregate.StartANewBook(author, language);
@@ -65,7 +64,7 @@ namespace Krakkl.Authorship.Book.Service
             if (string.IsNullOrEmpty(cmd.NewAuthorName))
                 throw new Exception("New Author Name is required");
 
-            var newAuthor = new AuthorModel(cmd.NewAuthorKey, cmd.NewAuthorName);
+            var newAuthor = new Author(cmd.NewAuthorKey, cmd.NewAuthorName);
 
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.AddAuthor(cmd.AuthorKey, newAuthor));
         }
@@ -84,7 +83,7 @@ namespace Krakkl.Authorship.Book.Service
             if (string.IsNullOrEmpty(cmd.RemoveAuthorName))
                 throw new Exception("Remove Author Name is required");
 
-            var removeAuthor = new AuthorModel(cmd.RemoveAuthorKey, cmd.RemoveAuthorName);
+            var removeAuthor = new Author(cmd.RemoveAuthorKey, cmd.RemoveAuthorName);
 
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.RemoveAuthor(cmd.AuthorKey, removeAuthor));
         }
@@ -150,7 +149,7 @@ namespace Krakkl.Authorship.Book.Service
             if (string.IsNullOrEmpty(cmd.GenreName))
                 throw new Exception("Gnere Name is required");
 
-            var newGenre = new GenreModel(cmd.GenreKey, cmd.GenreName, cmd.IsFiction);
+            var newGenre = new Genre(cmd.GenreKey, cmd.GenreName, cmd.IsFiction);
 
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeGenre(cmd.AuthorKey, newGenre));
         }
@@ -169,7 +168,7 @@ namespace Krakkl.Authorship.Book.Service
             if (string.IsNullOrEmpty(cmd.LanguageName))
                 throw new Exception("Language Name is required");
 
-            var newLanguage = new LanguageModel(cmd.LanguageKey, cmd.LanguageName);
+            var newLanguage = new Language(cmd.LanguageKey, cmd.LanguageName);
 
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.ChangeEditorLanguage(cmd.AuthorKey, newLanguage));
         }
