@@ -27,7 +27,8 @@
       "Microsoft.Framework.Logging >= 1.0.0-beta4",
       "Microsoft.Framework.Logging.Console >= 1.0.0-beta4",
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0-beta4",
-      "System.Threading >= 4.0.10-beta-22816"
+      "System.Threading >= 4.0.10-beta-22816",
+      "Krakkl.Infrastructure >= 1.0.0-*"
     ],
     "DNX,Version=v4.5.1": [
       "System.Threading >= 4.0.10-beta-22816"

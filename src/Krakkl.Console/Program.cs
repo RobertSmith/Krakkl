@@ -71,23 +71,23 @@ namespace Krakkl.Console
 //
 //            _bookService.Apply(changeTitle);
 
-            var changeSynopsis = new ChangeBookSynopsisCommand
+//            var changeSynopsis = new ChangeBookSynopsisCommand
+//            {
+//                BookKey = Guid.Parse("7528ebf1-2256-4f3d-a89e-ae61d95bdb6e"),
+//                AuthorKey = Guid.Parse("772c7b08-01bb-48f9-854f-d7bd8ebb0efb"),
+//                Synopsis = "A quaint little story about a boy and his llama."
+//            };
+//                        
+//            _bookService.Apply(changeSynopsis);
+
+            var changeSynopsis = new ChangeBookSubtitleCommand
             {
                 BookKey = Guid.Parse("7528ebf1-2256-4f3d-a89e-ae61d95bdb6e"),
                 AuthorKey = Guid.Parse("772c7b08-01bb-48f9-854f-d7bd8ebb0efb"),
-                Synopsis = "A quaint little story about a boy and his llama."
+                SubTitle = "Radar love in the preindustrial era."
             };
-                        
-            _bookService.Apply(changeSynopsis);
 
-//            var changeSynopsis = new ChangeBookSubtitleCommand
-//            {
-//                BookKey = Guid.Parse("5591cf0b-64d8-47d3-a823-c07a69bb6d07"),
-//                AuthorKey = Guid.Parse("85acdb07-9fa8-4fb2-983a-7b6d517c172f"),
-//                SubTitle = "Radar love in the preindustrial era."
-//            };
-//                                    
-//            _bookService.Apply(changeSynopsis);
+            _bookService.Apply(changeSynopsis);
 
             timer.Stop();
 

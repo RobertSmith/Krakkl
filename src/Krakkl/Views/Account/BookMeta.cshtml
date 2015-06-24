@@ -1,28 +1,27 @@
-﻿@using System.Collections.Generic
-@using System.Threading.Tasks
-@using Krakkl.Query
+﻿@using System.Threading.Tasks
+@using Krakkl.Authorship.ValueObjects
 @using Microsoft.AspNet.Mvc.Rendering
-@model BookModel
+@model Krakkl.Query.Models.BookModel
 
 <link href="~/css/jasny-bootstrap.min.css" rel="stylesheet" />
 
 @{
     ViewBag.Title = "Edit Book";
 
-    var genreList = ViewBag.Genres as List<GenreObject>;
+    var genreList = ViewBag.Genres as List<Genre>;
     var languages = ViewBag.Languages as Dictionary<string, string>;
 
-    List<SelectListItem> languageList = languages.Select(language => new SelectListItem { Text = language.Value, Value = language.Key, Selected = language.Key == Model.LanguageKey }).ToList();
+    List<SelectListItem> languageList = languages.Select(language => new SelectListItem { Text = language.Value, Value = language.Key, Selected = language.Key == Model.Language.Key }).ToList();
 
     object disabledAttributesPublic = new { disabled = "disabled", @readonly = "readonly" };
     object disabledAttributesComplete = new { disabled = "disabled", @readonly = "readonly" };
 
-    if (!Model.Public)
+    if (!Model.Published)
     {
         disabledAttributesPublic = new { };
     }
 
-    if (!Model.Complete)
+    if (!Model.Completed)
     {
         disabledAttributesComplete = new { };
     }
@@ -77,7 +76,7 @@
                             {
                                 if (genre.IsFiction)
                                 {
-                                    if (genre.Key == Model.GenreKey)
+                                    if (genre.Key == Model.Genre.Key)
                                     {
                                         <option value="@genre.Key" selected="selected">(fiction) @genre.Name</option>
                                     }
@@ -88,7 +87,7 @@
                                 }
                                 else
                                 {
-                                    if (genre.Key == Model.GenreKey)
+                                    if (genre.Key == Model.Genre.Key)
                                     {
                                         <option value="@genre.Key" selected="selected">@genre.Name</option>
                                     }
@@ -103,7 +102,7 @@
                 </div>
                 <div class="form-group">
                     <label for="LanguageKey">Language <i class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="The language you will write your book in, also sets the language of the text editor."></i></label><br/>
-                    @Html.DropDownListFor(m => m.LanguageKey, languageList, new { @class = "form-control" })
+                    @Html.DropDownListFor(m => m.Language.Key, languageList, new { @class = "form-control" })
                 </div>
             </div>
             <div class="col-md-6">
@@ -129,8 +128,8 @@
         <div class="col-md-12">
             <label for="Synopsis">Synopsis <i class="icon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="A brief summary of your book."></i></label>
             @Html.TextAreaFor(m => m.Synopsis, new {style = "width: 1150px;", @rows = 5})
-            <label class="checkbox inline" for="Public">@Html.CheckBoxFor(m => m.Public, disabledAttributesPublic) Public <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check public to allow others to read your work. This is permanent."></i></label>
-            <label class="checkbox inline" for="Complete">@Html.CheckBoxFor(m => m.Complete, disabledAttributesComplete) Complete <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check complete to indicate the work is in its final state, and will no longer be altered. It also allows readers to start leaving reviews. This is permanent."></i></label>
+            <label class="checkbox inline" for="Public">@Html.CheckBoxFor(m => m.Published, disabledAttributesPublic) Public <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check public to allow others to read your work. This is permanent."></i></label>
+            <label class="checkbox inline" for="Complete">@Html.CheckBoxFor(m => m.Completed, disabledAttributesComplete) Complete <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check complete to indicate the work is in its final state, and will no longer be altered. It also allows readers to start leaving reviews. This is permanent."></i></label>
             <label class="checkbox inline" for="Abandoned">@Html.CheckBoxFor(m => m.Abandoned) Abandoned <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check abandoned to to indicate the work will not be finished. This is reversable."></i></label>
         </div>
     </div>

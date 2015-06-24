@@ -1,32 +1,72 @@
-﻿@model Krakkl.Query.BookModel
+﻿@model Krakkl.Query.Models.BookModel
 
 <div class="row" style="margin-bottom: 20px;">
     <div class="col-md-2">
-        @{if (string.IsNullOrEmpty(Model.CoverArt))
-            { <img class="pull-left img-rounded" src="http://dummyimage.com/150x150/292929/e3e3e3&text=No Image" alt="@Model.Title" /> }
-            else
-            { <img class="pull-left" style="max-height: 150px; max-width: 150px;" src="@Model.CoverArt" alt="@Model.Title" /> }}
+        @*        @{*@
+        @*            if (string.IsNullOrEmpty(Model.CoverArt))*@
+        @*            {*@
+        <img class="pull-left img-rounded" src="http://dummyimage.com/150x150/292929/e3e3e3&text=No Image" alt="@Model.Title"/>
+        @*            }*@
+        @*            else*@
+        @*            {*@
+        @*                <img class="pull-left" style="max-height: 150px; max-width: 150px;" src="@Model.CoverArt" alt="@Model.Title" />*@
+        @*            }*@
+        @*        }*@
     </div>
     <div class="col-md-9">
         <h4 style="margin-top: 0;">
-            @Model.Title
-            @{if (!string.IsNullOrEmpty(Model.SubTitle))
-            { <text>(</text>@Model.SubTitle<text>)</text> }}
-            @{if (!string.IsNullOrEmpty(Model.SeriesTitle))
-            { <text>(</text>@Model.SeriesTitle<text>, </text>@Model.SeriesVolume<text>)</text> }}
-            <span class="text-muted"> by @Model.AuthorName</span>
+            @{
+                if (string.IsNullOrEmpty(Model.Title))
+                {
+                    <text>Untitled</text>
+                }
+                else
+                {
+                    @Model.Title
+                }
+            }
+            @{
+                if (!string.IsNullOrEmpty(Model.SubTitle))
+                {
+                    <text>(</text>
+                    @Model.SubTitle<text>)</text>
+                }
+            }
+            @{
+                if (!string.IsNullOrEmpty(Model.SeriesTitle))
+                {
+                    <text>(</text>
+                    @Model.SeriesTitle<text>, </text>
+                    @Model.SeriesVolume<text>)</text>
+                }
+            }
+            <span class="text-muted"> by @Model.Authors.First().Name</span>
         </h4>
-        <p>@Model.Genre (more info to go here, such as word count, last updated date, created date... whatever</p>
+        <p>@Model.Genre.Name (more info to go here, such as word count, last updated date, created date... whatever</p>
         <span class="label label-info" style="margin-bottom: 10px;">In Progress</span>
-        @{if (@Model.Public)
-            { <span class="label label-success" style="margin-bottom: 10px;">Public</span> }}
-        @{if (@Model.Synopsis != null && @Model.Synopsis.Length > 500)
-            { @Html.Raw(Model.Synopsis.Substring(0, 500))<text>...</text> }
+        @{
+            if (@Model.Published)
+            {
+                <span class="label label-success" style="margin-bottom: 10px;">Public</span>
+            }
+        }
+        @{
+            if (@Model.Synopsis != null && @Model.Synopsis.Length > 500)
+            {
+                @Html.Raw(Model.Synopsis.Substring(0, 500))<text>...</text>
+            }
             else
-            { @Html.Raw(Model.Synopsis) }}
+            {
+                @Html.Raw(Model.Synopsis)
+            }
+        }
     </div>
     <div class="col-md-1">
-        @{if (!Model.Complete)
-            { <button class="btn btn-primary" onclick="window.location.href='/Account/BookMeta?key=@Model.Key'" title="@Model.Title">Edit</button> }}
+        @{
+            if (!Model.Completed)
+            {
+                <button class="btn btn-primary" onclick="window.location.href = '/Account/BookMeta?key=@Model.Key'" title="@Model.Title">Edit</button>
+            }
+        }
     </div>
 </div>

@@ -1,5 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Krakkl.Authorship.Services;
 using Krakkl.Cache;
 using Krakkl.Models;
 using Krakkl.Query;
@@ -196,20 +200,29 @@ namespace Krakkl.Controllers
         }
 
         // GET: /Account/NewBook
-//        public async Task<ActionResult> NewBook(string message)
-//        {
-//            ViewBag.Tab = "Desk";
-//            ViewBag.Genres = GenreCache.GetAll();
-//            ViewBag.Languages = LanguagesCache.GetAll();
-//
-//            if (!string.IsNullOrEmpty(message))
-//                ViewBag.StatusMessage = message;
-//
-//            var user = await GetCurrentUserAsync();
-//            var newBook = new BookModel { AuthorName = user.UserName , LanguageKey = user.EditorLanguage };
-//
-//            return View(newBook);
-//        }
+        public async Task<ActionResult> NewBook(string message)
+        {
+            ViewBag.Tab = "Desk";
+            ViewBag.Genres = GenreCache.GetAll();
+            ViewBag.Languages = LanguagesCache.GetAll();
+
+            if (!string.IsNullOrEmpty(message))
+                ViewBag.StatusMessage = message;
+
+            var user = await GetCurrentUserAsync();
+            var languages = LanguagesCache.GetAll() as Dictionary<string, string>;
+
+            var bookService = new BookService(new Authorship.Infrastructure.BookAggregateRepository());
+            var bookKey = bookService.Start(new StartANewBookCommand
+            {
+                AuthorKey = Guid.Parse(user.Id),
+                AuthorName = user.Pseudonym,
+                LanguageKey = languages?.First(x => x.Key == user.EditorLanguage).Key,
+                LanguageName = languages?.First(x => x.Key == user.EditorLanguage).Value
+            });
+
+            return RedirectToAction("BookMeta", "Account", new { key = bookKey });
+        }
 
 //        [HttpPost]
 //        public async Task<ActionResult> NewBook(NewBookModel model)
