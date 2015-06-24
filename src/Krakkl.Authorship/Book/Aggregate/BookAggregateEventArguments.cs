@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Krakkl.Authorship.Book.Aggregate
 {
     // all event arguments should inherit from EventArgs
-    public class BookEventArgs : EventArgs
+    internal class BookEventArgs : EventArgs
     {
         public Guid BookKey { get; private set; }
         public string EventSource => "Book.Authorship.Krakkl";
@@ -25,7 +25,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookCreatedEventArgs : BookEventArgs
+    internal sealed class BookCreatedEventArgs : BookEventArgs
     {
         public Author AddedAuthor { get; private set; }
         public Language Language { get; private set; }
@@ -41,7 +41,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class AuthorAddedToBookEventArgs : BookEventArgs
+    internal sealed class AuthorAddedToBookEventArgs : BookEventArgs
     {
         public Author AddedAuthor { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -55,7 +55,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class AuthorRemovedFromBookEventArgs : BookEventArgs
+    internal sealed class AuthorRemovedFromBookEventArgs : BookEventArgs
     {
         public Author RemovedAuthor { get; private set; }
         public List<Author> ValidAuthors { get; private set; }
@@ -71,7 +71,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookRetitledEventArgs : BookEventArgs
+    internal sealed class BookRetitledEventArgs : BookEventArgs
     {
         public string NewTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -85,7 +85,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookSubTitleChangedEventArgs : BookEventArgs
+    internal sealed class BookSubTitleChangedEventArgs : BookEventArgs
     {
         public string NewSubTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -99,7 +99,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookSeriesTitleChangedEventArgs : BookEventArgs
+    internal sealed class BookSeriesTitleChangedEventArgs : BookEventArgs
     {
         public string NewSeriesTitle { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -113,7 +113,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookSeriesVolumeChangedEventArgs : BookEventArgs
+    internal sealed class BookSeriesVolumeChangedEventArgs : BookEventArgs
     {
         public string NewSeriesVolume { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -127,7 +127,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookGenreChangedEventArgs : BookEventArgs
+    internal sealed class BookGenreChangedEventArgs : BookEventArgs
     {
         public Genre NewGenre { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -141,7 +141,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookLanguageChangedEventArgs : BookEventArgs
+    internal sealed class BookLanguageChangedEventArgs : BookEventArgs
     {
         public Language NewLanguage { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -155,7 +155,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookSynopsisUpdatedEventArgs : BookEventArgs
+    internal sealed class BookSynopsisUpdatedEventArgs : BookEventArgs
     {
         public string NewSynopsis { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -169,7 +169,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookCompletedEventArgs : BookEventArgs
+    internal sealed class BookCompletedEventArgs : BookEventArgs
     {
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
@@ -181,7 +181,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookSetAsInProgressEventArgs : BookEventArgs
+    internal sealed class BookSetAsInProgressEventArgs : BookEventArgs
     {
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
@@ -193,7 +193,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookAbandonedEventArgs : BookEventArgs
+    internal sealed class BookAbandonedEventArgs : BookEventArgs
     {
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
@@ -205,7 +205,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookRevivedEventArgs : BookEventArgs
+    internal sealed class BookRevivedEventArgs : BookEventArgs
     {
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
@@ -217,7 +217,7 @@ namespace Krakkl.Authorship.Book.Aggregate
         }
     }
 
-    public sealed class BookPublishedEventArgs : BookEventArgs
+    internal sealed class BookPublishedEventArgs : BookEventArgs
     {
         public DateTime UpdatedAt { get; private set; }
         public Guid UpdatedBy { get; private set; }
