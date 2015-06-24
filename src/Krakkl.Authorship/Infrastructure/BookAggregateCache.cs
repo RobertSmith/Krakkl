@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Caching;
 
-namespace Krakkl.Infrastructure.Authorship.Book.Repository
+namespace Krakkl.Authorship.Infrastructure
 {
     internal static class BookAggregateCache
     {

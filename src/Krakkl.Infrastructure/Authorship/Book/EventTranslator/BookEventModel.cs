@@ -30,6 +30,12 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
         public int TranslationAttemptCount { get; set; }
         public string TranslationFailureMessage { get; set; }
         public bool TranslationFailed { get; set; }
+
+        public override string ToString()
+        {
+            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+            return JsonConvert.SerializeObject(this, settings);
+        }
     }
 
     internal sealed class AuthorModel

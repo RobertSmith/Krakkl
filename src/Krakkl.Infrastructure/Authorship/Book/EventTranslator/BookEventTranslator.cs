@@ -64,7 +64,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
             // ReSharper disable once FunctionNeverReturns
         }
 
-        private async void ProcessEvent(CloudQueueMessage message)
+        private void ProcessEvent(CloudQueueMessage message)
         {
             var bookEvent = JsonConvert.DeserializeObject<BookEventModel>(message.AsString);
 
@@ -141,13 +141,13 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
                     Exception = ex.ToString()
                 };
 
-                await _orchestrate.PostAsync(Definitions.TranslationFailureCollection, failedTranslationMessage);
+                _orchestrate.Post(Definitions.TranslationFailureCollection, failedTranslationMessage);
 
                 throw;
             }
         }
 
-        private async void BookCreatedHandler(BookEventModel eventModel)
+        private void BookCreatedHandler(BookEventModel eventModel)
         {
             var bookKey = eventModel.BookKey.ToString();
 
@@ -164,7 +164,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
             var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
             var json = JsonConvert.SerializeObject(state, settings);
 
-            await _orchestrate.PutAsync(Definitions.BookCollection, bookKey, json);
+            _orchestrate.Put(Definitions.BookCollection, bookKey, json);
         }
 
         private void AuthorAddedHandler(BookEventModel eventModel)
@@ -349,12 +349,12 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
             PatchBook(patchItems, eventModel.BookKey.ToString());
         }
 
-        private async void PatchBook(List<object> patchItems, string bookKey)
+        private void PatchBook(List<object> patchItems, string bookKey)
         {
             var settings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
             var json = JsonConvert.SerializeObject(patchItems, settings);
 
-            await _orchestrate.PatchAsync(Definitions.BookCollection, bookKey, json);
+            _orchestrate.Patch(Definitions.BookCollection, bookKey, json);
         }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.Framework.ConfigurationModel;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 
-namespace Krakkl.Infrastructure.Authorship.Book.Repository
+namespace Krakkl.Authorship.Infrastructure
 {
     internal class MessagingService
     {

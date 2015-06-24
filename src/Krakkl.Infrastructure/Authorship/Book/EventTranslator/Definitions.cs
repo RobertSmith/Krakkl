@@ -1,4 +1,4 @@
-﻿namespace Krakkl.Infrastructure.Authorship.Book
+﻿namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
 {
     public static class Definitions
     {

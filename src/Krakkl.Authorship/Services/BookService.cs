@@ -240,9 +240,9 @@ namespace Krakkl.Authorship.Services
         }
         // ReSharper restore UnusedMember.Local
 
-        private async void Act<T>(Guid key, Action<BookAggregate> action)
+        private void Act<T>(Guid key, Action<BookAggregate> action)
         {
-            var aggregate = await _bookAggregateRepository.FindByKey<T>(key);
+            var aggregate = _bookAggregateRepository.FindByKey<T>(key);
             action(aggregate);
             _bookAggregateRepository.Save(aggregate);
         }
