@@ -36,7 +36,7 @@ namespace Krakkl.Authorship.Infrastructure
             var more = true;
             var events = new List<object>();
             var minRefTime = book.LastEventRefTime;
-            var searchQuery = $"BookKey = {key} AND @path.reftime:[{minRefTime + 1} TO {long.MaxValue}]";
+            var searchQuery = $"BookKey:{key} AND @path.reftime:[{minRefTime + 1} TO {long.MaxValue}]";
 
             while (more)
             {
@@ -44,7 +44,7 @@ namespace Krakkl.Authorship.Infrastructure
                 var searchResults = query.Results.ToList();
 
                 if (!searchResults.Any())
-                    throw new Exception("Book not found");
+                    break;
 
                 foreach (var result in searchResults)
                 {

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Krakkl.Authorship.Services;
 using Krakkl.Cache;
 using Krakkl.Models;
 using Krakkl.Query;
+using Krakkl.Services;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
@@ -17,6 +16,7 @@ namespace Krakkl.Controllers
     public class DeskController : Controller
     {
         public UserManager<ApplicationUser> UserManager { get; }
+        private readonly DeskService _service = new DeskService();
 
         public DeskController(UserManager<ApplicationUser> userManager)
         {
@@ -46,18 +46,9 @@ namespace Krakkl.Controllers
                 ViewBag.StatusMessage = message;
 
             var user = await GetCurrentUserAsync();
-            var languages = LanguagesCache.GetAll() as Dictionary<string, string>;
+            var newBookKey = _service.StartANewBook(user);
 
-            var bookService = new BookService(new Authorship.Infrastructure.BookAggregateRepository());
-            var bookKey = bookService.Start(new StartANewBookCommand
-            {
-                AuthorKey = Guid.Parse(user.Id),
-                AuthorName = user.Pseudonym,
-                LanguageKey = languages?.First(x => x.Key == user.EditorLanguage).Key,
-                LanguageName = languages?.First(x => x.Key == user.EditorLanguage).Value
-            });
-
-            return RedirectToAction("Book", "Desk", new { key = bookKey });
+            return RedirectToAction("Book", "Desk", new { key = newBookKey });
         }
 
         // GET: /Desk/Book
@@ -81,24 +72,78 @@ namespace Krakkl.Controllers
         [HttpPost]
         public async Task<JsonResult> UpdateBookTitle(string bookKey, string title)
         {
-            try
-            {
-                var user = await GetCurrentUserAsync();
-                var bookService = new BookService(new Authorship.Infrastructure.BookAggregateRepository());
+            var user = await GetCurrentUserAsync();
 
-                bookService.Apply(new RetitleBookCommand
-                {
-                    AuthorKey = Guid.Parse(user.Id),
-                    BookKey = Guid.Parse(bookKey),
-                    Title = title
-                });
-            }
-            catch (Exception)
-            {
-                return new JsonResult("Retitle failed");
-            }
+            if (_service.UpdateBookTitle(user, bookKey, title))
+                return new JsonResult("success");
 
-            return new JsonResult("success");
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBookSubTitle(string bookKey, string subTitle)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateBookSubTitle(user, bookKey, subTitle))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBookSeriesTitle(string bookKey, string seriesTitle)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateBookSeriesTitle(user, bookKey, seriesTitle))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBookSeriesVolume(string bookKey, string seriesVolume)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateBookSeriesVolume(user, bookKey, seriesVolume))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBookGenre(string bookKey, string genre)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateBookGenre(user, bookKey, genre))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBookLanguage(string bookKey, string language)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateBookLanguage(user, bookKey, language))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateSynopsis(string bookKey, string synopsis)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateSynopsis(user, bookKey, synopsis))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
         }
 
         #region Helpers

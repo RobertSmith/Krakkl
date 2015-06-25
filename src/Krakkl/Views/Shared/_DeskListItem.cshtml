@@ -28,16 +28,13 @@
             @{
                 if (!string.IsNullOrEmpty(Model.SubTitle))
                 {
-                    <text>(</text>
-                    @Model.SubTitle<text>)</text>
+                    <text>(</text>@Model.SubTitle<text>)</text>
                 }
             }
             @{
                 if (!string.IsNullOrEmpty(Model.SeriesTitle))
                 {
-                    <text>(</text>
-                    @Model.SeriesTitle<text>, </text>
-                    @Model.SeriesVolume<text>)</text>
+                    <text>(</text>@Model.SeriesTitle<text>, </text>@Model.SeriesVolume<text>)</text>
                 }
             }
             <span class="text-muted"> by @Model.Authors.First().Name</span>

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
-using Krakkl.Authorship.Services;
-using Krakkl.Cache;
 using Krakkl.Models;
-using Krakkl.Query;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
@@ -169,11 +163,6 @@ namespace Krakkl.Controllers
                 return Redirect(returnUrl);
 
             return RedirectToAction("Index", "Home");
-        }
-
-        private async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return await UserManager.FindByIdAsync(Context.User.GetUserId());
         }
 
         #endregion
