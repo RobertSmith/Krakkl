@@ -42,8 +42,8 @@
 
 @Html.Partial("_BookEditTabs")
 
-@using (Html.BeginForm("BookMeta", "Account", FormMethod.Post, new {enctype = "multipart/form-data"}))
-{
+@*@using (Html.BeginForm("Book", "Desk", FormMethod.Post, new {enctype = "multipart/form-data"}))*@
+@*{*@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
 
@@ -52,7 +52,7 @@
             <div class="col-md-6">
                 @Html.HiddenFor(m => m.Key)
                 <div class="form-group">
-                    <label for="title"><i class="glyphicon glyphicon-asterisk" data-toggle="tooltip" data-placement="top" title data-original-title="Required field"></i> Title</label>
+                    <label for="title">Title</label>
                     <input type="text" class="form-control" id="title" name="title" value="@Model.Title"/>
                 </div>
                 <div class="form-group">
@@ -138,7 +138,7 @@
             <button class="btn btn-danger pull-right" onclick="window.location = '/Account/Desk'; return false;">Cancel</button>
         </div>
     </div>
-}
+@*}*@
 
 <script src="~/lib/jquery/jquery.js"></script>
 <script src="~/lib/ckeditor/ckeditor.js"></script>
@@ -152,18 +152,25 @@
         CKEDITOR.replace('Synopsis',
             {
                 toolbar: 'Basic',
-                language: $('#LanguageKey').val(),
+                language: $('#Language_Key').val(),
                 filebrowserImageBrowseUrl: '/Image/Browser?bookId=@Model.Key',
                 filebrowserImageUploadUrl: '/Image/Upload?bookId=@Model.Key',
                 filebrowserImageWindowWidth: '680',
                 filebrowserImageWindowHeight: '680'
             });
 
-        $("#LanguageKey").change(function (e) {
+        $("#Language_Key").change(function (e) {
             CKEDITOR.instances.Synopsis.destroy();
-            CKEDITOR.replace('Synopsis', { toolbar: 'Basic', language: $('#LanguageKey').val() });
+            CKEDITOR.replace('Synopsis', { toolbar: 'Basic', language: $('#Language_Key').val() });
         });
 
-        $('.fileinput').fileinput({ uploadtype: 'image' });
+//        $('.fileinput').fileinput({ uploadtype: 'image' });
+
+        $("#title").blur(function () {
+            var key = $("#Key")[0].value;
+            var title = $("#title")[0].value;
+            var data = { bookKey: key, title: title };
+            $.post("/Account/UpdateBookTitle", data);
+        });
     });
 </script>
