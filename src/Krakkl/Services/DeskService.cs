@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Krakkl.Authorship.Services;
 using Krakkl.Cache;
 using Krakkl.Models;
@@ -24,6 +25,9 @@ namespace Krakkl.Services
                 LanguageName = languages?.First(x => x.Key == user.EditorLanguage).Value
             });
 
+//            // Give the back end a sec to catch up
+//            Thread.Sleep(1000);
+//
             return bookKey;
         }
 

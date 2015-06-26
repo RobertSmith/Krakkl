@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Net.Http;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
-using Krakkl.Authorship.Services;
 using Krakkl.Cache;
 using Krakkl.Models;
 using Krakkl.Query;
@@ -34,16 +35,13 @@ namespace Krakkl.Controllers
             return View(books);
         }
 
-        // POST: /Desk/NewBook
-        [HttpPost]
-        public async Task<ActionResult> NewBook(string message)
+        // GET: /Desk/NewBook
+        [HttpGet]
+        public async Task<ActionResult> NewBook()
         {
             ViewBag.Tab = "Desk";
             ViewBag.Genres = GenreCache.GetAll();
             ViewBag.Languages = LanguagesCache.GetAll();
-
-            if (!string.IsNullOrEmpty(message))
-                ViewBag.StatusMessage = message;
 
             var user = await GetCurrentUserAsync();
             var newBookKey = _service.StartANewBook(user);
@@ -64,9 +62,22 @@ namespace Krakkl.Controllers
                 ViewBag.StatusMessage = message;
 
             var query = new Books();
-            var book = await query.GetBookAsync(key);
 
-            return View(book);
+            while (true)
+            {
+                try
+                {
+                    var book = await query.GetBookAsync(key);
+                    return View(book);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("404"))
+                        Thread.Sleep(1000);
+                    else 
+                        throw;
+                }
+            }
         }
 
         [HttpPost]
