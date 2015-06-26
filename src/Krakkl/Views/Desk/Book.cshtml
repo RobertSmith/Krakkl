@@ -163,7 +163,7 @@
 
         ckeditor.on('blur', function (e) {
             var key = $("#Key")[0].value;
-            var synopsis = $("#Synopsis")[0].document;
+            var synopsis = CKEDITOR.instances['Synopsis'].getData();
             var data = { bookKey: key, synopsis: synopsis };
             $.post("/Desk/UpdateSynopsis", data);
         });
