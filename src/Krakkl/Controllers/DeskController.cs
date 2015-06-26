@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Krakkl.Models;
 using Krakkl.Query;
 using Krakkl.Services;
 using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 
@@ -187,6 +189,14 @@ namespace Krakkl.Controllers
                 return new JsonResult("success");
 
             return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UploadCoverArt(HttpPostedFileBase upload)
+        {
+            var user = await GetCurrentUserAsync();
+
+            return new JsonResult("success");
         }
 
         #region Helpers

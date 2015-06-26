@@ -7,7 +7,8 @@ eval("var project = " + fs.readFileSync("./project.json"));
 
 var paths = {
   bower: "./bower_components/",
-  lib: "./" + project.webroot + "/lib/"
+  lib: "./" + project.webroot + "/lib/",
+  js: "./" + project.webroot + "/js/"
 };
 
 gulp.task("clean", function (cb) {
@@ -27,6 +28,7 @@ gulp.task("copy", ["clean"], function () {
 
   for (var destinationDir in bower) {
     gulp.src(paths.bower + bower[destinationDir])
-      .pipe(gulp.dest(paths.lib + destinationDir));
+      .pipe(gulp.dest(paths.lib + destinationDir))
+      .pipe(gulp.dest(paths.js + destinationDir));
   }
 });
