@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -152,6 +151,39 @@ namespace Krakkl.Controllers
             var user = await GetCurrentUserAsync();
 
             if (_service.UpdateSynopsis(user, bookKey, synopsis))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBookPublished(string bookKey)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateBookPublished(user, bookKey))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBookCompleted(string bookKey, bool completed)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateBookCompleted(user, bookKey, completed))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBookAbandoned(string bookKey, bool abandoned)
+        {
+            var user = await GetCurrentUserAsync();
+
+            if (_service.UpdateBookAbandoned(user, bookKey, abandoned))
                 return new JsonResult("success");
 
             return new JsonResult("Retitle failed");

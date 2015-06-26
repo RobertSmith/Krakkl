@@ -34,111 +34,96 @@
     }
 }
 
-<div class="row">
-    <div class="col-md-12">
-        <h3>@Model.Title<button class="btn btn-danger pull-right" onclick="window.location = '/Account/Desk'; return false;">Cancel</button></h3>
-    </div>
-</div>
-
 @Html.Partial("_BookEditTabs")
 
-@*@using (Html.BeginForm("Book", "Desk", FormMethod.Post, new {enctype = "multipart/form-data"}))*@
-@*{*@
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary()
+@Html.AntiForgeryToken()
+@Html.ValidationSummary()
 
-    <div class="row">
-        <fieldset>
-            <div class="col-md-6">
-                @Html.HiddenFor(m => m.Key)
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" value="@Model.Title"/>
-                </div>
-                <div class="form-group">
-                    <label for="subTitle">Sub Title</label>
-                    <input type="text" class="form-control" id="subTitle" name="subTitle" value="@Model.SubTitle"/>
-                </div>
-                <div class="form-group">
-                    <label for="seriesTitle">Series Title</label>
-                    <input type="text" class="form-control" id="seriesTitle" name="seriesTitle" value="@Model.SeriesTitle"/>
-                </div>
-                <div class="form-group">
-                    <label for="seriesVolume">Series Volume</label>
-                    <input type="text" class="form-control" id="seriesVolume" name="seriesVolume" value="@Model.SeriesVolume"/>
-                </div>
-                <div class="form-group">
-                    <label for="genreKey">Genre</label>
-                    <select id="genreKey" name="genreKey" class="form-control">
-                        @{
-                            foreach (var genre in genreList.OrderByDescending(x => x.IsFiction).ThenBy(x => x.Name))
+<div class="row">
+    <fieldset>
+        <div class="col-md-6">
+            @Html.HiddenFor(m => m.Key)
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" name="title" value="@Model.Title"/>
+            </div>
+            <div class="form-group">
+                <label for="subTitle">Sub Title</label>
+                <input type="text" class="form-control" id="subTitle" name="subTitle" value="@Model.SubTitle"/>
+            </div>
+            <div class="form-group">
+                <label for="seriesTitle">Series Title</label>
+                <input type="text" class="form-control" id="seriesTitle" name="seriesTitle" value="@Model.SeriesTitle"/>
+            </div>
+            <div class="form-group">
+                <label for="seriesVolume">Series Volume</label>
+                <input type="text" class="form-control" id="seriesVolume" name="seriesVolume" value="@Model.SeriesVolume"/>
+            </div>
+            <div class="form-group">
+                <label for="genreKey">Genre</label>
+                <select id="genreKey" name="genreKey" class="form-control">
+                    @{
+                        foreach (var genre in genreList.OrderByDescending(x => x.IsFiction).ThenBy(x => x.Name))
+                        {
+                            if (genre.IsFiction)
                             {
-                                if (genre.IsFiction)
+                                if (Model.Genre != null && genre.Key == Model.Genre.Key)
                                 {
-                                    if (Model.Genre != null && genre.Key == Model.Genre.Key)
-                                    {
-                                        <option value="@genre.Key" selected="selected">(fiction) @genre.Name</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@genre.Key">(fiction) @genre.Name</option>
-                                    }
+                                    <option value="@genre.Key" selected="selected">(fiction) @genre.Name</option>
                                 }
                                 else
                                 {
-                                    if (Model.Genre != null && genre.Key == Model.Genre.Key)
-                                    {
-                                        <option value="@genre.Key" selected="selected">@genre.Name</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@genre.Key">@genre.Name</option>
-                                    }
+                                    <option value="@genre.Key">(fiction) @genre.Name</option>
+                                }
+                            }
+                            else
+                            {
+                                if (Model.Genre != null && genre.Key == Model.Genre.Key)
+                                {
+                                    <option value="@genre.Key" selected="selected">@genre.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@genre.Key">@genre.Name</option>
                                 }
                             }
                         }
-                    </select>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Language_Key">Language <i class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="The language you will write your book in, also sets the language of the text editor."></i></label><br/>
+                @Html.DropDownListFor(m => m.Language.Key, languageList, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label>Cover Art</label><br />
+            <div class="fileinput fileinput-new" data-provides="fileinput">
+                <div class="fileinput-new thumbnail" style="width: 400px; height: 400px;">
+                    <img src="http://www.placehold.it/400x400/EFEFEF/AAAAAA&text=no+image" />
                 </div>
-                <div class="form-group">
-                    <label for="Language_Key">Language <i class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="The language you will write your book in, also sets the language of the text editor."></i></label><br/>
-                    @Html.DropDownListFor(m => m.Language.Key, languageList, new { @class = "form-control" })
+                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 400px; max-height: 400px; line-height: 20px;"></div>
+                <div>
+                    <span class="btn btn-primary btn-file">
+                        <span class="fileinput-new">Upload Cover Art...</span>
+                        <span class="fileinput-exists">Change</span>
+                        <input id="CoverArt" name="CoverArt" type="file" accept="image/*" />
+                    </span>
+                    <a href="#" class="btn fileinput-exists" data-dismiss="fileinput">Remove</a>
                 </div>
             </div>
-            <div class="col-md-6">
-                <label>Cover Art</label><br />
-                <div class="fileinput fileinput-new" data-provides="fileinput">
-                    <div class="fileinput-new thumbnail" style="width: 400px; height: 400px;">
-                        <img src="http://www.placehold.it/400x400/EFEFEF/AAAAAA&text=no+image" />
-                    </div>
-                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 400px; max-height: 400px; line-height: 20px;"></div>
-                    <div>
-                        <span class="btn btn-primary btn-file">
-                            <span class="fileinput-new">Upload Cover Art...</span>
-                            <span class="fileinput-exists">Change</span>
-                            <input id="CoverArt" name="CoverArt" type="file" accept="image/*" />
-                        </span>
-                        <a href="#" class="btn fileinput-exists" data-dismiss="fileinput">Remove</a>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-    </div>
-    <div class="row" style="margin-bottom: 10px;">
-        <div class="col-md-12">
-            <label for="Synopsis">Synopsis <i class="icon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="A brief summary of your book."></i></label>
-            @Html.TextAreaFor(m => m.Synopsis, new {style = "width: 1150px;", @rows = 5})
-            <label class="checkbox inline" for="Public">@Html.CheckBoxFor(m => m.Published, disabledAttributesPublic) Public <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check public to allow others to read your work. This is permanent."></i></label>
-            <label class="checkbox inline" for="Complete">@Html.CheckBoxFor(m => m.Completed, disabledAttributesComplete) Complete <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check complete to indicate the work is in its final state, and will no longer be altered. It also allows readers to start leaving reviews. This is permanent."></i></label>
-            <label class="checkbox inline" for="Abandoned">@Html.CheckBoxFor(m => m.Abandoned) Abandoned <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check abandoned to to indicate the work will not be finished. This is reversable."></i></label>
         </div>
+    </fieldset>
+</div>
+<div class="row" style="margin-bottom: 10px;">
+    <div class="col-md-12">
+        <label for="Synopsis">Synopsis <i class="icon-question-sign" data-toggle="tooltip" data-placement="right" title data-original-title="A brief summary of your book."></i></label>
+        @Html.TextAreaFor(m => m.Synopsis, new {style = "width: 1150px;", @rows = 5})
+        <label class="checkbox inline" for="Published">@Html.CheckBoxFor(m => m.Published, disabledAttributesPublic) Public <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check public to allow others to read your work. This is permanent."></i></label>
+        <label class="checkbox inline" for="Completed">@Html.CheckBoxFor(m => m.Completed, disabledAttributesComplete) Complete <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check complete to indicate the work is in its final state, and will no longer be altered. It also allows readers to start leaving reviews. This is permanent."></i></label>
+        <label class="checkbox inline" for="Abandoned">@Html.CheckBoxFor(m => m.Abandoned) Abandoned <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title data-original-title="Check abandoned to to indicate the work will not be finished. This is reversable."></i></label>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <button class="btn btn-success pull-left">Save</button>
-            <button class="btn btn-danger pull-right" onclick="window.location = '/Account/Desk'; return false;">Cancel</button>
-        </div>
-    </div>
-@*}*@
+</div>
 
 <script src="~/lib/jquery/jquery.js"></script>
 <script src="~/lib/ckeditor/ckeditor.js"></script>
@@ -213,6 +198,26 @@
             var genreKey = $("#genreKey").val();
             var data = { bookKey: key, genre: genreKey };
             $.post("/Desk/UpdateBookGenre", data);
+        });
+
+        $("#Published").change(function (e) {
+            var key = $("#Key")[0].value;
+            var data = { bookKey: key };
+            $.post("/Desk/UpdateBookPublished", data);
+        });
+
+        $("#Completed").change(function (e) {
+            var key = $("#Key")[0].value;
+            var completed = $("#Completed")[0].checked;
+            var data = { bookKey: key, completed: completed };
+            $.post("/Desk/UpdateBookCompleted", data);
+        });
+
+        $("#Abandoned").change(function (e) {
+            var key = $("#Key")[0].value;
+            var abandoned = $("#Abandoned")[0].checked;
+            var data = { bookKey: key, abandoned: abandoned };
+            $.post("/Desk/UpdateBookAbandoned", data);
         });
     });
 </script>

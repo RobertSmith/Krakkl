@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Krakkl.Authorship.Services;
 using Krakkl.Cache;
 using Krakkl.Models;
@@ -25,9 +24,6 @@ namespace Krakkl.Services
                 LanguageName = languages?.First(x => x.Key == user.EditorLanguage).Value
             });
 
-//            // Give the back end a sec to catch up
-//            Thread.Sleep(1000);
-//
             return bookKey;
         }
 
@@ -173,6 +169,89 @@ namespace Krakkl.Services
                     BookKey = Guid.Parse(bookKey),
                     Synopsis = synopsis
                 });
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool UpdateBookPublished(ApplicationUser user, string bookKey)
+        {
+            try
+            {
+                var languages = LanguagesCache.GetAll() as Dictionary<string, string>;
+
+                if (languages == null)
+                    throw new Exception("No languages? WTF?");
+
+                _service.Apply(new PublishBookCommand
+                {
+                    AuthorKey = Guid.Parse(user.Id),
+                    BookKey = Guid.Parse(bookKey)
+                });
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool UpdateBookCompleted(ApplicationUser user, string bookKey, bool completed)
+        {
+            try
+            {
+                var languages = LanguagesCache.GetAll() as Dictionary<string, string>;
+
+                if (languages == null)
+                    throw new Exception("No languages? WTF?");
+
+                if (completed)
+                    _service.Apply(new CompleteBookCommand
+                    {
+                        AuthorKey = Guid.Parse(user.Id),
+                        BookKey = Guid.Parse(bookKey)
+                    });
+                else
+                    _service.Apply(new SetBookInProgressCommand
+                    {
+                        AuthorKey = Guid.Parse(user.Id),
+                        BookKey = Guid.Parse(bookKey)
+                    });
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool UpdateBookAbandoned(ApplicationUser user, string bookKey, bool abandoned)
+        {
+            try
+            {
+                var languages = LanguagesCache.GetAll() as Dictionary<string, string>;
+
+                if (languages == null)
+                    throw new Exception("No languages? WTF?");
+
+                if (abandoned)
+                    _service.Apply(new AbandonBookCommand
+                    {
+                        AuthorKey = Guid.Parse(user.Id),
+                        BookKey = Guid.Parse(bookKey)
+                    });
+                else
+                    _service.Apply(new ReviveBookCommand
+                    {
+                        AuthorKey = Guid.Parse(user.Id),
+                        BookKey = Guid.Parse(bookKey)
+                    });
 
                 return true;
             }

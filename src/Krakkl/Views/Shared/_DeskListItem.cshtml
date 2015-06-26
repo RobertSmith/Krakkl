@@ -47,11 +47,24 @@
                 }
             } (more info to go here, such as word count, last updated date, created date... whatever
         </p>
-        <span class="label label-info" style="margin-bottom: 10px;">In Progress</span>
         @{
+            if (@Model.Completed)
+            {
+                <span class="label label-primary" style="margin-bottom: 10px;">Complete</span>
+            }
+            else
+            {
+                <span class="label label-info" style="margin-bottom: 10px;">In Progress</span>
+            }
+
             if (@Model.Published)
             {
                 <span class="label label-success" style="margin-bottom: 10px;">Public</span>
+            }
+
+            if (@Model.Abandoned)
+            {
+                <span class="label label-warning" style="margin-bottom: 10px;">Abandoned</span>
             }
         }
         @{
@@ -66,11 +79,6 @@
         }
     </div>
     <div class="col-md-1">
-        @{
-            if (!Model.Completed)
-            {
-                <button class="btn btn-primary" onclick="window.location.href = '/Desk/Book?key=@Model.Key'" title="@Model.Title">Edit</button>
-            }
-        }
+        <button class="btn btn-primary" onclick="window.location.href = '/Desk/Book?key=@Model.Key'" title="@Model.Title">Edit</button>
     </div>
 </div>
