@@ -1,0 +1,78 @@
+﻿@model List<string>
+
+@{
+    ViewBag.Title = "Browser";
+    Layout = "~/Views/Shared/_LayoutMin.cshtml";
+    string ckEditorFuncNum = ViewBag.CKEditorFuncNum;
+}
+
+@using (Html.BeginForm("BrowserSelect", "Image", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("CKEditorFuncNum", ckEditorFuncNum)
+
+    <fieldset>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div id="myCarousel" class="carousel" data-interval="false">
+                    <!-- Carousel items -->
+                    <div class="carousel-inner">
+                        @{
+                            bool firstItem = true;
+
+                            foreach (var image in Model)
+                            {
+                                if (firstItem)
+                                {
+                                    <div class="active item">
+                                        <img src="@image" style="width: 100%" />
+                                        <div class="carousel-caption">
+                                            <p>@image.Split('/').Last()</p>
+                                        </div>
+                                    </div>
+                                    firstItem = false;
+                                }
+                                else
+                                {
+                                    <div class="item">
+                                        <img src="@image" style="width: 100%" />
+                                        <div class="carousel-caption">
+                                            <p>@image.Split('/').Last()</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                    <!-- Carousel nav -->
+                    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </a>
+                    <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <button id="select" class="btn btn-success pull-left">Select</button>
+                <button class="btn btn-danger pull-right" onclick="window.close();">Cancel</button>
+            </div>
+        </div>
+    </fieldset>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.carousel').carousel({ interval: 0 });
+
+        $('#select').click(function () {
+            var funcNum = $('#CKEditorFuncNum').val();
+            var fileUrl = $('.active.item > img').attr('src');
+            window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+            window.close();
+        });
+    });
+</script>

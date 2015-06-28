@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Krakkl.Query.Models;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 
 namespace Krakkl.Query
@@ -29,6 +32,19 @@ namespace Krakkl.Query
             book.Key = query.Path.Key;
 
             return book;
+        }
+
+        public List<string> GetImagesByBook(string bookKey)
+        {
+            var uris = new List<string>();
+
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(_storageConnectionString);
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer blobContainer = blobClient.GetContainerReference(bookKey);
+
+            uris.AddRange(blobContainer.ListBlobs().Select(x => x.Uri.ToString()));
+
+            return uris;
         }
     }
 }

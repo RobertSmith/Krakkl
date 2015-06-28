@@ -7,6 +7,7 @@
         "EntityFramework.Commands": "7.0.0-beta4",
         "EntityFramework.SqlServer": "7.0.0-beta4",
         "Krakkl.Authorship": "1.0.0-*",
+        "Krakkl.Infrastructure": "1.0.0-*",
         "Krakkl.Query": "1.0.0-*",
         "Microsoft.AspNet.Authentication.Cookies": "1.0.0-beta4",
         "Microsoft.AspNet.Authentication.Facebook": "1.0.0-beta4",
@@ -28,8 +29,7 @@
         "Microsoft.Framework.Logging": "1.0.0-beta4",
         "Microsoft.Framework.Logging.Console": "1.0.0-beta4",
         "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-beta4",
-        "System.Threading": "4.0.10-beta-22816",
-        "Krakkl.Infrastructure": "1.0.0-*"
+        "System.Threading": "4.0.10-beta-22816"
     },
 
     "commands": {
