@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Krakkl.Authorship.Services;
 using Krakkl.Cache;
@@ -256,6 +257,25 @@ namespace Krakkl.Services
                 return true;
             }
             catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool UpdateBookCoverArt(ApplicationUser user, string bookKey, Stream coverArt)
+        {
+            try
+            {
+                _service.Apply(new SetBookCoverArtCommand
+                {
+                    AuthorKey = Guid.Parse(user.Id),
+                    BookKey = Guid.Parse(bookKey),
+                    CoverArt = coverArt
+                });
+
+                return true;
+            }
+            catch (Exception ex)
             {
                 return false;
             }

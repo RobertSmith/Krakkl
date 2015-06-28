@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Krakkl.Authorship.Book.Aggregate;
 using Krakkl.Authorship.Book.Repository;
 using Microsoft.Framework.ConfigurationModel;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 
 namespace Krakkl.Authorship.Infrastructure
@@ -12,6 +15,7 @@ namespace Krakkl.Authorship.Infrastructure
     {
         private readonly MessagingService _messagingService;
         private readonly Orchestrate.Net.Orchestrate _orchestrate;
+        private readonly string _storageConnectionString;
         private const string BookEventsCollection = "BookEvents";
 
         public BookAggregateRepository()
@@ -19,6 +23,7 @@ namespace Krakkl.Authorship.Infrastructure
             var configuration = new Configuration().AddJsonFile("config.json");
 
             _orchestrate = new Orchestrate.Net.Orchestrate(configuration["Data:Orchestrate:ApiKey"]);
+            _storageConnectionString = configuration["Data:AzureStorage:ConnectionString"];
             _messagingService = new MessagingService();
         }
 
@@ -140,6 +145,20 @@ namespace Krakkl.Authorship.Infrastructure
             }
 
             BookAggregateCache.UpdateItem(aggregate.Key, aggregate);
+        }
+
+        public async void SaveCoverArt(BookAggregate aggregate, Guid coverArtKey, Stream coverArt)
+        {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(_storageConnectionString);
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer container = blobClient.GetContainerReference(aggregate.Key.ToString());
+
+            await container.CreateIfNotExistsAsync();
+            var permissions = new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob };
+            await container.SetPermissionsAsync(permissions);
+
+            CloudBlockBlob blob = container.GetBlockBlobReference(coverArtKey.ToString());
+            await blob.UploadFromStreamAsync(coverArt);
         }
 
         private Entities.Book GetBookSnapshot(Guid key)

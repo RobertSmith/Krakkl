@@ -13,6 +13,7 @@ namespace Krakkl.Authorship.Entities
         public string SeriesVolume { get; set; }
         public ValueObjects.Genre Genre { get; set; }
         public ValueObjects.Language Language { get; set; }
+        public Guid CoverArtKey { get; set; }
         public string Synopsis { get; set; }
         public bool Published { get; set; }
         public bool Completed { get; set; }

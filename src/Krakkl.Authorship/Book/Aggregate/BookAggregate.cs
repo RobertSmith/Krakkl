@@ -31,7 +31,7 @@ namespace Krakkl.Authorship.Book.Aggregate
                 Apply(e);
         }
 
-        internal void StartANewBook(ValueObjects.Author author, Language language)
+        internal void StartANewBook(Author author, Language language)
         {
             if (_book == null)
                 _book = new Entities.Book();
@@ -44,7 +44,7 @@ namespace Krakkl.Authorship.Book.Aggregate
             Publish(new BookCreatedEventArgs(bookKey, author, language, DateTime.UtcNow, author.Key));
         }
 
-        internal void AddAuthor(Guid authorKey, ValueObjects.Author newAuthor)
+        internal void AddAuthor(Guid authorKey, Author newAuthor)
         {
             if (_book.Authors.Any(author => author.Key == newAuthor.Key))
                 return;
@@ -55,7 +55,7 @@ namespace Krakkl.Authorship.Book.Aggregate
             Publish(new AuthorAddedToBookEventArgs(_book.Key, newAuthor, DateTime.UtcNow, authorKey));
         }
 
-        internal void RemoveAuthor(Guid authorKey, ValueObjects.Author removedAuthor)
+        internal void RemoveAuthor(Guid authorKey, Author removedAuthor)
         {
             if (_book.Authors.All(a => a.Key != removedAuthor.Key))
                 return;
@@ -76,8 +76,6 @@ namespace Krakkl.Authorship.Book.Aggregate
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
-
-            _book.Title = newTitle;
 
             Publish(new BookRetitledEventArgs(_book.Key, newTitle, DateTime.UtcNow, authorKey));
         }
@@ -145,8 +143,6 @@ namespace Krakkl.Authorship.Book.Aggregate
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _book.Synopsis = newSynopsis;
-
             Publish(new BookSynopsisUpdatedEventArgs(_book.Key, newSynopsis, DateTime.UtcNow, authorKey));
         }
 
@@ -169,8 +165,6 @@ namespace Krakkl.Authorship.Book.Aggregate
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _book.Completed = false;
-
             Publish(new BookSetAsInProgressEventArgs(_book.Key, DateTime.UtcNow, authorKey));
         }
 
@@ -181,8 +175,6 @@ namespace Krakkl.Authorship.Book.Aggregate
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
-
-            _book.Abandoned = true;
 
             Publish(new BookAbandonedEventArgs(_book.Key, DateTime.UtcNow, authorKey));
         }
@@ -195,8 +187,6 @@ namespace Krakkl.Authorship.Book.Aggregate
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _book.Abandoned = false;
-
             Publish(new BookRevivedEventArgs(_book.Key, DateTime.UtcNow, authorKey));
         }
 
@@ -208,9 +198,18 @@ namespace Krakkl.Authorship.Book.Aggregate
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
-            _book.Published = true;
-
             Publish(new BookPublishedEventArgs(_book.Key, DateTime.UtcNow, authorKey));
+        }
+
+        internal void SetNewCoverArt(Guid authorKey, Guid coverArtKey)
+        {
+            if (_book.Published)
+                return;
+
+            if (!AuthorCanEditBook(authorKey))
+                throw new Exception("This author is not valid for updating this book");
+
+            Publish(new SetNewCoverArtEventArgs(_book.Key, DateTime.UtcNow, authorKey, coverArtKey));
         }
 
         private bool AuthorCanEditBook(Guid authorKey)
@@ -311,6 +310,11 @@ namespace Krakkl.Authorship.Book.Aggregate
         private void When(BookPublishedEventArgs e)
         {
             _book.Published = true;
+        }
+
+        private void When(SetNewCoverArtEventArgs e)
+        {
+            _book.CoverArtKey = e.CoverArtKey;
         }
         // ReSharper restore UnusedParameter.Local
         // ReSharper restore UnusedMember.Local

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Krakkl.Authorship.Book.Aggregate;
 
 namespace Krakkl.Authorship.Book.Repository
@@ -7,5 +8,6 @@ namespace Krakkl.Authorship.Book.Repository
     {
         BookAggregate FindByKey<T>(Guid key);
         void Save(BookAggregate aggregate);
+        void SaveCoverArt(BookAggregate aggregate, Guid coverArtKey, Stream coverArt);
     }
 }

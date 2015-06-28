@@ -88,8 +88,19 @@ $(document).ready(function () {
 
     var input = $('.fileinput').fileinput();
     input.on('change.bs.fileinput', function(e, files) {
-        var data = new FormData();
-        data.append("UploadedImage", files[0]);
-        $.post("/Desk/UploadCoverArt", data);
+        var key = $("#Key")[0].value;
+        var formData = new FormData();
+        formData.append("UploadedImage", files);
+
+        $.ajax({
+            url: '/Desk/UploadCoverArt?bookKey=' + key,  //Server script to process data
+            type: 'POST',
+            // Form data
+            data: formData,
+            //Options to tell jQuery not to process data or worry about content-type.
+            cache: false,
+            contentType: false,
+            processData: false
+        });
     });
 });

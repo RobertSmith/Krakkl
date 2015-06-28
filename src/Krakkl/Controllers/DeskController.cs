@@ -1,14 +1,13 @@
 ﻿using System;
-using System.IO;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Krakkl.Cache;
 using Krakkl.Models;
 using Krakkl.Query;
 using Krakkl.Services;
 using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 
@@ -192,11 +191,15 @@ namespace Krakkl.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UploadCoverArt(HttpPostedFileBase upload)
+        public async Task<JsonResult> UploadCoverArt(string bookKey)
         {
+            var coverArt = Request.Form.Files[0].OpenReadStream();
             var user = await GetCurrentUserAsync();
 
-            return new JsonResult("success");
+            if (_service.UpdateBookCoverArt(user, bookKey, coverArt))
+                return new JsonResult("success");
+
+            return new JsonResult("Retitle failed");
         }
 
         #region Helpers

@@ -238,6 +238,21 @@ namespace Krakkl.Authorship.Services
 
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.PublishBook(cmd.AuthorKey));
         }
+
+        private void When(SetBookCoverArtCommand cmd)
+        {
+            if (cmd.BookKey == null)
+                throw new Exception("Book Key is required");
+
+            if (cmd.AuthorKey == null)
+                throw new Exception("Author Key is required");
+
+            var coverArtKey = Guid.NewGuid();
+            var aggregate = _bookAggregateRepository.FindByKey<BookAggregate>(cmd.BookKey);
+
+            aggregate.SetNewCoverArt(cmd.AuthorKey, coverArtKey);
+            _bookAggregateRepository.SaveCoverArt(aggregate, coverArtKey, cmd.CoverArt);
+        }
         // ReSharper restore UnusedMember.Local
 
         private void Act<T>(Guid key, Action<BookAggregate> action)

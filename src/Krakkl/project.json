@@ -43,6 +43,9 @@
         "dnx451": {
             "dependencies": {
                 "System.Threading": "4.0.10-beta-22816"
+            },
+            "frameworkAssemblies": {
+                "System.Web": "4.0.0.0"
             }
         }
     },

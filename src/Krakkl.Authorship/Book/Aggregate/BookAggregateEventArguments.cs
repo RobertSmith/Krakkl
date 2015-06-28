@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Krakkl.Authorship.ValueObjects;
 using Newtonsoft.Json;
 
@@ -224,6 +225,20 @@ namespace Krakkl.Authorship.Book.Aggregate
 
         public BookPublishedEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookPublished")
         {
+            UpdatedAt = updatedAt;
+            UpdatedBy = updatedBy;
+        }
+    }
+
+    internal sealed class SetNewCoverArtEventArgs : BookEventArgs
+    {
+        public DateTime UpdatedAt { get; private set; }
+        public Guid UpdatedBy { get; private set; }
+        public Guid CoverArtKey { get; private set; }
+
+        public SetNewCoverArtEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy, Guid coverArtKey) : base(bookKey, "BookCoverArtSet")
+        {
+            CoverArtKey = coverArtKey;
             UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;
         }
