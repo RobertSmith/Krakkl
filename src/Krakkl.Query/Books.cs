@@ -25,7 +25,10 @@ namespace Krakkl.Query
         public async Task<BookModel> GetBookAsync(string key)
         {
             var query = await Orchestrate.GetAsync("Books", key);
-            return JsonConvert.DeserializeObject<BookModel>(query.Value.ToString());
+            var book = JsonConvert.DeserializeObject<BookModel>(query.Value.ToString());
+            book.Key = query.Path.Key;
+
+            return book;
         }
     }
 }

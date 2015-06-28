@@ -131,6 +131,10 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
                     case "BookPublished":
                         BookPublishedHanlder(bookEvent);
                         break;
+
+                    case "BookCoverArtSet":
+                        BookCoverArtSet(bookEvent);
+                        break;
                 }
             }
             catch (AggregateException ex)
@@ -341,6 +345,19 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
             var patchItems = new List<object>
             {
                 new PatchItemObject {Op = "add", Path = "/Published", Value = true},
+                new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
+                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
+                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
+            };
+
+            PatchBook(patchItems, eventModel.BookKey.ToString());
+        }
+
+        private void BookCoverArtSet(BookEventModel eventModel)
+        {
+            var patchItems = new List<object>
+            {
+                new PatchItemObject {Op = "add", Path = "/CoverArtKey", Value = eventModel.CoverArtKey},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
                 new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }

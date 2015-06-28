@@ -2,16 +2,16 @@
 
 <div class="row" style="margin-bottom: 20px;">
     <div class="col-md-2">
-        @*        @{*@
-        @*            if (string.IsNullOrEmpty(Model.CoverArt))*@
-        @*            {*@
-        <img class="pull-left img-rounded" src="http://dummyimage.com/150x150/292929/e3e3e3&text=No Image" alt="@Model.Title"/>
-        @*            }*@
-        @*            else*@
-        @*            {*@
-        @*                <img class="pull-left" style="max-height: 150px; max-width: 150px;" src="@Model.CoverArt" alt="@Model.Title" />*@
-        @*            }*@
-        @*        }*@
+    @{
+        if (string.IsNullOrEmpty(Model.CoverArtKey))
+        {
+            <img class="pull-left img-rounded" src="http://dummyimage.com/150x150/292929/e3e3e3&text=No Image" alt="@Model.Title"/>
+        }
+        else
+        {
+            <img class="pull-left" style="max-height: 150px; max-width: 150px;" src="@Model.CoverArtUri" alt="@Model.Title" />
+        }
+    }
     </div>
     <div class="col-md-9">
         <h4 style="margin-top: 0;">

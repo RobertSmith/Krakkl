@@ -21,6 +21,7 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
         public string NewSeriesVolume { get; set; }
         public GenreModel NewGenre { get; set; }
         public LanguageModel NewLanguage { get; set; }
+        public Guid? CoverArtKey { get; set; }
         public string NewSynopsis { get; set; }
         public DateTime? CreatedAt { get; set; }
         public Guid? CreatedBy { get; set; }

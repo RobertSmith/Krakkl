@@ -13,7 +13,7 @@ namespace Krakkl.Query.Models
         public string SeriesVolume { get; set; }
         public GenreModel Genre { get; set; }
         public LanguageModel Language { get; set; }
-        public string CoverArt { get; set; }
+        public string CoverArtKey { get; set; }
         public string Synopsis { get; set; }
         public bool Published { get; set; }
         public bool Completed { get; set; }
@@ -24,5 +24,7 @@ namespace Krakkl.Query.Models
         public Guid CreatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public Guid UpdatedBy { get; set; }
+
+        public string CoverArtUri => $"http://krakkl.blob.core.windows.net/{Key}/{CoverArtKey}";
     }
 }

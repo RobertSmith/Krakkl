@@ -248,10 +248,11 @@ namespace Krakkl.Authorship.Services
                 throw new Exception("Author Key is required");
 
             var coverArtKey = Guid.NewGuid();
-            var aggregate = _bookAggregateRepository.FindByKey<BookAggregate>(cmd.BookKey);
 
-            aggregate.SetNewCoverArt(cmd.AuthorKey, coverArtKey);
-            _bookAggregateRepository.SaveCoverArt(aggregate, coverArtKey, cmd.CoverArt);
+            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.SetNewCoverArt(cmd.AuthorKey, coverArtKey));
+
+            var agg = _bookAggregateRepository.FindByKey<BookAggregate>(cmd.BookKey);
+            _bookAggregateRepository.SaveCoverArt(agg, coverArtKey, cmd.CoverArt);
         }
         // ReSharper restore UnusedMember.Local
 

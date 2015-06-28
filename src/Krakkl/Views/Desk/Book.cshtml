@@ -98,16 +98,27 @@
         </div>
         <div class="col-md-6">
             <label>Cover Art</label><br />
-            <div class="fileinput fileinput-new" data-provides="fileinput">
+            <div class="fileinput fileinput-exists" data-provides="fileinput">
                 <div class="fileinput-new thumbnail" style="width: 400px; height: 400px;">
-                    <img src="http://www.placehold.it/400x400/EFEFEF/AAAAAA&text=no+image" alt="cover art" />
+                    <img src="http://www.placehold.it/400x400/EFEFEF/AAAAAA&text=no+image" />
                 </div>
-                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 400px; max-height: 400px; line-height: 20px;"></div>
+                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 400px; max-height: 400px; line-height: 20px;">
+                    @{
+                        if (string.IsNullOrEmpty(Model.CoverArtKey))
+                        {
+                            <img src="http://www.placehold.it/400x400/EFEFEF/AAAAAA&text=no+image" />
+                        }
+                        else
+                        {
+                            <img src="@Model.CoverArtUri" />
+                        }
+                    }
+                </div>
                 <div>
                     <span class="btn btn-primary btn-file">
                         <span class="fileinput-new">Upload Cover Art...</span>
                         <span class="fileinput-exists">Change</span>
-                        <input id="CoverArt" name="CoverArt" type="file" accept="image/*" />
+                        <input id="CoverArt" name="CoverArt" type="file" />
                     </span>
                     <a href="#" class="btn fileinput-exists" data-dismiss="fileinput">Remove</a>
                 </div>
