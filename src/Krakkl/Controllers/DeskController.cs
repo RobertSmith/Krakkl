@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using Krakkl.Cache;
 using Krakkl.Models;
 using Krakkl.Query;
@@ -61,23 +60,7 @@ namespace Krakkl.Controllers
             if (!string.IsNullOrEmpty(message))
                 ViewBag.StatusMessage = message;
 
-            var query = new Books();
-
-            while (true)
-            {
-                try
-                {
-                    var book = await query.GetBookAsync(key);
-                    return View(book);
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message.Contains("404"))
-                        Thread.Sleep(1000);
-                    else 
-                        throw;
-                }
-            }
+            return View(await _service.GetBookByKey(key));
         }
 
         [HttpPost]

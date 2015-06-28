@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Krakkl.Authorship.Services;
 using Krakkl.Cache;
 using Krakkl.Models;
+using Krakkl.Query;
 using Krakkl.Query.Models;
 
 namespace Krakkl.Services
@@ -12,6 +15,33 @@ namespace Krakkl.Services
     public class DeskService
     {
         private readonly BookService _service = new BookService(new Authorship.Infrastructure.BookAggregateRepository());
+
+        public async Task<BookModel> GetBookByKey(string key)
+        {
+            var retryCount = 0;
+            var maxTries = 5;
+
+            var query = new Books();
+
+            while (true)
+            {
+                try
+                {
+                    var book = await query.GetBookAsync(key);
+                    return book;
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("404") && retryCount < maxTries)
+                    {
+                        retryCount++;
+                        Thread.Sleep(1000);
+                    }
+                    else
+                        throw;
+                }
+            }
+        }
 
         public Guid StartANewBook(ApplicationUser user)
         {
