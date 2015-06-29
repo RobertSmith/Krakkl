@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using Krakkl.Models;
 using Krakkl.Services;
@@ -20,27 +19,28 @@ namespace Krakkl.Controllers
 
         //
         // POST: /Image/Upload
-        [HttpPost]
-        public async Task<ActionResult> Upload(string bookId)
-        {
-            var message = string.Empty;
-            var url = string.Empty;
-
-            try
-            {
-                var user = await UserManager.FindByIdAsync(Context.User.GetUserId());
-                var image = Request.Form.Files[0].OpenReadStream();
-                url = _service.AddImage(bookId, image);
-            }
-            catch (Exception ex)
-            {
-                message = ex.Message;
-            }
-
-            return Content("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction(" + Request.QueryString["CKEditorFuncNum"] + ", '" + url + "', '" + message + "');</script>");
-        }
+        //        [HttpPost]
+        //        public async Task<ActionResult> Upload(string bookId)
+        //        {
+        //            var message = string.Empty;
+        //            var url = string.Empty;
+        //
+        //            try
+        //            {
+        //                var user = await UserManager.FindByIdAsync(Context.User.GetUserId());
+        //                var image = Request.Form.Files[0].OpenReadStream();
+        //                url = _service.AddImage(bookId, image);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                message = ex.Message;
+        //            }
+        //
+        //            return Content("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction(" + Request.QueryString["CKEditorFuncNum"] + ", '" + url + "', '" + message + "');</script>");
+        //        }
 
         // GET: /Image/Browser
+        [HttpGet]
         public async Task<ActionResult> Browser(string bookKey)
         {
             ViewBag.CKEditorFuncNum = Request.Query["CKEditorFuncNum"];

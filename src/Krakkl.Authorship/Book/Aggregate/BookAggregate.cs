@@ -203,7 +203,7 @@ namespace Krakkl.Authorship.Book.Aggregate
 
         internal void SetNewCoverArt(Guid authorKey, Guid coverArtKey)
         {
-            if (_book.Published)
+            if (_book.CoverArtKey == coverArtKey)
                 return;
 
             if (!AuthorCanEditBook(authorKey))
