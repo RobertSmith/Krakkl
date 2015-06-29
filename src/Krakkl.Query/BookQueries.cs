@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Krakkl.Query
 {
-    public class Books : OrchestrateBase
+    public class BookQueries : OrchestrateBase
     {
         public async Task<IEnumerable<BookModel>> GetAuthorBooksAsyc(string authorId)
         {

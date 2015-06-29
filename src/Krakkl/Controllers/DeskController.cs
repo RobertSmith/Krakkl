@@ -25,7 +25,7 @@ namespace Krakkl.Controllers
         public async Task<ActionResult> Index()
         {
             ViewBag.Tab = "Desk";
-            var query = new Books();
+            var query = new BookQueries();
             var user = await GetCurrentUserAsync();
             var books = await query.GetAuthorBooksAsyc(user.Id);
 

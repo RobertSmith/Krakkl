@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 
 namespace Krakkl.Query
 {
-    public class Language : OrchestrateBase
+    public class LanguageQueries : OrchestrateBase
     {
         public Dictionary<string, string> Languages { get; }
 
-        public Language()
+        public LanguageQueries()
         {
             Languages = new Dictionary<string, string>();
             var query = Orchestrate.Search("Languages", "*", 100, 0, "Name:asc");

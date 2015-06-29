@@ -21,7 +21,7 @@ namespace Krakkl.Services
             var retryCount = 0;
             var maxTries = 5;
 
-            var query = new Books();
+            var query = new BookQueries();
 
             while (true)
             {

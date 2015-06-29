@@ -36,7 +36,7 @@ namespace Krakkl.Cache
 
         private static object InitItem()
         {
-            var genre = new Query.Genre();
+            var genre = new Query.GenreQueries();
             return genre.Genres;
         }
     }

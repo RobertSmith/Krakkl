@@ -36,7 +36,7 @@ namespace Krakkl.Cache
 
         private static object InitItem()
         {
-            var lang = new Query.Language();
+            var lang = new Query.LanguageQueries();
             return lang.Languages;
         }
     }

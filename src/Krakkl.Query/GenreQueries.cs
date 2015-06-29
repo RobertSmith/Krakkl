@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 
 namespace Krakkl.Query
 {
-    public class Genre : OrchestrateBase
+    public class GenreQueries : OrchestrateBase
     {
         public List<GenreModel> Genres { get; }
 
-        public Genre()
+        public GenreQueries()
         {
             Genres = new List<GenreModel>();
             var query = Orchestrate.Search("Genres", "*", 100, 0, "IsFiction:desc,Name:asc");
