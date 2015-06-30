@@ -75,8 +75,7 @@ $(document).ready(function () {
     });
 
     $("#Completed").change(function (e) {
-        var completed = $("#Completed")[0].checked;
-        var data = { bookKey: key, completed: completed };
+        var data = { bookKey: key };
         $.post("/Desk/UpdateBookCompleted", data);
     });
 

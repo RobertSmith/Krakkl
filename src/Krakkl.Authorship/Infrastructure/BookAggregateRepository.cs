@@ -103,10 +103,6 @@ namespace Krakkl.Authorship.Infrastructure
                             events.Add(JsonConvert.DeserializeObject<BookCompletedEventArgs>(result.Value.ToString()));
                             break;
 
-                        case "BookSetAsInProgress":
-                            events.Add(JsonConvert.DeserializeObject<BookSetAsInProgressEventArgs>(result.Value.ToString()));
-                            break;
-
                         case "BookAbandoned":
                             events.Add(JsonConvert.DeserializeObject<BookAbandonedEventArgs>(result.Value.ToString()));
                             break;

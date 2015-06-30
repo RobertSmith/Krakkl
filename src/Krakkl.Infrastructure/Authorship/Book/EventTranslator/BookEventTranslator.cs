@@ -116,10 +116,6 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
                         BookCompletedHandler(bookEvent);
                         break;
 
-                    case "BookSetAsInProgress":
-                        BookSetAsInProgressHandler(bookEvent);
-                        break;
-
                     case "BookAbandoned":
                         BookAbandonedHandler(bookEvent);
                         break;
@@ -293,19 +289,6 @@ namespace Krakkl.Infrastructure.Authorship.Book.EventTranslator
             var patchItems = new List<object>
             {
                 new PatchItemObject {Op = "add", Path = "/Completed", Value = true},
-                new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
-                new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
-                new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }
-            };
-
-            PatchBook(patchItems, eventModel.BookKey.ToString());
-        }
-
-        private void BookSetAsInProgressHandler(BookEventModel eventModel)
-        {
-            var patchItems = new List<object>
-            {
-                new PatchItemObject {Op = "add", Path = "/Completed", Value = false},
                 new PatchItemString {Op = "add", Path = "/UpdatedBy", Value = eventModel.UpdatedBy.ToString()},
                 new PatchItemDate {Op = "add", Path = "/UpdatedAt", Value = eventModel.UpdatedAt.GetValueOrDefault()},
                 new PatchItemDate {Op ="add", Path="/LastEventTimeStamp", Value = eventModel.TimeStamp }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Krakkl.Authorship.ValueObjects;
 using Newtonsoft.Json;
 
@@ -176,18 +175,6 @@ namespace Krakkl.Authorship.Book.Aggregate
         public Guid UpdatedBy { get; private set; }
 
         public BookCompletedEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookCompleted")
-        {
-            UpdatedAt = updatedAt;
-            UpdatedBy = updatedBy;
-        }
-    }
-
-    internal sealed class BookSetAsInProgressEventArgs : BookEventArgs
-    {
-        public DateTime UpdatedAt { get; private set; }
-        public Guid UpdatedBy { get; private set; }
-
-        public BookSetAsInProgressEventArgs(Guid bookKey, DateTime updatedAt, Guid updatedBy) : base(bookKey, "BookSetAsInProgress")
         {
             UpdatedAt = updatedAt;
             UpdatedBy = updatedBy;

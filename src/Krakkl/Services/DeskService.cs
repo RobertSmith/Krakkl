@@ -232,7 +232,7 @@ namespace Krakkl.Services
             }
         }
 
-        public bool UpdateBookCompleted(ApplicationUser user, string bookKey, bool completed)
+        public bool UpdateBookCompleted(ApplicationUser user, string bookKey)
         {
             try
             {
@@ -241,18 +241,11 @@ namespace Krakkl.Services
                 if (languages == null)
                     throw new Exception("No languages? WTF?");
 
-                if (completed)
-                    _service.Apply(new CompleteBookCommand
-                    {
-                        AuthorKey = Guid.Parse(user.Id),
-                        BookKey = Guid.Parse(bookKey)
-                    });
-                else
-                    _service.Apply(new SetBookInProgressCommand
-                    {
-                        AuthorKey = Guid.Parse(user.Id),
-                        BookKey = Guid.Parse(bookKey)
-                    });
+                _service.Apply(new CompleteBookCommand
+                {
+                    AuthorKey = Guid.Parse(user.Id),
+                    BookKey = Guid.Parse(bookKey)
+                });
 
                 return true;
             }

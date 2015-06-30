@@ -150,11 +150,11 @@ namespace Krakkl.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UpdateBookCompleted(string bookKey, bool completed)
+        public async Task<JsonResult> UpdateBookCompleted(string bookKey)
         {
             var user = await GetCurrentUserAsync();
 
-            if (_service.UpdateBookCompleted(user, bookKey, completed))
+            if (_service.UpdateBookCompleted(user, bookKey))
                 return new JsonResult("success");
 
             return new JsonResult("Retitle failed");

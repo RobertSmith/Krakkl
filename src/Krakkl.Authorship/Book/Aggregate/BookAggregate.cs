@@ -49,6 +49,9 @@ namespace Krakkl.Authorship.Book.Aggregate
             if (_book.Authors.Any(author => author.Key == newAuthor.Key))
                 return;
 
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
+
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
@@ -57,8 +60,8 @@ namespace Krakkl.Authorship.Book.Aggregate
 
         internal void RemoveAuthor(Guid authorKey, Author removedAuthor)
         {
-            if (_book.Authors.All(a => a.Key != removedAuthor.Key))
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (_book.Authors.Count == 1)
                 throw new Exception("There must be at least one author assigned to a book");
@@ -66,82 +69,106 @@ namespace Krakkl.Authorship.Book.Aggregate
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
 
+            if (_book.Authors.All(a => a.Key != removedAuthor.Key))
+                return;
+
             Publish(new AuthorRemovedFromBookEventArgs(_book.Key, removedAuthor, _book.Authors, DateTime.UtcNow, authorKey));
         }
 
         internal void Retitle(Guid authorKey, string newTitle)
         {
-            if (_book.Title == newTitle)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.Title == newTitle)
+                return;
 
             Publish(new BookRetitledEventArgs(_book.Key, newTitle, DateTime.UtcNow, authorKey));
         }
 
         internal void ChangeSubTitle(Guid authorKey, string newSubTitle)
         {
-            if (_book.SubTitle == newSubTitle)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.SubTitle == newSubTitle)
+                return;
 
             Publish(new BookSubTitleChangedEventArgs(_book.Key, newSubTitle, DateTime.UtcNow, authorKey));
         }
 
         internal void ChangeSeriesTitle(Guid authorKey, string newSeriesTitle)
         {
-            if (_book.SeriesTitle == newSeriesTitle)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.SeriesTitle == newSeriesTitle)
+                return;
 
             Publish(new BookSeriesTitleChangedEventArgs(_book.Key, newSeriesTitle, DateTime.UtcNow, authorKey));
         }
 
         internal void ChangeSeriesVolume(Guid authorKey, string newSeriesVolume)
         {
-            if (_book.SeriesVolume == newSeriesVolume)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.SeriesVolume == newSeriesVolume)
+                return;
 
             Publish(new BookSeriesVolumeChangedEventArgs(_book.Key, newSeriesVolume, DateTime.UtcNow, authorKey));
         }
 
         internal void ChangeGenre(Guid authorKey, Genre newGenre)
         {
-            if (_book.Genre == newGenre)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.Genre == newGenre)
+                return;
 
             Publish(new BookGenreChangedEventArgs(_book.Key, newGenre, DateTime.UtcNow, authorKey));
         }
 
         internal void ChangeEditorLanguage(Guid authorKey, Language newLanguage)
         {
-            if (_book.Language == newLanguage)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.Language == newLanguage)
+                return;
 
             Publish(new BookLanguageChangedEventArgs(_book.Key, newLanguage, DateTime.UtcNow, authorKey));
         }
 
         internal void UpdateSynopsis(Guid authorKey, string newSynopsis)
         {
-            if (_book.Synopsis == newSynopsis)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.Synopsis == newSynopsis)
+                return;
 
             Publish(new BookSynopsisUpdatedEventArgs(_book.Key, newSynopsis, DateTime.UtcNow, authorKey));
         }
@@ -149,65 +176,66 @@ namespace Krakkl.Authorship.Book.Aggregate
         internal void CompleteBook(Guid authorKey)
         {
             if (_book.Completed)
-                return;
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.Completed)
+                return;
 
             Publish(new BookCompletedEventArgs(_book.Key, DateTime.UtcNow, authorKey));
         }
 
-        internal void SetBookAsInProgress(Guid authorKey)
-        {
-            if (!_book.Completed)
-                return;
-
-            if (!AuthorCanEditBook(authorKey))
-                throw new Exception("This author is not valid for updating this book");
-
-            Publish(new BookSetAsInProgressEventArgs(_book.Key, DateTime.UtcNow, authorKey));
-        }
-
         internal void AbandonBook(Guid authorKey)
         {
-            if (_book.Abandoned)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.Abandoned)
+                return;
 
             Publish(new BookAbandonedEventArgs(_book.Key, DateTime.UtcNow, authorKey));
         }
 
         internal void ReviveBook(Guid authorKey)
         {
-            if (!_book.Abandoned)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (!_book.Abandoned)
+                return;
 
             Publish(new BookRevivedEventArgs(_book.Key, DateTime.UtcNow, authorKey));
         }
 
         internal void PublishBook(Guid authorKey)
         {
-            if (_book.Published)
-                return;
-
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.Published)
+                return;
 
             Publish(new BookPublishedEventArgs(_book.Key, DateTime.UtcNow, authorKey));
         }
 
         internal void SetNewCoverArt(Guid authorKey, Guid coverArtKey)
         {
-            if (_book.CoverArtKey == coverArtKey)
-                return;
+            if (_book.Completed)
+                throw new Exception("This book is complete, no changes are allowed.");
 
             if (!AuthorCanEditBook(authorKey))
                 throw new Exception("This author is not valid for updating this book");
+
+            if (_book.CoverArtKey == coverArtKey)
+                return;
 
             Publish(new SetNewCoverArtEventArgs(_book.Key, DateTime.UtcNow, authorKey, coverArtKey));
         }
@@ -290,11 +318,6 @@ namespace Krakkl.Authorship.Book.Aggregate
         private void When(BookCompletedEventArgs e)
         {
             _book.Completed = true;
-        }
-
-        private void When(BookSetAsInProgressEventArgs e)
-        {
-            _book.Completed = false;
         }
 
         private void When(BookAbandonedEventArgs e)

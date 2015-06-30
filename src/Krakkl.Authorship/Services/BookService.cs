@@ -195,17 +195,6 @@ namespace Krakkl.Authorship.Services
             Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.CompleteBook(cmd.AuthorKey));
         }
 
-        private void When(SetBookInProgressCommand cmd)
-        {
-            if (cmd.BookKey == null)
-                throw new Exception("Book Key is required");
-
-            if (cmd.AuthorKey == null)
-                throw new Exception("Author Key is required");
-
-            Act<BookAggregate>(cmd.BookKey, aggregate => aggregate.SetBookAsInProgress(cmd.AuthorKey));
-        }
-
         private void When(AbandonBookCommand cmd)
         {
             if (cmd.BookKey == null)

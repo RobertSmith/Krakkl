@@ -71,10 +71,6 @@ namespace Krakkl.Authorship.Services
     {
     }
 
-    public class SetBookInProgressCommand : BookCommandBase
-    {
-    }
-
     public class AbandonBookCommand : BookCommandBase
     {
     }
